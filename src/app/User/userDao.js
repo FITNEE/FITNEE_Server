@@ -2,7 +2,7 @@
 async function selectUser(connection) {
   const selectUserListQuery = `
                 SELECT email, nickname 
-                FROM UserInfo;
+                FROM User;
                 `;
   const [userRows] = await connection.query(selectUserListQuery);
   return userRows;
@@ -12,7 +12,7 @@ async function selectUser(connection) {
 async function selectUserEmail(connection, email) {
   const selectUserEmailQuery = `
                 SELECT email, nickname 
-                FROM UserInfo 
+                FROM User
                 WHERE email = ?;
                 `;
   const [emailRows] = await connection.query(selectUserEmailQuery, email);
@@ -23,7 +23,7 @@ async function selectUserEmail(connection, email) {
 async function selectUserId(connection, userId) {
   const selectUserIdQuery = `
                  SELECT id, email, nickname 
-                 FROM UserInfo 
+                 FROM User
                  WHERE id = ?;
                  `;
   const [userRow] = await connection.query(selectUserIdQuery, userId);
@@ -33,7 +33,7 @@ async function selectUserId(connection, userId) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO UserInfo(email, password, nickname)
+        INSERT INTO User(email, password, nickname)
         VALUES (?, ?, ?);
     `;
   const insertUserInfoRow = await connection.query(
@@ -48,7 +48,7 @@ async function insertUserInfo(connection, insertUserInfoParams) {
 async function selectUserPassword(connection, selectUserPasswordParams) {
   const selectUserPasswordQuery = `
         SELECT email, nickname, password
-        FROM UserInfo 
+        FROM User
         WHERE email = ? AND password = ?;`;
   const selectUserPasswordRow = await connection.query(
       selectUserPasswordQuery,
@@ -62,7 +62,7 @@ async function selectUserPassword(connection, selectUserPasswordParams) {
 async function selectUserAccount(connection, email) {
   const selectUserAccountQuery = `
         SELECT status, id
-        FROM UserInfo 
+        FROM User
         WHERE email = ?;`;
   const selectUserAccountRow = await connection.query(
       selectUserAccountQuery,
@@ -73,7 +73,7 @@ async function selectUserAccount(connection, email) {
 
 async function updateUserInfo(connection, id, nickname) {
   const updateUserQuery = `
-  UPDATE UserInfo 
+  UPDATE User
   SET nickname = ?
   WHERE id = ?;`;
   const updateUserRow = await connection.query(updateUserQuery, [nickname, id]);
