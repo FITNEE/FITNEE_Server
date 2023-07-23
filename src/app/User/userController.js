@@ -24,12 +24,12 @@ exports.getTest = async function (req, res) {
  */
 exports.postUsers = async function (req, res) {
     /**
-     * Body: UserId, userPw, userName, email, userNickname, addressIdx
+     * Body: userId, userPw, userName, email, userNickname, addressIdx
      */
-    const { UserId, userPw, userName, email, userNickname, addressIdx} = req.body;
+    const { userId, userPw, userName, email, userNickname, addressIdx} = req.body;
 
     // 빈값 체크
-    if (!UserId) return res.send(errResponse(baseResponse.EMPTY_ID));
+    if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
     if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
     if (!userName) return res.send(errResponse(baseResponse.EMPTY_NAME));
     if (!email) return res.send(errResponse(baseResponse.EMPTY_EMAIL));
@@ -46,7 +46,7 @@ exports.postUsers = async function (req, res) {
     if (!regexEmail.test(email))
         return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
 
-    const signUpResponse = await userService.createUser(UserId, userPw, userName, email, userNickname, addressIdx);
+    const signUpResponse = await userService.createUser(userId, userPw, userName, email, userNickname, addressIdx);
 
     return res.send(signUpResponse);
 };
