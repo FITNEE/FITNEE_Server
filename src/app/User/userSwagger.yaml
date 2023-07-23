@@ -1,4 +1,29 @@
-# 
 tags:
   name: Users
-  
+  description: 사용자 관련 API
+
+/app/test:
+  get:
+    summary: 테스트 API
+    description: 서버 응답을 테스트하는 API
+    tags:
+      - Users
+    response:
+      1000:
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isSuccess:
+                  type: boolean
+                code:
+                  type: number
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    # 필요에 따라 응답 데이터 속성 추가
+                    # 예: 이메일, 비밀번호, 닉네임 등
