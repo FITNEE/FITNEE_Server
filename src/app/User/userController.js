@@ -23,32 +23,30 @@ exports.getTest = async function (req, res) {
  * [POST] /app/users
  */
 exports.postUsers = async function (req, res) {
-
     /**
-     * Body: email, password, nickname
+     * Body: userId, userPw, userName, email, userNickname, addressIdx
      */
-    const {email, password, nickname} = req.body;
+    const { userId, userPw, userName, email, userNickname, addressIdx} = req.body;
 
-    // 빈 값 체크
-    if (!email)
-        return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
+    // 빈값 체크
+    if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
+    if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
+    if (!userName) return res.send(errResponse(baseResponse.EMPTY_NAME));
+    if (!email) return res.send(errResponse(baseResponse.EMPTY_EMAIL));
+    if (!userNickname) return res.send(errResponse(baseResponse.EMPTY_NICKNAME));
+    if (!addressIdx) return res.send(errResponse(baseResponse.EMPTY_ADDRESSIDX));
 
-    // 길이 체크
-    if (email.length > 30)
-        return res.send(response(baseResponse.SIGNUP_EMAIL_LENGTH));
+    // check length of value
+    if (id.length > 20) return res.send(errResponse(baseResponse.LENGTH_ID));
+    if (password.length > 20 || password.length < 6) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
+    if (userName.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
+    if (nickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NICKNAME));
 
     // 형식 체크 (by 정규표현식)
     if (!regexEmail.test(email))
         return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
 
-    // 기타 등등 - 추가하기
-
-
-    const signUpResponse = await userService.createUser(
-        email,
-        password,
-        nickname
-    );
+    const signUpResponse = await userService.createUser(userId, userPw, userName, email, userNickname, addressIdx);
 
     return res.send(signUpResponse);
 };
@@ -64,7 +62,6 @@ exports.getUsers = async function (req, res) {
      * Query String: email
      */
     const email = req.query.email;
-    logger.debug(`getUsers query test\n: ${email}`);
 
     if (!email) {
         // 유저 전체 조회
