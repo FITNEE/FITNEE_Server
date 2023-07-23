@@ -70,7 +70,7 @@ exports.getUsers = async function (req, res) {
     } else {
         // 유저 검색 조회
         const userListByEmail = await userProvider.retrieveUserList(email);
-        if (userListByEmail.lenght === 0) {
+        if (userListByEmail.length === 0) {
             return res.send(response(baseResponse.SIGNIN_EMAIL_UNKNOWN));
         }
         return res.send(response(baseResponse.SUCCESS, userListByEmail));
