@@ -8,8 +8,8 @@ tags:
     description: 서버 응답을 테스트하는 API
     tags:
       - Users
-    response:
-      1000:
+    responses:
+      '1000':
         description: 성공
         content:
           application/json:
@@ -27,3 +27,34 @@ tags:
                   properties:
                     # 필요에 따라 응답 데이터 속성 추가
                     # 예: 이메일, 비밀번호, 닉네임 등
+
+/app/users:
+  get:
+    summary: 유저 조회 API
+    description: 파라미터 값으로 유저를 조회하는 API
+    tags:
+      - Users
+    parameters:
+      - name: email
+        in: query
+        required: false
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isSuccess:
+                  type: boolean
+                code:
+                  type: number
+                message:
+                  type: string
+                data:
+                  type: Array
+      '3003':
+        description: 존재하지 않는 이메일입니다.
+
+
