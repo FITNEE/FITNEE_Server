@@ -19,7 +19,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
  */
 
 /**
- * @path {GET} http://localhost:3000/
+ * @path {GET} https://gpthealth.shop/
  * @description 요청 데이터 값이 없고 반환 값이 있는 GET Method
  */
 

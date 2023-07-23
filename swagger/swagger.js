@@ -12,11 +12,11 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000", // 요청 URL
+        url: "https://gpthealth.shop/", // 요청 URL
       },
     ],
   },
-  apis: ["./src/app/*.js", "./src/app/User/*.js"], //Swagger 파일 연동
+  apis: ["./src/app/*.js", "./src/app/*/*.js"], //Swagger 파일 연동
 }
 const specs = swaggerJsdoc(options)
 
