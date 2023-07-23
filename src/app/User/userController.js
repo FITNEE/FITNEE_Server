@@ -1,3 +1,4 @@
+const {logger} = require("../../../config/winston");
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
@@ -63,6 +64,7 @@ exports.getUsers = async function (req, res) {
      * Query String: email
      */
     const email = req.query.email;
+    logger.debug(`getUsers query test\n: ${email}`);
 
     if (!email) {
         // 유저 전체 조회
