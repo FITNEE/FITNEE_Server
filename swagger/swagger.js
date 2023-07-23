@@ -12,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000", // 요청 URL
+        url: "https://gpthealth.shop/", // 요청 URL
       },
     ],
   },
