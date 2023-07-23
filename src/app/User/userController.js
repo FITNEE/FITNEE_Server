@@ -64,7 +64,6 @@ exports.getUsers = async function (req, res) {
      * Query String: email
      */
     const email = req.query.email;
-    logger.debug(`getUsers query test\n: ${email}`);
 
     if (!email) {
         // 유저 전체 조회
