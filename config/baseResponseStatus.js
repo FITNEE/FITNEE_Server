@@ -8,6 +8,28 @@ module.exports = {
     TOKEN_VERIFICATION_FAILURE : { "isSuccess": false, "code": 3000, "message":"JWT 토큰 검증 실패" },
     TOKEN_VERIFICATION_SUCCESS : { "isSuccess": true, "code": 1001, "message":"JWT 토큰 검증 성공" }, // ?
 
+    // 3xx: Empthy value
+    EMPTY_ID: { isSuccess: true, code: 300, message: "ID is required." },
+    EMPTY_PASSWORD: { isSuccess: true, code: 301, message: "Password is required." },
+    EMPTY_NAME: { isSuccess: true, code: 302, message: "User name is required." },
+    EMPTY_EMAIL: { isSuccess: true, code: 303, message: "User email is required." },
+    EMPTY_NICKNAME: { isSuccess: true, code: 304, message: "User nickname is required." },
+    EMPTY_ADDRESSIDX: { isSuccess: true, code: 305, message: "AddressIdx is required." },
+    EMPTY_SUBADDRESSIDX: { isSuccess: true, code: 306, message: "subAddressIdx is required." },
+    EMPTY_ADDRESSTYPE: { isSuccess: true, code: 307, message: "Address type is required." },
+    EMPTY_INFO_TO_UPDATE: { isSuccess: true, code: 308, message: "There is no info to update." },
+    EMPTY_TITLE: { isSuccess: true, code: 309, message: "Title is required." },
+    EMPTY_CATEGORYIDX: { isSuccess: true, code: 310, message: "CategoryIdx is required." },
+    EMPTY_CONTENT: { isSuccess: true, code: 311, message: "Content is required." },
+    EMPTY_SEARCH_RANGE: { isSuccess: true, code: 312, message: "Range is required." },
+    
+    LENGTH_ID: { isSuccess: true, code: 313, message: "User ID should be shorter then 20 charaters." },
+    LENGTH_PASSWORD: { isSuccess: true, code: 314, message: "User password should be longer than 6 and shorter then 20 charaters." },
+    LENGTH_NAME: { isSuccess: true, code: 315, message: "User name should be shorter then 24 charaters." },
+    LENGTH_NICKNAME: { isSuccess: true, code: 316, message: "User name should be shorter then 24 charaters." },
+    LENGTH_PHOTO: { isSuccess: true, code: 317, message: "Photos can be uploaded less than 10 photos" },
+
+
     //Request error
 
     //signup
