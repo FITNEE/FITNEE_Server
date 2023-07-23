@@ -14,6 +14,11 @@
             "date": 1689927510923,
             "name": "log/2023-07-21-smart-push.log",
             "hash": "6efca6b707b861b5d8cbf42005bd709cd16e25b8c5bfaebb72907a6f495700d4"
+        },
+        {
+            "date": 1690083715400,
+            "name": "log\\2023-07-23-smart-push.log",
+            "hash": "b2800c953d5011053ab2252d1340b4e9f2e2222303087b2ed202ff75fb39fda7"
         }
     ],
     "hashType": "sha256"
