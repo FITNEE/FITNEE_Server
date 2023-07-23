@@ -10,7 +10,7 @@ const app = express()
 
 app.use("/api", api)
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
+app.use("/", swaggerUi.serve, swaggerUi.setup(specs))
 
 /**
  * 파라미터 변수 뜻
