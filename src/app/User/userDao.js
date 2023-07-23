@@ -1,7 +1,7 @@
 // 모든 유저 조회
 async function selectUser(connection) {
   const selectUserListQuery = `
-                SELECT email, nickname 
+                SELECT email, userNickname 
                 FROM User;
                 `;
   const [userRows] = await connection.query(selectUserListQuery);
@@ -11,7 +11,7 @@ async function selectUser(connection) {
 // 이메일로 회원 조회
 async function selectUserEmail(connection, email) {
   const selectUserEmailQuery = `
-                SELECT email, nickname 
+                SELECT email, userNickname 
                 FROM User
                 WHERE email = ?;
                 `;
