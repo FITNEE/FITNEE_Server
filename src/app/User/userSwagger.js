@@ -14,7 +14,7 @@
  *     tags:
  *       - Users
  *     responses:
- *       "200":
+ *       "1000":
  *         description: 성공
  *         content:
  *           application/json:
@@ -37,8 +37,55 @@
 /**
  * @swagger
  * /app/users:
+ *   get:
+ *     summary: 유저 조회 API
+ *     description: 파라미터 값으로 유저를 조회하는 API
+ *     tags:
+ *       - Users
+ *     responses:
+ *       "1000":
+ *         description: 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isSuccess:
+ *                   type: boolean
+ *                 code:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     # 필요에 따라 응답 데이터 속성 추가
+ *                     # 예: 이메일, 비밀번호, 닉네임 등
+ *       "3003":
+ *         description: 존재하지 않는 이메일입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isSuccess:
+ *                   type: boolean
+ *                 code:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     # 필요에 따라 응답 데이터 속성 추가
+ *                     # 예: 이메일, 비밀번호, 닉네임 등
+ */
+
+/**
+ * @swagger
+ * /app/users:
  *   post:
- *     summary: 유저 생성 (회원가입) API
+ *     summary: 유저 생성 (회원가입) API (아직 실행 안됨)
  *     description: 새로운 사용자를 생성하는 API (회원 가입)
  *     tags:
  *       - Users
