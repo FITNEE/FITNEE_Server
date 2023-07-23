@@ -2,7 +2,7 @@
 async function selectUser(connection) {
   const selectUserListQuery = `
                 SELECT email, nickname 
-                FROM UserInfo;
+                FROM User;
                 `;
   const [userRows] = await connection.query(selectUserListQuery);
   return userRows;
@@ -12,7 +12,7 @@ async function selectUser(connection) {
 async function selectUserEmail(connection, email) {
   const selectUserEmailQuery = `
                 SELECT email, nickname 
-                FROM UserInfo 
+                FROM User
                 WHERE email = ?;
                 `;
   const [emailRows] = await connection.query(selectUserEmailQuery, email);
@@ -23,7 +23,7 @@ async function selectUserEmail(connection, email) {
 async function selectUserId(connection, userId) {
   const selectUserIdQuery = `
                  SELECT id, email, nickname 
-                 FROM UserInfo 
+                 FROM User
                  WHERE id = ?;
                  `;
   const [userRow] = await connection.query(selectUserIdQuery, userId);
