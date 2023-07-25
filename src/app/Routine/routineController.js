@@ -14,7 +14,18 @@ const {response, errResponse} = require("../../../config/response");
  * [GET] /app/routine
  */
 exports.getRoutine = async function (req, res) {
-    return res.send(response(baseResponse.SUCCESS))
+
+    /**
+     * Query String: userID
+     */
+    const userId = req.query.userId;
+
+    if (!userId) {
+        // 쿼리 미존재
+    } else {
+        const myRoutines = await routineProvider.retrieveMyRoutines(userId);
+        return res.send(response(baseResponse.SUCCESS, myRoutines))
+    }
 }
 
 /**
