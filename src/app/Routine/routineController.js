@@ -1,6 +1,6 @@
 const {logger} = require("../../../config/winston");
-const userProvider = require("./routineProvider");
-const userService = require("./routineService");
+const routineProvider = require("./routineProvider");
+const routineService = require("./routineService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
@@ -13,7 +13,7 @@ const {response, errResponse} = require("../../../config/response");
  * API Name : 루틴 조회 API
  * [GET] /app/routine
  */
-exports.getTest = async function (req, res) {
+exports.getRoutine = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS))
 }
 
