@@ -73,7 +73,7 @@ exports.getUsers = async function (req, res) {
         if (userListByEmail.length === 0) {
             return res.send(response(baseResponse.SIGNIN_EMAIL_UNKNOWN));
         }
-        return res.send(response(baseResponse.SUCCESS, userListByEmail));
+        return res.send(response(baseResponse.SUCCESS, userListByEmail[0]));
     }
 };
 

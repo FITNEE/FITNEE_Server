@@ -1,5 +1,5 @@
 tags:
-  name: Users
+  name: User
   description: 사용자 관련 API
 
 /app/test:
@@ -7,7 +7,7 @@ tags:
     summary: 테스트 API
     description: 서버 응답을 테스트하는 API
     tags:
-      - Users
+      - User
     responses:
       '1000':
         description: 성공
@@ -18,26 +18,23 @@ tags:
               properties:
                 isSuccess:
                   type: boolean
+                  example: true
                 code:
-                  type: number
+                  type: integer
+                  example: 1000
                 message:
                   type: string
-                data:
-                  type: object
-                  properties:
-                    # 필요에 따라 응답 데이터 속성 추가
-                    # 예: 이메일, 비밀번호, 닉네임 등
+                  example: 성공
 
 /app/users:
   get:
     summary: 유저 조회 API
     description: 파라미터 값으로 유저를 조회하는 API
     tags:
-      - Users
+      - User
     parameters:
       - name: email
         in: query
-        required: false
     responses:
       '1000':
         description: 성공
@@ -48,12 +45,26 @@ tags:
               properties:
                 isSuccess:
                   type: boolean
+                  example: true
                 code:
-                  type: number
+                  type: integer
+                  example: 1000
                 message:
                   type: string
-                data:
-                  type: Array
+                  example: 성공
+                result:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: phs@naver.com
+                      userNickName:
+                        type: string
+                        example: 승
+
+                  
       '3003':
         description: 존재하지 않는 이메일입니다.
 
