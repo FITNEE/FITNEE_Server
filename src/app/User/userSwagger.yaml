@@ -33,7 +33,7 @@ tags:
     tags:
       - User
     parameters:
-      - name: email
+      - name: userId
         in: query
     responses:
       '1000':
@@ -57,7 +57,7 @@ tags:
                   items:
                     type: object
                     properties:
-                      email:
+                      userId:
                         type: string
                         example: phs@naver.com
                       userNickName:

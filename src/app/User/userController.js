@@ -24,31 +24,49 @@ exports.getTest = async function (req, res) {
  */
 exports.postUsers = async function (req, res) {
     /**
-     * Body: userId, userPw, userName, email, userNickname, addressIdx
+     * Body: userId(이메일), userPw(비번), userName(실명), userNickName(별명), addressIdx(주소), sex(성별), height(키), career(운동경력), weight(몸무게), birth(생년월일)
      */
-    const { userId, userPw, userName, email, userNickname, addressIdx} = req.body;
+    const { userId, userPw, userName, userNickName, addressIdx, sex, height, career, weight, birth } = req.body;
 
-    // 빈값 체크
+    // 유효성 검사 : 빈 값 체크
     if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
     if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
     if (!userName) return res.send(errResponse(baseResponse.EMPTY_NAME));
-    if (!email) return res.send(errResponse(baseResponse.EMPTY_EMAIL));
-    if (!userNickname) return res.send(errResponse(baseResponse.EMPTY_NICKNAME));
+    if (!userNickName) return res.send(errResponse(baseResponse.EMPTY_NICKNAME));
     if (!addressIdx) return res.send(errResponse(baseResponse.EMPTY_ADDRESSIDX));
+    if (!sex) return res.send(errResponse(baseResponse.EMPTY_SEX));
+    if (!height) return res.send(errResponse(baseResponse.EMPTY_HEIGHT));
+    if (!career) return res.send(errResponse(baseResponse.EMPTY_CAREER));
+    if (!weight) return res.send(errResponse(baseResponse.EMPTY_WEIGHT));
+    if (!birth) return res.send(errResponse(baseResponse.EMPTY_BIRTH));
 
-    // check length of value
-    if (id.length > 20) return res.send(errResponse(baseResponse.LENGTH_ID));
-    if (password.length > 20 || password.length < 6) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
+    // 유효성 검사 : 길이 체크
+    if (userId.length > 20) return res.send(errResponse(baseResponse.LENGTH_ID));
+    if (userPw.length > 20) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
     if (userName.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
-    if (nickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NICKNAME));
+    if (userNickName.length > 24) return res.send(errResponse(baseResponse.LENGTH_NICKNAME));
 
-    // 형식 체크 (by 정규표현식)
-    if (!regexEmail.test(email))
-        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
+    // 유효성 검사 : 운동 경력, 성별, 키, 몸무게
+    const validCareerValues = [0, 1, 2];
+    const validSexValues = [0, 1];
+    if (!validCareerValues.includes(career)) return res.send(errResponse(baseResponse.INVALID_CAREER));
+    if (!validSexValues.includes(sex)) return res.send(errResponse(baseResponse.INVALID_SEX));
+    if (isNaN(height) || height <= 0) return res.send(errResponse(baseResponse.INVALID_HEIGHT));
+    if (isNaN(weight) || weight <= 0) return res.send(errResponse(baseResponse.INVALID_WEIGHT));
 
-    const signUpResponse = await userService.createUser(userId, userPw, userName, email, userNickname, addressIdx);
+    // 이메일 형식 체크
+    if (!regexEmail.test(userId)) return res.send(errResponse(baseResponse.SIGNUP_USERID_ERROR_TYPE));
 
-    return res.send(signUpResponse);
+    try {
+        // 회원 생성 호출
+        const signUpResponse = await userService.createUser(userId, userPw, userName, userNickName, addressIdx, sex, height, career, weight, birth);
+        
+        // 회원가입 성공 응답
+        return res.send(response(baseResponse.SUCCESS, signUpResponse));
+    } catch (error) {
+        logger.error(`회원 가입 API 오류: ${error.message}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
 };
 
 /**
@@ -59,21 +77,21 @@ exports.postUsers = async function (req, res) {
 exports.getUsers = async function (req, res) {
 
     /**
-     * Query String: email
+     * Query String: userId
      */
-    const email = req.query.email;
+    const userId = req.query.userId;
 
-    if (!email) {
+    if (!userId) {
         // 유저 전체 조회
         const userListResult = await userProvider.retrieveUserList();
         return res.send(response(baseResponse.SUCCESS, userListResult));
     } else {
         // 유저 검색 조회
-        const userListByEmail = await userProvider.retrieveUserList(email);
-        if (userListByEmail.length === 0) {
-            return res.send(response(baseResponse.SIGNIN_EMAIL_UNKNOWN));
+        const userListByUserId = await userProvider.retrieveUserList(userId);
+        if (userListByUserId.length === 0) {
+            return res.send(response(baseResponse.SIGNIN_USERID_UNKNOWN));
         }
-        return res.send(response(baseResponse.SUCCESS, userListByEmail[0]));
+        return res.send(response(baseResponse.SUCCESS, userListByUserId[0]));
     }
 };
 
@@ -101,17 +119,23 @@ exports.getUserById = async function (req, res) {
  * API No. 4
  * API Name : 로그인 API
  * [POST] /app/login
- * body : email, passsword
+ * body : userId, password
  */
-exports.login = async function (req, res) {
+exports.login = async function(req, res) {
+    const { userId, password } = req.body;
 
-    const {email, password} = req.body;
+    // 유효성 검사 : userId와 password가 제공되었는지 체크
+    if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
+    if (!password) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
 
-    // TODO: email, password 형식적 Validation
-
-    const signInResponse = await userService.postSignIn(email, password);
-
-    return res.send(signInResponse);
+    // 
+    try {
+        const signInResponse = await userService.postSignIn(userId, password);
+        return res.send(signInResponse);
+    } catch (error) {
+        logger.error(`로그인 API 오류: ${error.message}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
 };
 
 
