@@ -8,7 +8,6 @@ yarn-error.log
 Thumbs.db
 
 # Logs and debugging files
-logs/
 log/
 *.log
 npm-debug.log.*
