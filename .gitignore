@@ -44,3 +44,5 @@ yarn.lock
 *.njsproj
 *.sln
 *.sw?
+
+config/secret.js
