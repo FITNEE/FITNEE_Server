@@ -4,8 +4,8 @@ module.exports = function(app){
     // 1. 루틴 등록 API
     app.post('/app/routine', routine.getRoutine);
 
-    // 2. 루틴 조회 API
-    app.get('/app/routine', routine.getRoutine);
+    // 2. 마이 루틴 조회 API
+    app.get('/app/my_routines', routine.getMyRoutines);
 
     // 3. 루틴 수정 API
     app.patch('/app/routine', routine.getRoutine);

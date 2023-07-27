@@ -5,8 +5,8 @@ const userDao = require("./userDao");
 
 // Provider: Read 비즈니스 로직 처리
 
-exports.retrieveUserList = async function (email) {
-  if (!email) {
+exports.retrieveUserList = async function (userId) {
+  if (!userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userListResult = await userDao.selectUser(connection);
     connection.release();
@@ -15,7 +15,7 @@ exports.retrieveUserList = async function (email) {
 
   } else {
     const connection = await pool.getConnection(async (conn) => conn);
-    const userListResult = await userDao.selectUserEmail(connection, email);
+    const userListResult = await userDao.selectUserUserId(connection, userId);
     connection.release();
 
     return userListResult;
@@ -31,12 +31,12 @@ exports.retrieveUser = async function (userId) {
   return userResult[0];
 };
 
-exports.emailCheck = async function (email) {
+exports.userIdCheck = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const emailCheckResult = await userDao.selectUserEmail(connection, email);
+  const userIdCheckResult = await userDao.selectUserUserId(connection, userId);
   connection.release();
 
-  return emailCheckResult;
+  return userIdCheckResult;
 };
 
 exports.passwordCheck = async function (selectUserPasswordParams) {
@@ -49,9 +49,9 @@ exports.passwordCheck = async function (selectUserPasswordParams) {
   return passwordCheckResult[0];
 };
 
-exports.accountCheck = async function (email) {
+exports.accountCheck = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const userAccountResult = await userDao.selectUserAccount(connection, email);
+  const userAccountResult = await userDao.selectUserAccount(connection, userId);
   connection.release();
 
   return userAccountResult;

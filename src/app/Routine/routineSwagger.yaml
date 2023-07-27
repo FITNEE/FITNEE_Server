@@ -1,0 +1,13 @@
+tags:
+  name: Routine
+  description: 루틴 관련 API
+
+/app/my_routines:
+  get:
+    summuary: 마이 루틴 조회 API
+    description: 유저 id로 마이 루틴을 조회하는 API
+    tags:
+      - Routine
+    responses:
+      '1000':
+        description: 성공
