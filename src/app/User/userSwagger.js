@@ -96,7 +96,7 @@
  *           schema:
  *             type: object
  *             properties:
- *               email:
+ *               userId:
  *                 type: string
  *                 description: 사용자의 이메일 주소
  *               password:
