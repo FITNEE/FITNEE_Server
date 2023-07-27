@@ -29,6 +29,25 @@ exports.getRoutine = async function (req, res) {
 }
 
 /**
+ * API Name : 마이 루틴 조회 API
+ * [GET] /app/my_routine
+ */
+exports.getMyRoutines = async function (req, res) {
+
+    /**
+     * Query String: userID
+     */
+    const userId = req.query.userId;
+
+    if (!userId) {
+        // 쿼리 미존재
+    } else {
+        const myRoutines = await routineProvider.retrieveMyRoutines(userId);
+        return res.send(response(baseResponse.SUCCESS, myRoutines))
+    }
+}
+
+/**
  * API Name : 루틴 수정 API
  * [PUT] /app/routine
  */
