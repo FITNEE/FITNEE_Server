@@ -129,6 +129,10 @@ exports.login = async function(req, res) {
     try {
         const signInResponse = await userService.postSignIn(userId, userPw);
 
+        if (!signInResponse.isSuccess) {
+            return res.send(signInResponse)
+        }
+
         const token = userService.generateToken(signInResponse.userId)
 
         return res.send(response(baseResponse.SUCCESS, { accessToken: token }));

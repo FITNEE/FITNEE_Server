@@ -69,7 +69,7 @@ exports.postSignIn = async function (userId, userPw) {
     try {
         // 이메일 여부 확인
         const userIdRows = await userProvider.userIdCheck(userId);
-        if (userIdRows.length < 1) return errResponse(baseResponse.SIGNIN_USERID_WRONG);
+        if (userIdRows.length < 1) return errResponse(baseResponse.USER_USERID_NOT_EXIST);
 
         const selectUserId = userIdRows[0].userId
 
@@ -105,21 +105,26 @@ exports.postSignIn = async function (userId, userPw) {
         console.log(userInfoRows[0].id) // DB의 userId
 
         //토큰 생성 Service
-        let token = await jwt.sign(
-            {
-                userId: userInfoRows[0].id,
-            }, // 토큰의 내용(payload)
-            secret_config.jwtsecret, // 비밀키
-            {
-                expiresIn: "365d",
-            } // 유효 기간 365일
-        );
+        let token;
+        if (userInfoRows[0].status === "ACTIVE") {
+            token = await jwt.sign(
+                {
+                    userId: userInfoRows[0].id,
+                }, // 토큰의 내용(payload)
+                secret_config.jwtsecret, // 비밀키
+                {
+                    expiresIn: "365d",
+                } // 유효 기간 365일
+            )
+        } else {
+            token = null
+        }
 
         
         return response(baseResponse.SUCCESS, {
             isSuccess: true,
             'userId': userInfoRows[0].id,
-            'accessToken': token
+            'accessToken': token,
         });
 
     } catch (err) {
