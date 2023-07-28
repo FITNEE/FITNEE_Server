@@ -1,10 +1,15 @@
-// 특정유저 n월에 운동한 날짜
-async function selectMyCalendar(connection, month) {
+// 특정유저가 n월에 운동한 날짜
+async function selectMyCalendar(connection, userIdx, month) {
     const selectMyCalendarQuery = `
-                SELECT healthDate
+                SELECT day(healthDate) as day
                 FROM myCalendar
-                WHERE month(healthDate)= ?;
+                WHERE userIdx = ? AND MONTH(healthDate) = ? AND status=0
+                ORDER BY healthDate ASC;
                 `;
-    const [myCalendar] = await connection.query(selectMyCalendarQuery, [userId, month]);
+    const myCalendar = await connection.query(selectMyCalendarQuery, [userIdx, month]);
     return myCalendar;
 }
+
+module.exports = {
+    selectMyCalendar,
+  };

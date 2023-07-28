@@ -30,7 +30,8 @@ module.exports = {
     LENGTH_PHOTO: { isSuccess: true, code: 317, message: "Photos can be uploaded less than 10 photos" },
     
     //calendar error
-    CALENDAR_MONTH_EMPTY : { "isSuccess": false, "code": 501, "message":"달을 입력해 주세요." },
+    CALENDAR_USERID_EMPTY : { "isSuccess": false, "code": 501, "message":"userIdx를 입력해주세요" },
+    CALENDAR_MONTH_EMPTY : { "isSuccess": false, "code": 502, "message":"달을 입력해 주세요." },
 
     //Request error
 

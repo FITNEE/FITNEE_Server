@@ -1,9 +1,12 @@
 const {logger} = require("../../../config/winston");
+const jwtMiddleware = require("../../../config/jwtMiddleware");
 const mypageProvider = require("./mypageProvider");
 const mypageService = require("./mypageService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
-const userProvider = require("../User/userProvider")
+
+const regexEmail = require("regex-email");
+const {emit} = require("nodemon");
 
 /**
  * API Name : getExerckseData 한달간 운동한 날짜
@@ -11,14 +14,14 @@ const userProvider = require("../User/userProvider")
  */
 exports.getExercisedData = async function (req, res) {
     /**
-     * Query String: month
+     * Query String: userIdx, month
      */
-    
-    const month = req.query.month;
+    const { userIdx, month } = req.query;
 
+    if (!userIdx) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
     if (!month) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
 
-    const exerciseByMonth = await mypageProvider.searchExercise(month);
+    const exerciseByMonth = await mypageProvider.searchExercise(userIdx, month);
     return res.send(response(baseResponse.SUCCESS, exerciseByMonth));
 }
 
