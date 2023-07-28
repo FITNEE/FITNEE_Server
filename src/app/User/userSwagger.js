@@ -99,7 +99,7 @@
  *               userId:
  *                 type: string
  *                 description: 사용자의 이메일 주소
- *               password:
+ *               userPw:
  *                 type: string
  *                 description: 사용자의 비밀번호
  *               nickname:
