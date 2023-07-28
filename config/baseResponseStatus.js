@@ -28,7 +28,9 @@ module.exports = {
     LENGTH_NAME: { isSuccess: true, code: 315, message: "User name should be shorter then 24 charaters." },
     LENGTH_NICKNAME: { isSuccess: true, code: 316, message: "User name should be shorter then 24 charaters." },
     LENGTH_PHOTO: { isSuccess: true, code: 317, message: "Photos can be uploaded less than 10 photos" },
-
+    
+    //calendar error
+    CALENDAR_MONTH_EMPTY : { "isSuccess": false, "code": 501, "message":"달을 입력해 주세요." },
 
     //Request error
 
