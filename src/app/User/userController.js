@@ -56,7 +56,8 @@ exports.postUsers = async function (req, res) {
         // 회원 생성 호출
         const signUpResponse = await userService.createUser(userId, userPw, userNickname, gender, height, weight, birthYear);
         
-        const token = userService.generateToken(signUpResponse.userId)
+        
+        // const token = userService.generateToken(signUpResponse.userId)
 
         // 회원가입 성공 응답
         return res.send(response(baseResponse.SUCCESS, { accessToken: token }));
