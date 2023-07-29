@@ -8,7 +8,7 @@ module.exports = function(app){
     //app.get('/app/mypage', mypage.getExerciseInfo);
 
     // 3. 
-    //app.get('/app/mypage', mypage.getExerciseRecord);
+    app.get('/app/record', mypage.getExerciseRecord);
 
     // 4. 유저 정보 조회(
     //app.get('/app/mypage', mypage.getUserData);

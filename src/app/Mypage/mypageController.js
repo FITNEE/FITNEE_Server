@@ -31,7 +31,7 @@ exports.getExercisedData = async function (req, res) {
  */
 exports.getExerciseInfo = async function (req, res) {
     /**
-     * Query String: day
+     * Query String: month
      */
 
     
@@ -39,14 +39,20 @@ exports.getExerciseInfo = async function (req, res) {
 
 /**
  * API Name :
- * [GET] /app/mypage
+ * [GET] /app/record
  */
 exports.getExerciseRecord= async function (req, res) {
 
     /**
      * Query String: month
      */
-    
+    const { month, day } = req.query;
+    if (!month) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
+    if (!day) return res.send(errResponse(baseResponse.CALENDAR_DAY_EMPTY));
+
+    const recordByMonth = await mypageProvider.searchRecord(month, day);
+    return res.send(response(baseResponse.SUCCESS, recordByMonth));
+
 }
 
 /**

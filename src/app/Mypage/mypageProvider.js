@@ -5,28 +5,38 @@ const mypageDao = require("./mypageDao");
 
 //
 exports.searchExercise = async function (userIdx, month) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const myExerciseResult = await mypageDao.selectMyCalendar(connection,userIdx, month);
-    connection.release();
+  const connection = await pool.getConnection(async (conn) => conn);
+  const myExerciseResult = await mypageDao.selectMyCalendar(connection,userIdx, month);
+  connection.release();
 
-    return myExerciseResult;
+  return myExerciseResult;
 };
 
 
 //
 exports.retrieveNicknameList = async function (userNickName) {
-    if (!userNickName) {
-      const connection = await pool.getConnection(async (conn) => conn);
-      const nicknameListResult = await mypageDao.selectUserNickname(connection);
-      connection.release();
+  if (!userNickName) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const nicknameListResult = await mypageDao.selectUserNickname(connection);
+    connection.release();
 
-      return nicknameListResult;
-  
-    } else {
-      const connection = await pool.getConnection(async (conn) => conn);
-      const nicknameListResult = await mypageDao.selectUserNickname(connection, userNickName);
-      connection.release();
-  
-      return nicknameListResult;
-    }
-  };
+    return nicknameListResult;
+
+  } else {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const nicknameListResult = await mypageDao.selectUserNickname(connection, userNickName);
+    connection.release();
+
+    return nicknameListResult;
+  }
+};
+
+
+//
+exports.searchRecord = async function (month, day) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const myRecordResult = await mypageDao.selectMyRecord(connection, month, day);
+  connection.release();
+
+  return myRecordResult;
+};
