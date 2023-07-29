@@ -6,7 +6,7 @@ async function selectMyCalendar(connection, userIdx, month) {
                 WHERE userIdx = ? AND MONTH(healthDate) = ? AND status=0
                 ORDER BY healthDate ASC;
                 `;
-    const myCalendar = await connection.query(selectMyCalendarQuery, [userIdx, month]);
+    const [myCalendar] = await connection.query(selectMyCalendarQuery, [userIdx, month]);
     return myCalendar;
 }
 

@@ -57,7 +57,7 @@ exports.getExerciseRecord= async function (req, res) {
 
 /**
  * API Name :
- * [GET] /app/mypage
+ * [GET] /app/
  */
 exports.getUserData = async function (req, res) {
 
@@ -69,7 +69,7 @@ exports.getUserData = async function (req, res) {
 
 /**
  * API Name :
- * [GET] /app/mypage
+ * [GET] /app/
  */
 exports.updateUserData = async function (req, res) {
 
@@ -81,7 +81,7 @@ exports.updateUserData = async function (req, res) {
 
 /**
  * API Name :
- * [GET] /app/mypage
+ * [GET] /app/
  */
 exports.updatePassword = async function (req, res) {
 
@@ -94,7 +94,7 @@ exports.updatePassword = async function (req, res) {
 
 /**
  * API Name :
- * [GET] /app/mypage
+ * [GET] /app/nickname
  */
 
 exports.checkUserNameValid = async function (req, res) {
