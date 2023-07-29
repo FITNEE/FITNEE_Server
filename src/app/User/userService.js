@@ -123,8 +123,8 @@ exports.postSignIn = async function (userId, userPw) {
         
         return response(baseResponse.SUCCESS, {
             isSuccess: true,
-            'userId': userInfoRows[0].id,
-            'accessToken': token,
+            userId: userInfoRows[0].id,
+            accessToken: token,
         });
 
     } catch (err) {
