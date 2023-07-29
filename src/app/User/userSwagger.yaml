@@ -1,71 +1,146 @@
+openapi: 3.0.0
+info:
+  title: "gptHealth"
+  version: "1.0.0"
 tags:
-  name: User
-  description: 사용자 관련 API
-
-/app/test:
-  get:
-    summary: 테스트 API
-    description: 서버 응답을 테스트하는 API
-    tags:
-      - User
-    responses:
-      '1000':
-        description: 성공
+  - name: User
+    description: 사용자 관련 API
+paths:
+  /app/users:
+    post:
+      tags:
+        - User
+      summary: 회원가입 API
+      operationId: postUsers
+      requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                isSuccess:
-                  type: boolean
-                  example: true
-                code:
-                  type: integer
-                  example: 1000
-                message:
+                userId:
                   type: string
-                  example: 성공
+                userPw:
+                  type: string
+                userNickname:
+                  type: string
+                gender:
+                  type: string
+                height:
+                  type: number
+                weight:
+                  type: number
+                birthYear:
+                  type: string
+              required:
+                - userId
+                - userPw
+                - userNickname
+                - gender
+                - height
+                - weight
+                - birthYear
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '400':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: JWT 토큰을 입력해주세요.
+        '500':
+          description: 서버 에러
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: 4001
+                  message:
+                    type: string
+                    example: 서버 에러
 
-/app/users:
-  get:
-    summary: 유저 조회 API
-    description: 파라미터 값으로 유저를 조회하는 API
-    tags:
-      - User
-    parameters:
-      - name: userId
-        in: query
-    responses:
-      '1000':
-        description: 성공
+  /app/login:
+    post:
+      tags:
+        - User
+      summary: 로그인 API
+      operationId: login
+      requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                isSuccess:
-                  type: boolean
-                  example: true
-                code:
-                  type: integer
-                  example: 1000
-                message:
+                userId:
                   type: string
-                  example: 성공
-                result:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      userId:
-                        type: string
-                        example: phs@naver.com
-                      userNickName:
-                        type: string
-                        example: 승
-
-                  
-      '3003':
-        description: 존재하지 않는 이메일입니다.
-
-
+                userPw:
+                  type: string
+              required:
+                - userId
+                - userPw
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '400':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: 3000
+                  message:
+                    type: string
+                    example: JWT 토큰 검증 실패
+        '500':
+          description: 서버 에러
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: 4001
+                  message:
+                    type: string
+                    example: 서버 에러

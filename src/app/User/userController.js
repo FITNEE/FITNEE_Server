@@ -112,7 +112,6 @@ exports.getUserById = async function (req, res) {
 };
 
 
-// TODO: After 로그인 인증 방법 (JWT)
 /**
  * API No. 4
  * API Name : 로그인 API
