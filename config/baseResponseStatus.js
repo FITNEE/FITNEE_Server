@@ -33,6 +33,10 @@ module.exports = {
     CALENDAR_USERID_EMPTY : { "isSuccess": false, "code": 501, "message":"userIdx를 입력해주세요" },
     CALENDAR_MONTH_EMPTY : { "isSuccess": false, "code": 502, "message":"달을 입력해 주세요." },
 
+
+    //dictionary error
+    DICTIONARY_PARTS_EMPTY : { "isSuccess": false, "code": 601, "message":"운동부위를 입력해 주세요." },
+
     //Request error
 
     //signup(회원가입)

@@ -26,8 +26,19 @@ async function selectKeyword(connection, userIdx) {
 }
 
 
+// parts 받아서 운동정보 respond
+async function selectInformation(connection, parts) {
+    const selectExerciseInformationQuery = `
+        SELECT name, muscle, equipment, time, calories
+        FROM healthCategory
+        WHERE parts = ?;
+    `;
 
+    const [informationRows] = await connection.query(selectExerciseInformationQuery, [parts]);
+    return informationRows;
+}
 
 module.exports = {
     selectKeyword,
+    selectInformation,
 };
