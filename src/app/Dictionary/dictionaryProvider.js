@@ -19,3 +19,13 @@ exports.retrieveInformation = async function (parts) {
 
     return exerciseInformationResult;
 };
+
+
+//
+exports.retrieveMethod = async function (name) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const exerciseMethodResult = await dictionaryDao.selectExerciseMethod(connection, name);
+    connection.release();
+
+    return exerciseMethodResult;
+};

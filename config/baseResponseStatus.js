@@ -36,6 +36,7 @@ module.exports = {
 
     //dictionary error
     DICTIONARY_PARTS_EMPTY : { "isSuccess": false, "code": 601, "message":"운동부위를 입력해 주세요." },
+    DICTIONARY_NAME_EMPTY : { "isSuccess": false, "code": 602, "message":"운동종목을 입력해 주세요." },
 
     //Request error
 

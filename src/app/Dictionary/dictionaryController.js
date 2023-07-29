@@ -28,7 +28,7 @@ exports.getKeywordByIdx = async function (req, res) {
 
 
 /**
- * API Name : 
+ * API Name : parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
  * [GET] /app/exerciseinfo
  */
 exports.getInformationByparts = async function (req, res) {
@@ -42,4 +42,22 @@ exports.getInformationByparts = async function (req, res) {
 
     const exerciseInformationByParts = await dictionaryProvider.retrieveInformation(parts);
     return res.send(response(baseResponse.SUCCESS, exerciseInformationByParts));
+};
+
+
+/**
+ * API Name : name 받아서 그 운동의 운동방법과 주의사항 반환
+ * [GET] /app/exercisemethod
+ */
+exports.getMethodByName = async function (req, res) {
+
+    /**
+     * Path Variable: parts(healthCategory Table)
+     */
+    const name = req.query.name;
+
+    if (!name) return res.send(errResponse(baseResponse.DICTIONARY_NAME_EMPTY));
+
+    const exerciseMethodByName = await dictionaryProvider.retrieveMethod(name);
+    return res.send(response(baseResponse.SUCCESS, exerciseMethodByName));
 };

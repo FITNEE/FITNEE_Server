@@ -7,4 +7,7 @@ module.exports = function(app){
 
     // 2.
     app.get('/app/exerciseinfo', mypage.getInformationByparts);
+
+    // 3.
+    app.get('/app/exercisemethod', mypage.getMethodByName);
 };
