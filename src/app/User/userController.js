@@ -24,33 +24,28 @@ exports.getTest = async function (req, res) {
  */
 exports.postUsers = async function (req, res) {
     /**
-     * Body: userId(이메일), userPw(비번), userName(실명), userNickName(별명), addressIdx(주소), sex(성별), height(키), career(운동경력), weight(몸무게), birth(생년월일)
+     * Body: userId(이메일), userPw(비번), userNickname(실명 혹은 별명), gender(성별), height(키), weight(몸무게), birthYear(생년월일)
      */
-    const { userId, userPw, userName, userNickName, addressIdx, sex, height, career, weight, birth } = req.body;
+    const { userId, userPw, userNickname, gender, height, weight, birthYear } = req.body;
+
 
     // 유효성 검사 : 빈 값 체크
     if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
     if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
-    if (!userName) return res.send(errResponse(baseResponse.EMPTY_NAME));
-    if (!userNickName) return res.send(errResponse(baseResponse.EMPTY_NICKNAME));
-    if (!addressIdx) return res.send(errResponse(baseResponse.EMPTY_ADDRESSIDX));
-    if (!sex) return res.send(errResponse(baseResponse.EMPTY_SEX));
+    if (!userNickname) return res.send(errResponse(baseResponse.EMPTY_NICKNAME));
+    if (!gender) return res.send(errResponse(baseResponse.EMPTY_GENDER));
     if (!height) return res.send(errResponse(baseResponse.EMPTY_HEIGHT));
-    if (!career) return res.send(errResponse(baseResponse.EMPTY_CAREER));
     if (!weight) return res.send(errResponse(baseResponse.EMPTY_WEIGHT));
-    if (!birth) return res.send(errResponse(baseResponse.EMPTY_BIRTH));
+    if (!birthYear) return res.send(errResponse(baseResponse.EMPTY_BIRTH));
 
     // 유효성 검사 : 길이 체크
     if (userId.length > 20) return res.send(errResponse(baseResponse.LENGTH_ID));
     if (userPw.length > 20) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
-    if (userName.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
-    if (userNickName.length > 24) return res.send(errResponse(baseResponse.LENGTH_NICKNAME));
+    if (userNickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
 
-    // 유효성 검사 : 운동 경력, 성별, 키, 몸무게
-    const validCareerValues = [0, 1, 2];
-    const validSexValues = [0, 1];
-    if (!validCareerValues.includes(career)) return res.send(errResponse(baseResponse.INVALID_CAREER));
-    if (!validSexValues.includes(sex)) return res.send(errResponse(baseResponse.INVALID_SEX));
+    // 유효성 검사 : 성별, 키, 몸무게
+    const validGenderValues = [0, 1];
+    if (!validGenderValues.includes(gender)) return res.send(errResponse(baseResponse.INVALID_GENDER));
     if (isNaN(height) || height <= 0) return res.send(errResponse(baseResponse.INVALID_HEIGHT));
     if (isNaN(weight) || weight <= 0) return res.send(errResponse(baseResponse.INVALID_WEIGHT));
 
@@ -59,10 +54,12 @@ exports.postUsers = async function (req, res) {
 
     try {
         // 회원 생성 호출
-        const signUpResponse = await userService.createUser(userId, userPw, userName, userNickName, addressIdx, sex, height, career, weight, birth);
+        const signUpResponse = await userService.createUser(userId, userPw, userNickname, gender, height, weight, birthYear);
         
+        const token = userService.generateToken(signUpResponse.userId)
+
         // 회원가입 성공 응답
-        return res.send(response(baseResponse.SUCCESS, signUpResponse));
+        return res.send(response(baseResponse.SUCCESS, { accessToken: token }));
     } catch (error) {
         logger.error(`회원 가입 API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
@@ -119,19 +116,26 @@ exports.getUserById = async function (req, res) {
  * API No. 4
  * API Name : 로그인 API
  * [POST] /app/login
- * body : userId, password
+ * body : userId, userPw
  */
 exports.login = async function(req, res) {
-    const { userId, password } = req.body;
+    const { userId, userPw } = req.body;
 
-    // 유효성 검사 : userId와 password가 제공되었는지 체크
+    // 유효성 검사 : userId와 userPw가 제공되었는지 체크
     if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
-    if (!password) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
-
+    if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
+    
     // 
     try {
-        const signInResponse = await userService.postSignIn(userId, password);
-        return res.send(signInResponse);
+        const signInResponse = await userService.postSignIn(userId, userPw);
+
+        if (!signInResponse.isSuccess) {
+            return res.send(signInResponse)
+        }
+
+        const token = userService.generateToken(signInResponse.userId)
+
+        return res.send(response(baseResponse.SUCCESS, { accessToken: token }));
     } catch (error) {
         logger.error(`로그인 API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
@@ -144,7 +148,7 @@ exports.login = async function(req, res) {
  * API Name : 회원 정보 수정 API + JWT + Validation
  * [PATCH] /app/users/:userId
  * path variable : userId
- * body : nickname
+ * body : userNickname
  */
 exports.patchUsers = async function (req, res) {
 
@@ -153,14 +157,14 @@ exports.patchUsers = async function (req, res) {
     const userIdFromJWT = req.verifiedToken.userId
 
     const userId = req.params.userId;
-    const nickname = req.body.nickname;
+    const userNickname = req.body.userNickname;
 
     if (userIdFromJWT != userId) {
         res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
     } else {
-        if (!nickname) return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
+        if (!userNickname) return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
 
-        const editUserInfo = await userService.editUser(userId, nickname)
+        const editUserInfo = await userService.editUser(userId, userNickname)
         return res.send(editUserInfo);
     }
 };

@@ -13,7 +13,28 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (userId, password, nickname) {
+exports.generateToken = function (userId) {
+    console.log("Generating token for userId:", userId)
+
+    const payload = {
+        userId: userId,
+    };
+
+    const options = {
+        expiresIn: "1d",
+    };
+
+    try {
+        const token = jwt.sign(payload, secret_config.jwtsecret, options)
+        console.log("Token generated:", token)
+        return token
+    } catch (error) {
+        console.log("Error generating token:", error.message)
+        throw error
+    }
+}
+
+exports.createUser = async function (userId, userPw, userNickname, gender, height, weight, birthYear) {
     try {
         // 이메일 중복 확인
         const userIdRows = await userProvider.userIdCheck(userId);
@@ -23,10 +44,10 @@ exports.createUser = async function (userId, password, nickname) {
         // 비밀번호 암호화
         const hashedPassword = await crypto
             .createHash("sha512")
-            .update(password)
+            .update(userPw)
             .digest("hex");
 
-        const insertUserInfoParams = [userId, hashedPassword, nickname];
+        const insertUserInfoParams = [userId, hashedPassword, userNickname, gender, height, weight, birthYear];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
@@ -44,18 +65,18 @@ exports.createUser = async function (userId, password, nickname) {
 
 
 // TODO: After 로그인 인증 방법 (JWT)
-exports.postSignIn = async function (userId, password) {
+exports.postSignIn = async function (userId, userPw) {
     try {
         // 이메일 여부 확인
         const userIdRows = await userProvider.userIdCheck(userId);
-        if (userIdRows.length < 1) return errResponse(baseResponse.SIGNIN_USERID_WRONG);
+        if (userIdRows.length < 1) return errResponse(baseResponse.USER_USERID_NOT_EXIST);
 
         const selectUserId = userIdRows[0].userId
 
         // 비밀번호 확인
         const hashedPassword = await crypto
             .createHash("sha512")
-            .update(password)
+            .update(userPw)
             .digest("hex");
 
         const selectUserPasswordParams = [selectUserId, hashedPassword];
@@ -84,19 +105,27 @@ exports.postSignIn = async function (userId, password) {
         console.log(userInfoRows[0].id) // DB의 userId
 
         //토큰 생성 Service
-        let token = await jwt.sign(
-            {
-                userId: userInfoRows[0].id,
-            }, // 토큰의 내용(payload)
-            secret_config.jwtsecret, // 비밀키
-            {
-                expiresIn: "365d",
-                subject: "userInfo",
-            } // 유효 기간 365일
-        );
+        let token;
+        if (userInfoRows[0].status === "ACTIVE") {
+            token = await jwt.sign(
+                {
+                    userId: userInfoRows[0].id,
+                }, // 토큰의 내용(payload)
+                secret_config.jwtsecret, // 비밀키
+                {
+                    expiresIn: "365d",
+                } // 유효 기간 365일
+            )
+        } else {
+            token = null
+        }
 
         
-        return response(baseResponse.SUCCESS, {'userId': userInfoRows[0].id, 'jwt': token});
+        return response(baseResponse.SUCCESS, {
+            isSuccess: true,
+            'userId': userInfoRows[0].id,
+            'accessToken': token,
+        });
 
     } catch (err) {
         logger.error(`App - postSignIn Service error\n: ${err.message} \n${JSON.stringify(err)}`);
@@ -104,11 +133,11 @@ exports.postSignIn = async function (userId, password) {
     }
 };
 
-exports.editUser = async function (id, nickname) {
+exports.editUser = async function (userId, userNickname) {
     try {
-        console.log(id)
+        console.log(userId)
         const connection = await pool.getConnection(async (conn) => conn);
-        const editUserResult = await userDao.updateUserInfo(connection, id, nickname)
+        const editUserResult = await userDao.updateUserInfo(connection, userId, userNickname)
         connection.release();
 
         return response(baseResponse.SUCCESS);

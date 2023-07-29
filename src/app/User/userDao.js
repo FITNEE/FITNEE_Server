@@ -11,7 +11,7 @@ async function selectUser(connection) {
 // 이메일로 회원 조회
 async function selectUserUserId(connection, userId) {
   const selectUserUserIdQuery = `
-                SELECT userId, userNickName 
+                SELECT userId, userNickname 
                 FROM User
                 WHERE userId = ?;
                 `;
@@ -22,7 +22,7 @@ async function selectUserUserId(connection, userId) {
 // userId 회원 조회
 async function selectUserId(connection, userId) {
   const selectUserIdQuery = `
-                 SELECT id, userId, userNickName
+                 SELECT id, userId, userNickname
                  FROM User
                  WHERE id = ?;
                  `;
@@ -33,7 +33,7 @@ async function selectUserId(connection, userId) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO User(userId, userPw, nickname)
+        INSERT INTO User(userId, userPw, userNickname)
         VALUES (?, ?, ?);
     `;
   const insertUserInfoRow = await connection.query(
@@ -61,7 +61,7 @@ async function selectUserPassword(connection, selectUserPasswordParams) {
 // 유저 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectUserAccount(connection, userId) {
   const selectUserAccountQuery = `
-        SELECT id, userId, userNickName, status
+        SELECT id, userId, userNickname, status
         FROM User
         WHERE userId = ?;`;
   const selectUserAccountRow = await connection.query(
@@ -71,12 +71,12 @@ async function selectUserAccount(connection, userId) {
   return selectUserAccountRow[0];
 }
 
-async function updateUserInfo(connection, id, nickname) {
+async function updateUserInfo(connection, id, userNickname) {
   const updateUserQuery = `
   UPDATE User
-  SET userNickName = ?
+  SET userNickname = ?
   WHERE id = ?;`;
-  const updateUserRow = await connection.query(updateUserQuery, [nickname, id]);
+  const updateUserRow = await connection.query(updateUserQuery, [userNickname, id]);
   return updateUserRow[0];
 }
 
