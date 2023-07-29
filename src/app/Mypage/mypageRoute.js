@@ -20,6 +20,6 @@ module.exports = function(app){
     //app.patch('/app/mypage', mypage.updatePassword);
 
     // 7. user테이블에 동일 닉네임 존재하는지 확인
-    //app.delete('/app/mypage', mypage.checkUserNameValid);
+    app.get('/app/nickname', mypage.checkUserNameValid);
     
 };

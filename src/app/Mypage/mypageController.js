@@ -30,10 +30,10 @@ exports.getExercisedData = async function (req, res) {
  * [GET] /app/mypage
  */
 exports.getExerciseInfo = async function (req, res) {
-
     /**
-     * Query String: month
+     * Query String: day
      */
+
     
 }
 
@@ -96,18 +96,18 @@ exports.checkUserNameValid = async function (req, res) {
     /**
      * Query String: userNickName
      */
-    const userId = req.query.userId;
+    const userNickName = req.query.userNickName;
 
-    if (!userId) {
-        // 유저 전체 조회
-        const userListResult = await userProvider.retrieveUserList();
-        return res.send(response(baseResponse.SUCCESS, userListResult));
+    if (!userNickName) {
+        // 닉네임 전체 조회
+        const nicknameListResult = await mypageProvider.retrieveNicknameList();
+        return res.send(response(baseResponse.SUCCESS, nicknameListResult));
     } else {
-        // 유저 검색 조회
-        const userListByUserId = await userProvider.retrieveUserList(userId);
-        if (userListByUserId.length === 0) {
+        // 닉네임 검색 조회
+        const nicknameListByUserId = await mypageProvider.retrieveNicknameList(userNickName);
+        if (nicknameListByUserId.length === 0) {
             return res.send(response(baseResponse.SIGNIN_USERID_UNKNOWN));
         }
-        return res.send(response(baseResponse.SUCCESS, userListByUserId[0]));
+        return res.send(response(baseResponse.SUCCESS, nicknameListByUserId));
     }
 };
