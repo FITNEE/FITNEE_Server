@@ -10,6 +10,23 @@ async function selectMyCalendar(connection, userIdx, month) {
     return myCalendar;
 }
 
+async function selectUserNickname(connection, userNickName) {
+  const selectNicknameQuery = `
+              SELECT EXISTS(
+                  SELECT 1
+                  FROM User
+                  WHERE userNickname = ?
+              ) as isNicknameExist;
+              `;
+  
+    const [rows] = await connection.query(selectNicknameQuery, [userNickName]);
+    const isNicknameExist = rows[0].isNicknameExist === 1; // 1이면 true, 0이면 false로 반환
+  
+    return isNicknameExist;
+  }
+  
+
 module.exports = {
     selectMyCalendar,
+    selectUserNickname,
   };
