@@ -36,7 +36,7 @@ exports.postUsers = async function (req, res) {
     if (!gender) return res.send(errResponse(baseResponse.EMPTY_GENDER));
     if (!height) return res.send(errResponse(baseResponse.EMPTY_HEIGHT));
     if (!weight) return res.send(errResponse(baseResponse.EMPTY_WEIGHT));
-    if (!birthYear) return res.send(errResponse(baseResponse.EMPTY_BIRTH));
+    if (!birthYear) return res.send(errResponse(baseResponse.EMPTY_BIRTHYEAR));
 
     // 유효성 검사 : 길이 체크
     if (userId.length > 20) return res.send(errResponse(baseResponse.LENGTH_ID));
@@ -44,7 +44,7 @@ exports.postUsers = async function (req, res) {
     if (userNickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
 
     // 유효성 검사 : 성별, 키, 몸무게
-    const validGenderValues = [0, 1];
+    const validGenderValues = ["0", "1"];
     if (!validGenderValues.includes(gender)) return res.send(errResponse(baseResponse.INVALID_GENDER));
     if (isNaN(height) || height <= 0) return res.send(errResponse(baseResponse.INVALID_HEIGHT));
     if (isNaN(weight) || weight <= 0) return res.send(errResponse(baseResponse.INVALID_WEIGHT));

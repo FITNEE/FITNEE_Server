@@ -33,6 +33,15 @@ module.exports = {
     CALENDAR_USERID_EMPTY : { "isSuccess": false, "code": 501, "message":"userIdx를 입력해주세요" },
     CALENDAR_MONTH_EMPTY : { "isSuccess": false, "code": 502, "message":"달을 입력해 주세요." },
 
+    //gender, height, weight, birthyear error
+    EMPTY_GENDER: { isSuccess: true, code: 318, message: "성별을 입력해주세요." },
+    EMPTY_HEIGHT: { isSuccess: true, code: 319, message: "키를 입력해주세요." },
+    EMPTY_WEIGHT: { isSuccess: true, code: 320, message: "몸무게를 입력해주세요." },
+    EMPTY_BIRTHYEAR: { isSuccess: true, code: 321, message: "생년월일을 입력해주세요." },
+    
+    INVALID_GENDER: { isSuccess: true, code: 322, message: "남/녀 중에 하나를 선택하세요." },
+    INVALID_HEIGHT: { isSuccess: true, code: 323, message: "몸무게를 제대로 선택하세요." },
+    INVALID_WEIGHT: { isSuccess: true, code: 324, message: "키를 제대로 선택하세요." },
 
     //dictionary error
     DICTIONARY_PARTS_EMPTY : { "isSuccess": false, "code": 601, "message":"운동부위를 입력해 주세요." },
