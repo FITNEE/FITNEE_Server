@@ -42,7 +42,7 @@ exports.createUser = async function (userId, userPw, userNickname, gender, heigh
             return errResponse(baseResponse.SIGNUP_REDUNDANT_USERID);
 
         // 비밀번호 암호화
-        const hashedPassword = await crypto
+        const hashedPassword = crypto
             .createHash("sha512")
             .update(userPw)
             .digest("hex");
@@ -73,43 +73,34 @@ exports.postSignIn = async function (userId, userPw) {
 
         const selectUserId = userIdRows[0].userId
 
+        // userId에 해당하는 유저 정보 가져오기
+        const userResult = await userProvider.getPassword(selectUserId)
+
         // 비밀번호 확인
-        const hashedPassword = await crypto
+        const hashedPasswordInput = crypto
             .createHash("sha512")
             .update(userPw)
             .digest("hex");
+        const storedPasswordHash = userResult[0].userPw
 
-        const selectUserPasswordParams = [selectUserId, hashedPassword];
-        const passwordRows = await userProvider.passwordCheck(selectUserPasswordParams);
-
-        // Check if the user password exists
-        if (!passwordRows || passwordRows.length === 0) {
-            return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
-        }
-
-        // Check if the hashed passwords match
-        if (passwordRows[0].userPw !== hashedPassword) {
-            // Return error response if the passwords don't match
-            return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
+        // 해시 userPw와 비교
+        if (hashedPasswordInput !== storedPasswordHash) {
+            return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG)
         }
 
         // 계정 상태 확인
         const userInfoRows = await userProvider.accountCheck(userId);
 
-        if (userInfoRows[0].status === "INACTIVE") {
-            return errResponse(baseResponse.SIGNIN_INACTIVE_ACCOUNT);
-        } else if (userInfoRows[0].status === "DELETED") {
-            return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT);
-        }
+        // 현재 상태가 회원인지, 탈퇴 회원인지 확인
+        if (userInfoRows[0].status === 1) return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT)
 
-        console.log(userInfoRows[0].id) // DB의 userId
 
         //토큰 생성 Service
         let token;
-        if (userInfoRows[0].status === "ACTIVE") {
+        if (userInfoRows[0].status === 0) {
             token = await jwt.sign(
                 {
-                    userId: userInfoRows[0].id,
+                    userId: selectUserId,
                 }, // 토큰의 내용(payload)
                 secret_config.jwtsecret, // 비밀키
                 {
@@ -123,7 +114,7 @@ exports.postSignIn = async function (userId, userPw) {
         
         return response(baseResponse.SUCCESS, {
             isSuccess: true,
-            userId: userInfoRows[0].id,
+            userId: selectUserId,
             accessToken: token,
         });
 

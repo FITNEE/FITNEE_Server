@@ -39,15 +39,27 @@ exports.userIdCheck = async function (userId) {
   return userIdCheckResult;
 };
 
-exports.passwordCheck = async function (selectUserPasswordParams) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const passwordCheckResult = await userDao.selectUserPassword(
-      connection,
-      selectUserPasswordParams
-  );
-  connection.release();
-  return passwordCheckResult[0];
+exports.getPassword = async function (userId) {
+  try {
+    const connection = await pool.getConnection(async (conn) => conn)
+    const passwordRows = await userDao.getPasswordByUserId(connection, userId);
+    connection.release()
+    return passwordRows;
+  } catch (err) {
+    throw err;
+  }
 };
+
+// 기존에 있던 userPw 비교 함수.
+// exports.passwordCheck = async function (selectUserPasswordParams) {
+//   const connection = await pool.getConnection(async (conn) => conn);
+//   const passwordCheckResult = await userDao.selectUserPassword(
+//       connection,
+//       selectUserPasswordParams
+//   );
+//   connection.release();
+//   return passwordCheckResult[0];
+// };
 
 exports.accountCheck = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
