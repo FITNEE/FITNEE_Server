@@ -68,7 +68,7 @@ async function selectExerciseChatting(connection, name) {
         FROM healthChatting AS HC
         JOIN healthCategory AS HCh ON HC.healthCategoryName = HCh.name
         JOIN User AS UC ON HC.userIdx = UC.userIdx
-        ORDER BY HC.userIdx;
+        ORDER BY HC.updatedAt ASC;
     `;
 
     const selectExerciseChatNumQuery = `
@@ -84,11 +84,6 @@ async function selectExerciseChatting(connection, name) {
 
     return { chattinginfo: chattinginfo[0], chattingnum: chattingnum[0][0].chatCount };
 }
-
-
-
-
-
 
 
 module.exports = {
