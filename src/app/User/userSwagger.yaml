@@ -25,13 +25,13 @@ paths:
                 userNickname:
                   type: string
                 gender:
-                  type: string
+                  type: number
                 height:
                   type: number
                 weight:
                   type: number
                 birthYear:
-                  type: string
+                  type: number
               required:
                 - userId
                 - userPw
