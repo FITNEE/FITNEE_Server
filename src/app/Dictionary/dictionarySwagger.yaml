@@ -1,0 +1,13 @@
+tags:
+  name: Dictionary
+  description: 운동사전 관련 API
+
+/app/dictionary:
+  get:
+    summuary: 최근검색, 인기 키워드 조회(각 5개씩)
+    description: 유저 id로
+    tags:
+      - Routine
+    responses:
+      '1000':
+        description: 성공
