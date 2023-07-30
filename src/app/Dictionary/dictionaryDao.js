@@ -41,15 +41,23 @@ async function selectInformation(connection, parts) {
 // name 받아서 그 운동의 운동방법과 주의사항 반환
 async function selectExerciseMethod(connection, name) {
     const selectExerciseInformationQuery = `
-        SELECT healthMethod.num, healthMethod.title, healthMethod.content,
-               healthCategory.caution1, healthCategory.caution2, healthCategory.caution3
+        SELECT healthMethod.num, healthMethod.title, healthMethod.content
         FROM healthCategory
         JOIN healthMethod ON healthCategory.healthCategoryidx = healthMethod.healthCategoryIdx
         WHERE healthCategory.name = ?;
     `;
 
-    const [methodRows] = await connection.query(selectExerciseInformationQuery, [name]);
-    return methodRows;
+    const selectExerciseCautionQuery = `
+        SELECT caution1, caution2, caution3
+        FROM healthCategory
+        WHERE healthCategory.name = ?;
+    `;
+
+    const [exerciseinfo, exercisecaution] = await Promise.all([
+        connection.query(selectExerciseInformationQuery, [name]),
+        connection.query(selectExerciseCautionQuery, [name])
+    ]);
+    return { exerciseinfo: exerciseinfo[0], exercisecaution: exercisecaution[0] };
 }
 
 module.exports = {
