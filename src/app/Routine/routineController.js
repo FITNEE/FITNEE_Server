@@ -11,42 +11,38 @@ const {response, errResponse} = require("../../../config/response");
 
 
 /**
- * API Name : 마이 루틴 조회 API
+ * API Name : 루틴 일정 조회 API
  * [GET] /app/routines
  */
-
 exports.getRoutineCalendar = async function (req, res) {
-
     /**
-     * Query String: userId
+     * Query Parameters : userId
      */
     const userId = req.query.userId;
 
-    if (!userId) {
-        return res.send(errResponse(QUREY_PARAMETER_WRONG));
+    if  (!userId) {
+        return res.send(errResponse(baseResponse.QUREY_PARAMETER_WRONG));
     } else {
         const routineCalendar = await routineProvider.retrieveRoutineCalendar(userId);
-        if (!routineCalendar) {
-            return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
-        } else {
-            return res.send(response(baseResponse.SUCCESS, routineCalendar));
-        }
+
+        if (!routineCalendar) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
+        else return res.send(response(baseResponse.SUCCESS, routineCalendar));
     }
 }
 
+/**
+ * API Name : 루틴 조회 API
+ * [GET] /app/routine/:routineIdx
+ */
 exports.getRoutine = async function (req, res) {
-
     /**
-     * Query String: routineIdx
+     * Path Variable : routineIdx
      */
-    const routineIdx = req.query.routineIdx;
+    const routineIdx = req.params.routineIdx;
+    const routine = await routineProvider.retrieveRoutine(routineIdx);
 
-    if (!routineIdx) {
-        return res.send(errResponse(QUREY_PARAMETER_WRONG));
-    } else {
-        const routine = await routineProvider.retrieveRoutine(routineIdx);
-        return res.send(response(baseResponse.SUCCESS, routine))
-    }
+    if (!routine) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
+    else return res.send(response(baseResponse.SUCCESS, routine));
 }
 
 /**
@@ -58,3 +54,15 @@ exports.getRoutine = async function (req, res) {
  * API Name : 루틴 삭제 API
  * [DELETE] /app/routine
  */
+exports.deleteRoutine = async function (req, res) {
+    /**
+     * Body : userId
+     * Path Variable : routineIdx
+     */
+    const userId = req.body.userId;
+    const routineIdx = req.params.routineIdx;
+
+    const resposneRoutine = await routineService.deleteRoutine(userId, routineIdx);
+
+    return res.send(resposneRoutine);
+}

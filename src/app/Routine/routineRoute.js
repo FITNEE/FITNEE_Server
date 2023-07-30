@@ -5,14 +5,14 @@ module.exports = function(app){
     // app.post('/app/routine', routine.getRoutine);
 
     // 2. 루틴 일정 조회 API
-    app.get('/app/routine_calendar', routine.getRoutineCalendar);
+    app.get('/app/routines', routine.getRoutineCalendar);
 
     // 3. 루틴 조회 API
-    app.get('/app/routine', routine.getRoutine);
+    app.get('/app/routine/:routineIdx', routine.getRoutine);
 
     // 4. 루틴 수정 API
     // app.patch('/app/routine', routine.patchRoutineCurri);
 
     // 4. 루틴 삭제 API
-    // app.delete('/app/routine', routine.getRoutine);
+    app.delete('/app/routine/:routineIdx', routine.deleteRoutine);
 };
