@@ -27,7 +27,7 @@ exports.getRoutines = async function (req, res) {
     } else {
         const routines = await routineProvider.retrieveRoutines(userId);
         if (!routines) {
-            return res.send(errResponse());
+            return res.send(errResponse(QUREY_PARAMETER_WRONG));
         } else {
             return res.send(response(baseResponse.SUCCESS, routines));
         }

@@ -5,10 +5,18 @@ const routineDao = require("./routineDao");
 
 // Provider: Read 비즈니스 로직 처리
 
-exports.retrieveMyRoutines = async function (userId) {
+exports.retrieveRoutines = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const myRoutineResult = await routineDao.selectMyRoutine(connection, userId);
+    const routines = await routineDao.selectRoutines(connection, userId);
     connection.release();
 
-    return myRoutineResult;
+    return routines;
+};
+
+exports.retrieveRoutineCurri = async function (curriIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const routineCurri = await routineDao.selectRoutineCurri(connection, curriIdx);
+    connection.release();
+
+    return routineCurri;
 };
