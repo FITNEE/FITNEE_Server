@@ -5,5 +5,9 @@ module.exports = function(app){
     // 1. 
     app.get('/app/dictionary', mypage.getKeywordByIdx);
 
-    
+    // 2.
+    app.get('/app/exerciseinfo', mypage.getInformationByparts);
+
+    // 3.
+    app.get('/app/exercisemethod', mypage.getMethodByName);
 };

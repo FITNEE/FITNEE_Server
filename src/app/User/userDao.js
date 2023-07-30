@@ -33,8 +33,8 @@ async function selectUserId(connection, userId) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO User(userId, userPw, userNickname)
-        VALUES (?, ?, ?);
+        INSERT INTO User(userId, userPw, userNickname, gender, height, weight, birthYear)
+        VALUES (?, ?, ?, ?, ?, ?, ?);
     `;
   const insertUserInfoRow = await connection.query(
     insertUserInfoQuery,
@@ -44,24 +44,40 @@ async function insertUserInfo(connection, insertUserInfoParams) {
   return insertUserInfoRow;
 }
 
-// 패스워드 체크
-async function selectUserPassword(connection, selectUserPasswordParams) {
-  const selectUserPasswordQuery = `
-        SELECT userId, userPw
-        FROM User
-        WHERE userId = ? AND userPw = ?;`;
-  const [selectUserPasswordRow] = await connection.query(
-      selectUserPasswordQuery,
-      selectUserPasswordParams
-  );
-
-  return selectUserPasswordRow;
+// userPw 불러오기
+async function getPasswordByUserId(connection, userId) {
+  try {
+    const getPasswordQuery = `
+      SELECT userPw
+      FROM User
+      WHERE userId = ?
+      AND status = 0;
+    `;
+    const [passwordRows] = await connection.query(getPasswordQuery, userId);
+    return passwordRows;
+  } catch (err) {
+    throw err;
+  }
 }
+
+// // 패스워드 체크(기존에 있던 코드, 혹시나해서 남겨놓음)
+// async function selectUserPassword(connection, selectUserPasswordParams) {
+//   const selectUserPasswordQuery = `
+//         SELECT userId, userPw
+//         FROM User
+//         WHERE userId = ? AND userPw = ?;`;
+//   const selectUserPasswordRow = await connection.query(
+//       selectUserPasswordQuery,
+//       selectUserPasswordParams
+//   );
+
+//   return selectUserPasswordRow;
+// }
 
 // 유저 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectUserAccount(connection, userId) {
   const selectUserAccountQuery = `
-        SELECT id, userId, userNickname, status
+        SELECT userId, userNickname, status
         FROM User
         WHERE userId = ?;`;
   const selectUserAccountRow = await connection.query(
@@ -71,12 +87,12 @@ async function selectUserAccount(connection, userId) {
   return selectUserAccountRow[0];
 }
 
-async function updateUserInfo(connection, id, userNickname) {
+async function updateUserInfo(connection, userId, userNickname) {
   const updateUserQuery = `
   UPDATE User
   SET userNickname = ?
-  WHERE id = ?;`;
-  const updateUserRow = await connection.query(updateUserQuery, [userNickname, id]);
+  WHERE userId = ?;`;
+  const updateUserRow = await connection.query(updateUserQuery, [userNickname, userId]);
   return updateUserRow[0];
 }
 
@@ -86,7 +102,7 @@ module.exports = {
   selectUserUserId,
   selectUserId,
   insertUserInfo,
-  selectUserPassword,
+  getPasswordByUserId,
   selectUserAccount,
   updateUserInfo,
 };
