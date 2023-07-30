@@ -23,3 +23,13 @@ tags:
     responses:
       '1000':
         description: 성공
+
+/app/exercisemethod:
+  get:
+    summuary: 운동 name으로 운동방법, 운동주의사항
+    params: name
+    description: 운동 name받아서 운동방법, 운동주의사항 return
+      - Dictionary
+    responses:
+      '1000':
+        description: 성공
