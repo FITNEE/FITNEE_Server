@@ -61,3 +61,20 @@ exports.getMethodByName = async function (req, res) {
     const exerciseMethodByName = await dictionaryProvider.retrieveMethod(name);
     return res.send(response(baseResponse.SUCCESS, exerciseMethodByName));
 };
+
+/**
+ * API Name : name 받아서 그 운동의 채팅 반환
+ * [GET] /app/exercisechat
+ */
+exports.getChattingByName = async function (req, res) {
+
+    /**
+     * Path Variable: parts(healthCategory Table)
+     */
+    const name = req.query.name;
+
+    if (!name) return res.send(errResponse(baseResponse.DICTIONARY_NAME_EMPTY));
+
+    const exerciseChatByName = await dictionaryProvider.retrieveChatting(name);
+    return res.send(response(baseResponse.SUCCESS, exerciseChatByName));
+};
