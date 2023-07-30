@@ -9,41 +9,43 @@ const {response, errResponse} = require("../../../config/response");
  * [POST] /app/routine
  */
 
-/**
- * API Name : 루틴 조회 API
- * [GET] /app/routine
- */
-exports.getRoutine = async function (req, res) {
-
-    /**
-     * Query String: userID
-     */
-    const userId = req.query.userId;
-
-    if (!userId) {
-        // 쿼리 미존재
-    } else {
-        const myRoutines = await routineProvider.retrieveMyRoutines(userId);
-        return res.send(response(baseResponse.SUCCESS, myRoutines))
-    }
-}
 
 /**
  * API Name : 마이 루틴 조회 API
- * [GET] /app/my_routine
+ * [GET] /app/routines
  */
-exports.getMyRoutines = async function (req, res) {
+
+exports.getRoutines = async function (req, res) {
 
     /**
-     * Query String: userID
+     * Query String: userId
      */
     const userId = req.query.userId;
 
     if (!userId) {
-        // 쿼리 미존재
+        return res.send(errResponse(QUREY_PARAMETER_WRONG));
     } else {
-        const myRoutines = await routineProvider.retrieveMyRoutines(userId);
-        return res.send(response(baseResponse.SUCCESS, myRoutines))
+        const routines = await routineProvider.retrieveRoutines(userId);
+        if (!routines) {
+            return res.send(errResponse());
+        } else {
+            return res.send(response(baseResponse.SUCCESS, routines));
+        }
+    }
+}
+
+exports.getRoutineCurri = async function (req, res) {
+
+    /**
+     * Query String: curriIdx
+     */
+    const curriIdx = req.query.curriIdx;
+
+    if (!curriIdx) {
+        return res.send(errResponse(QUREY_PARAMETER_WRONG));
+    } else {
+        const routineCurri = await routineProvider.retrieveRoutineCurri(curriIdx);
+        return res.send(response(baseResponse.SUCCESS, routineCurri))
     }
 }
 
