@@ -60,8 +60,35 @@ async function selectExerciseMethod(connection, name) {
     return { exerciseinfo: exerciseinfo[0], exercisecaution: exercisecaution[0] };
 }
 
+
+// name 받아서 그 운동의 채팅내용과 채팅 수 반환
+async function selectExerciseChatting(connection, name) {
+    const selectExerciseChatInfoQuery = `
+        SELECT HC.userIdx, UC.userNickname, HC.text
+        FROM healthChatting AS HC
+        JOIN healthCategory AS HCh ON HC.healthCategoryName = HCh.name
+        JOIN User AS UC ON HC.userIdx = UC.userIdx
+        ORDER BY HC.updatedAt ASC;
+    `;
+
+    const selectExerciseChatNumQuery = `
+        SELECT COUNT(*) AS chatCount
+        FROM healthChatting AS HC
+        WHERE HC.healthCategoryName = ?;
+    `;
+
+    const [chattinginfo, chattingnum] = await Promise.all([
+        connection.query(selectExerciseChatInfoQuery, [name]),
+        connection.query(selectExerciseChatNumQuery, [name])
+    ]);
+
+    return { chattinginfo: chattinginfo[0], chattingnum: chattingnum[0][0].chatCount };
+}
+
+
 module.exports = {
     selectKeyword,
     selectInformation,
     selectExerciseMethod,
+    selectExerciseChatting,
 };

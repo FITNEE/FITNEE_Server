@@ -10,4 +10,7 @@ module.exports = function(app){
 
     // 3.
     app.get('/app/exercisemethod', mypage.getMethodByName);
+
+    // 4.
+    app.get('/app/exercisechat', mypage.getChattingByName);
 };

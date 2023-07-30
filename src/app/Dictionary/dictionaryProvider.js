@@ -2,7 +2,7 @@ const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
 const dictionaryDao = require("./dictionaryDao");
 
-//
+
 exports.retrieveKeyword = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const keywordCheckResult = await dictionaryDao.selectKeyword(connection, userIdx);
@@ -13,19 +13,28 @@ exports.retrieveKeyword = async function (userIdx) {
 
 //
 exports.retrieveInformation = async function (parts) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const exerciseInformationResult = await dictionaryDao.selectInformation(connection, parts);
-    connection.release();
+  const connection = await pool.getConnection(async (conn) => conn);
+  const exerciseInformationResult = await dictionaryDao.selectInformation(connection, parts);
+  connection.release();
 
-    return exerciseInformationResult;
+  return exerciseInformationResult;
 };
 
 
 //
 exports.retrieveMethod = async function (name) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const exerciseMethodResult = await dictionaryDao.selectExerciseMethod(connection, name);
-    connection.release();
+  const connection = await pool.getConnection(async (conn) => conn);
+  const exerciseMethodResult = await dictionaryDao.selectExerciseMethod(connection, name);
+  connection.release();
 
-    return exerciseMethodResult;
+  return exerciseMethodResult;
+};
+
+//
+exports.retrieveChatting = async function (name) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const exerciseChattingResult = await dictionaryDao.selectExerciseChatting(connection, name);
+  connection.release();
+
+  return exerciseChattingResult;
 };
