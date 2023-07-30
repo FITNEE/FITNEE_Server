@@ -84,6 +84,8 @@ module.exports = {
     SIGNIN_INACTIVE_ACCOUNT : { "isSuccess": false, "code": 3006, "message": "비활성화 된 계정입니다. 고객센터에 문의해주세요." },
     SIGNIN_WITHDRAWAL_ACCOUNT : { "isSuccess": false, "code": 3007, "message": "탈퇴 된 계정입니다. 고객센터에 문의해주세요." },
 
+    ROUTINE_UNDEFINED : { "isSuccess": false, "code": 3101, "message": "루틴이 존재하지 않습니다." },
+
     QUREY_PARAMETER_WRONG : { "isSuccess": false, "code": 3999, "message": "쿼리 파라미터가 잘못되었습니다." },
 
     //Connection, Transaction 등의 서버 오류

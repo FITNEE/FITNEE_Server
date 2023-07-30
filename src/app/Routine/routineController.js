@@ -15,7 +15,7 @@ const {response, errResponse} = require("../../../config/response");
  * [GET] /app/routines
  */
 
-exports.getRoutines = async function (req, res) {
+exports.getRoutineCalendar = async function (req, res) {
 
     /**
      * Query String: userId
@@ -25,27 +25,27 @@ exports.getRoutines = async function (req, res) {
     if (!userId) {
         return res.send(errResponse(QUREY_PARAMETER_WRONG));
     } else {
-        const routines = await routineProvider.retrieveRoutines(userId);
-        if (!routines) {
-            return res.send(errResponse(QUREY_PARAMETER_WRONG));
+        const routineCalendar = await routineProvider.retrieveRoutineCalendar(userId);
+        if (!routineCalendar) {
+            return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
         } else {
-            return res.send(response(baseResponse.SUCCESS, routines));
+            return res.send(response(baseResponse.SUCCESS, routineCalendar));
         }
     }
 }
 
-exports.getRoutineCurri = async function (req, res) {
+exports.getRoutine = async function (req, res) {
 
     /**
-     * Query String: curriIdx
+     * Query String: routineIdx
      */
-    const curriIdx = req.query.curriIdx;
+    const routineIdx = req.query.routineIdx;
 
-    if (!curriIdx) {
+    if (!routineIdx) {
         return res.send(errResponse(QUREY_PARAMETER_WRONG));
     } else {
-        const routineCurri = await routineProvider.retrieveRoutineCurri(curriIdx);
-        return res.send(response(baseResponse.SUCCESS, routineCurri))
+        const routine = await routineProvider.retrieveRoutine(routineIdx);
+        return res.send(response(baseResponse.SUCCESS, routine))
     }
 }
 

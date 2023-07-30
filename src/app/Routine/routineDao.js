@@ -1,24 +1,24 @@
 const lodash = require('lodash');
 
 // 마이 루틴 조희
-async function selectRoutines(connection, userId) {
-    const selectRoutinesQuery = `
-                  SELECT monCurriIdx, tueCurriIdx, wedCurriIdx, thuCurriIdx, friCurriIdx, satCurriIdx, sunCurriIdx
-                  FROM routine
+async function selectRoutineCalendar(connection, userId) {
+    const selectRoutineCalendarQuery = `
+                  SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
+                  FROM routineCalendar
                   WHERE status = 0 AND userId = ?
                   `;
-    const [[routines]] = await connection.query(selectRoutinesQuery, userId);
-    return routines;
+    const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+    return routineCalendar;
 }
 
 // 유명 루틴 조회
-async function selectRoutineCurri(connection, curriIdx) {
-    const selectRoutineCurriQuery = `
+async function selectRoutine(connection, routineIdx) {
+    const selectRoutineQuery = `
                   SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
-                  FROM routineCurri
-                  WHERE status = 0 AND routineCurriIdx = ?
+                  FROM routine
+                  WHERE status = 0 AND routineIdx = ?
                   `;
-    const [[routineCurri]] = await connection.query(selectRoutineCurriQuery, curriIdx);
+    const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
 
     var routineContent = [];
 
@@ -28,7 +28,7 @@ async function selectRoutineCurri(connection, curriIdx) {
                       FROM routineDetail
                       WHERE status = 0 AND routineDetailIdx = ?
                       `;
-        const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routineCurri['detailIdx'+String(i)]);
+        const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routine['detailIdx'+String(i)]);
         
         var detailContent = lodash.pickBy(routineDetail);
         if (routineDetail) {
@@ -40,6 +40,6 @@ async function selectRoutineCurri(connection, curriIdx) {
 }
   
 module.exports = {
-    selectRoutines,
-    selectRoutineCurri,
+    selectRoutineCalendar,
+    selectRoutine,
 };
