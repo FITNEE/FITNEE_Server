@@ -5,9 +5,21 @@ tags:
 /app/dictionary:
   get:
     summuary: 최근검색, 인기 키워드 조회(각 5개씩)
-    description: 유저 id로
+    params: userIdx
+    description: userIdx로 최근검색기록, 인기 키워드 조회하는 api
     tags:
-      - Routine
+      - Dictionary
+    responses:
+      '1000':
+        description: 성공
+
+/app/exerciseinfo:
+  get:
+    summuary: parts로 운동정보
+    params: parts
+    description: parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
+    tags:
+      - Dictionary
     responses:
       '1000':
         description: 성공
