@@ -13,27 +13,6 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.generateToken = function (userId) {
-    console.log("Generating token for userId:", userId)
-
-    const payload = {
-        userId: userId,
-    };
-
-    const options = {
-        expiresIn: "1d",
-    };
-
-    try {
-        const token = jwt.sign(payload, secret_config.jwtsecret, options)
-        console.log("Token generated:", token)
-        return token
-    } catch (error) {
-        console.log("Error generating token:", error.message)
-        throw error
-    }
-}
-
 exports.createUser = async function (userId, userPw, userNickname, gender, height, weight, birthYear) {
     try {
         // 이메일 중복 확인
@@ -64,17 +43,14 @@ exports.createUser = async function (userId, userPw, userNickname, gender, heigh
 };
 
 
-// TODO: After 로그인 인증 방법 (JWT)
-exports.postSignIn = async function (userId, userPw) {
+exports.postSignIn = async function (userId, userPw, res) {
     try {
         // 이메일 여부 확인
         const userIdRows = await userProvider.userIdCheck(userId);
         if (userIdRows.length < 1) return errResponse(baseResponse.USER_USERID_NOT_EXIST);
 
-        const selectUserId = userIdRows[0].userId
-
         // userId에 해당하는 유저 정보 가져오기
-        const userResult = await userProvider.getPassword(selectUserId)
+        const userResult = await userProvider.getPassword(userId)
 
         // 비밀번호 확인
         const hashedPasswordInput = crypto
@@ -94,12 +70,22 @@ exports.postSignIn = async function (userId, userPw) {
         // 현재 상태가 회원인지, 탈퇴 회원인지 확인
         if (userInfoRows[0].status === 1) return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT)
 
+        // Token 발급
+        let token
+        const payload = {
+            userId: userId,
+        }
+        const options = {
+            expiresIn: "365d",
+        }
 
-
+        token = jwt.sign(payload, secret_config.jwtsecret, options)
+            
         
         return response(baseResponse.SUCCESS, {
             isSuccess: true,
-            userId: selectUserId
+            userId: userId,
+            token: token,
         });
 
     } catch (err) {
