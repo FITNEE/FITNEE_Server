@@ -10,6 +10,7 @@ const {emit} = require("nodemon");
 
 
 /**
+ *  * API No. 1
  * API Name : 최근 검색키워드 5개, 인기 검색 키워드 5개 -> 몇개 보여줄지 숫자 바꿀 수 있음.
  * [GET] /app/dictionary
  */
@@ -28,6 +29,7 @@ exports.getKeywordByIdx = async function (req, res) {
 
 
 /**
+ *  * API No. 2
  * API Name : parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
  * [GET] /app/exerciseinfo
  */
@@ -46,6 +48,7 @@ exports.getInformationByparts = async function (req, res) {
 
 
 /**
+ *  * API No. 3
  * API Name : name 받아서 그 운동의 운동방법과 주의사항 반환
  * [GET] /app/exercisemethod
  */
@@ -63,6 +66,7 @@ exports.getMethodByName = async function (req, res) {
 };
 
 /**
+ *  * API No. 4
  * API Name : name 받아서 그 운동의 채팅 반환
  * [GET] /app/exercisechat
  */
@@ -77,4 +81,31 @@ exports.getChattingByName = async function (req, res) {
 
     const exerciseChatByName = await dictionaryProvider.retrieveChatting(name);
     return res.send(response(baseResponse.SUCCESS, exerciseChatByName));
+};
+
+
+/**
+ * API No. 5
+ * API Name : 채팅, 유저닉네임 post
+ * [POST] /app/chatting
+ * body : name(healthCategory Table), userNickname(User Table), text(healthChatting Table)
+ */
+exports.postChatting = async function(req, res) {
+    const { name, userNickname, text } = req.body;
+
+    // userNickname, text, name가 제공되었는지 체크
+    if (!name) return res.send(errResponse(baseResponse.DICTIONARY_NAME_EMPTY));
+    if (!userNickname) return res.send(errResponse(baseResponse.DICTIONARY_USERNICKNAME_EMPTY));
+    if (!text) return res.send(errResponse(baseResponse.DICTIONARY_TEXT_EMPTY));
+    
+    try {
+        // 채팅 생성 호출
+        const createChattingResponse = await dictionaryService.createChatting(name, userNickname, text);
+        
+        // 채팅 생성 성공 응답
+        return res.send(response(baseResponse.SUCCESS, createChattingResponse));
+    } catch (error) {
+        logger.error(`채팅 post api error: ${error.message}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
 };
