@@ -26,14 +26,31 @@ tags:
 
 /app/dictionary/exercisemethod:
   get:
-    summuary: 운동 name으로 운동방법, 운동주의사항
-    params: name
-    description: 운동 name받아서 운동방법, 운동주의사항 return
+    summary: 운동 name으로 운동방법, 운동주의사항 조회
+    parameters:
+      - name: name
+        in: query
+        required: true
+        description: 운동 name을 입력하세요.
+        schema:
+          type: string
+    description: 운동 name을 받아서 운동방법과 운동주의사항을 반환합니다.
     tags:
       - Dictionary
     responses:
       '1000':
         description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                exerciseMethod:
+                  type: string
+                  description: 운동방법
+                exercisePrecaution:
+                  type: string
+                  description: 운동주의사항
       '602':
         description: 운동종목을 입력해 주세요
 
@@ -82,10 +99,10 @@ tags:
 
 /app/dictionary/chatting:
   post:
-    tags:
-      - Dictionary
     summuary: 운동 name, userNickname, text post
     description: 운동 name, userNickname, text post해서 db에 넣기
+    tags:
+      - Dictionary
     operationId: postChatting
 
     requestBody:
