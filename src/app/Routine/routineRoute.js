@@ -11,7 +11,7 @@ module.exports = function(app){
     app.get('/app/routine/:routineIdx', routine.getRoutine);
 
     // 4. 루틴 수정 API
-    // app.patch('/app/routine', routine.patchRoutineCurri);
+    app.put('/app/routine/:routineIdx', routine.putRoutine);
 
     // 4. 루틴 삭제 API
     app.delete('/app/routine/:routineIdx', routine.deleteRoutine);
