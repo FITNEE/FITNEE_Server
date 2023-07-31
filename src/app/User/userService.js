@@ -95,27 +95,11 @@ exports.postSignIn = async function (userId, userPw) {
         if (userInfoRows[0].status === 1) return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT)
 
 
-        //토큰 생성 Service
-        let token;
-        if (userInfoRows[0].status === 0) {
-            token = await jwt.sign(
-                {
-                    userId: selectUserId,
-                }, // 토큰의 내용(payload)
-                secret_config.jwtsecret, // 비밀키
-                {
-                    expiresIn: "365d",
-                } // 유효 기간 365일
-            )
-        } else {
-            token = null
-        }
 
         
         return response(baseResponse.SUCCESS, {
             isSuccess: true,
-            userId: selectUserId,
-            accessToken: token,
+            userId: selectUserId
         });
 
     } catch (err) {

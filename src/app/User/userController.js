@@ -137,6 +137,7 @@ exports.login = async function(req, res) {
         console.log(signInResponse)
         const token = userService.generateToken(signInResponse.userId)
 
+        res.cookie('accessToken', token)
         return res.send(response(baseResponse.SUCCESS, { accessToken: token }));
     } catch (error) {
         logger.error(`로그인 API 오류: ${error.message}`);
