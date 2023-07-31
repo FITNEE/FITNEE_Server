@@ -1,14 +1,15 @@
 const express = require('./config/express');
 const {logger} = require('./config/winston');
-
-const api = require("./src/app/User/userRoute")
 const cookieParser = require('cookie-parser')
-
 const { swaggerUi, specs } = require("./swagger/swagger")
+
+const userRoute = require('./src/app/User/userRoute')
 
 const app = express()
 
-app.use("/api", api)
+// api 실행
+app.use("/", userRoute)
+
 app.use(cookieParser())
 app.use("/", swaggerUi.serve, swaggerUi.setup(specs))
 
