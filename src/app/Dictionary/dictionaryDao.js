@@ -71,6 +71,7 @@ async function selectExerciseChatting(connection, name) {
         ORDER BY HC.updatedAt ASC;
     `;
 
+
     const selectExerciseChatNumQuery = `
         SELECT COUNT(*) AS chatCount
         FROM healthChatting AS HC
@@ -86,9 +87,27 @@ async function selectExerciseChatting(connection, name) {
 }
 
 
+// 채팅 text 추가
+// insertChattingParams = [name, userNickname, text];
+async function insertChatting(connection, insertChattingParams) {
+    const insertChattingQuery = `
+        INSERT INTO healthChatting (healthCategoryName, userIdx, text)
+        VALUES (
+            (SELECT name FROM healthCategory WHERE name = ?),
+            (SELECT userIdx FROM User WHERE userNickname = ?),
+            ?
+        );
+    `;
+    const insertChattingRow = await connection.query(insertChattingQuery, insertChattingParams);
+
+    return insertChattingRow;
+}
+
+
 module.exports = {
     selectKeyword,
     selectInformation,
     selectExerciseMethod,
     selectExerciseChatting,
+    insertChatting,
 };

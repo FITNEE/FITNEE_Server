@@ -13,4 +13,7 @@ module.exports = function(app){
 
     // 4.
     app.get('/app/exercisechat', mypage.getChattingByName);
+
+    // 5.
+    app.get('/app/chatting', mypage.postChatting);
 };
