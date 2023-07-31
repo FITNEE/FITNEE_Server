@@ -98,7 +98,6 @@ exports.postChatting = async function(req, res) {
     if (!userNickname) return res.send(errResponse(baseResponse.DICTIONARY_USERNICKNAME_EMPTY));
     if (!text) return res.send(errResponse(baseResponse.DICTIONARY_TEXT_EMPTY));
     
-    // 
     try {
         // 채팅 생성 호출
         const createChattingResponse = await dictionaryService.createChatting(name, userNickname, text);
@@ -106,7 +105,7 @@ exports.postChatting = async function(req, res) {
         // 채팅 생성 성공 응답
         return res.send(response(baseResponse.SUCCESS, createChattingResponse));
     } catch (error) {
-        logger.error(`채팅 post API 오류: ${error.message}`);
+        logger.error(`채팅 post api error: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
     }
 };

@@ -91,7 +91,7 @@ async function selectExerciseChatting(connection, name) {
 // insertChattingParams = [name, userNickname, text];
 async function insertChatting(connection, insertChattingParams) {
     const insertChattingQuery = `
-        INSERT INTO healthChatting (healthCategoryName, userIdx, text)
+    INSERT INTO healthChatting (healthCategoryName, userIdx, text)
         VALUES (
             (SELECT name FROM healthCategory WHERE name = ?),
             (SELECT userIdx FROM User WHERE userNickname = ?),
@@ -99,7 +99,6 @@ async function insertChatting(connection, insertChattingParams) {
         );
     `;
     const insertChattingRow = await connection.query(insertChattingQuery, insertChattingParams);
-
     return insertChattingRow;
 }
 

@@ -18,7 +18,7 @@ exports.createChatting = async function (name, userNickname, text) {
         const connection = await pool.getConnection(async (conn) => conn);
 
         const chattingResult = await dictionaryDao.insertChatting(connection, insertChattingParams);
-        console.log(`추가된 채팅 : ${chattingResult[0].insertId}`)
+        console.log(`추가된 채팅 healthChattingIdx : ${chattingResult[0].insertId}`)
         connection.release();
         return response(baseResponse.SUCCESS);
 

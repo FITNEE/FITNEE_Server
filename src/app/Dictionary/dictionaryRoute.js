@@ -15,5 +15,5 @@ module.exports = function(app){
     app.get('/app/exercisechat', mypage.getChattingByName);
 
     // 5.
-    app.get('/app/chatting', mypage.postChatting);
+    app.post('/app/chatting', mypage.postChatting);
 };
