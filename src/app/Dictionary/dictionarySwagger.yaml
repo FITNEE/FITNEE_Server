@@ -13,7 +13,7 @@ tags:
       '1000':
         description: 성공
 
-/app/exerciseinfo:
+/app/dictionary/exerciseinfo:
   get:
     summuary: parts로 운동정보
     params: parts
@@ -24,12 +24,53 @@ tags:
       '1000':
         description: 성공
 
-/app/exercisemethod:
+/app/dictionary/exercisemethod:
   get:
     summuary: 운동 name으로 운동방법, 운동주의사항
     params: name
     description: 운동 name받아서 운동방법, 운동주의사항 return
+    tags:
       - Dictionary
+    responses:
+      '1000':
+        description: 성공
+
+/app/dictionary/exercisechat:
+  get:
+    summuary: 운동 name으로 채팅내역 조회
+    params: name
+    description: 운동 name받아서 운동방법, 운동주의사항 return
+    tags:
+      - Dictionary
+    responses:
+      '1000':
+        description: 성공
+
+/app/dictionary/chatting:
+  post:
+    tags:
+      - Dictionary
+    summuary: 운동 name, userNickname, text post
+    description: 운동 name, userNickname, text post해서 db에 넣기
+    operationId: postChatting
+
+    requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                userNickname:
+                  type: string
+                text:
+                  type: string
+
+              required:
+                - name
+                - userNickname
+                - text
     responses:
       '1000':
         description: 성공
