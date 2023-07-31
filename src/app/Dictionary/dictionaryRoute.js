@@ -6,14 +6,14 @@ module.exports = function(app){
     app.get('/app/dictionary', mypage.getKeywordByIdx);
 
     // 2.
-    app.get('/app/exerciseinfo', mypage.getInformationByparts);
+    app.get('/app/dictionary/exerciseinfo', mypage.getInformationByparts);
 
     // 3.
-    app.get('/app/exercisemethod', mypage.getMethodByName);
+    app.get('/app/dictionary/exercisemethod', mypage.getMethodByName);
 
     // 4.
-    app.get('/app/exercisechat', mypage.getChattingByName);
+    app.get('/app/dictionary/exercisechat', mypage.getChattingByName);
 
     // 5.
-    app.post('/app/chatting', mypage.postChatting);
+    app.post('/app/dictionary/chatting', mypage.postChatting);
 };
