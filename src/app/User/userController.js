@@ -56,12 +56,12 @@ exports.postUsers = async function (req, res) {
     try {
         // 회원 생성 호출
         const signUpResponse = await userService.createUser(userId, userPw, userNickname, gender, height, weight, birthYear);
-        
-        // 토큰 발급
-        const token = userService.generateToken(signUpResponse.userId)
 
         // 회원가입 성공 응답
-        return res.send(response(baseResponse.SUCCESS, { accessToken: token }));
+        return res.send(response(baseResponse.SUCCESS, {
+            userId: userId,
+            userNickname: userNickname,
+         }));
     } catch (error) {
         logger.error(`회원 가입 API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
