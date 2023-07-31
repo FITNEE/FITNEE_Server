@@ -13,7 +13,8 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (userId, userPw, userNickname, gender, height, weight, birthYear) {
+// 회원가입
+exports.postSignUp = async function (userId, userPw, userNickname, gender, height, weight, birthYear) {
     try {
         // 이메일 중복 확인
         const userIdRows = await userProvider.userIdCheck(userId);
@@ -37,12 +38,12 @@ exports.createUser = async function (userId, userPw, userNickname, gender, heigh
 
 
     } catch (err) {
-        logger.error(`App - createUser Service error\n: ${err.message}`);
+        logger.error(`App - postSignUp Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };
 
-
+// 로그인
 exports.postSignIn = async function (userId, userPw, res) {
     try {
         // 이메일 여부 확인
@@ -70,17 +71,22 @@ exports.postSignIn = async function (userId, userPw, res) {
         // 현재 상태가 회원(1)인지, 탈퇴 회원(2)인지 확인
         if (userInfoRows[0].status === '2') return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT)
 
-        let token = ''
-        // Token 발급()
+        // access Token 및 refresh Token 발급
+        let accessToken = ''
+        // let refreshToken = ''
         if (userInfoRows[0].status === '1') {
             const payload = {
                 userId: userId,
             }
-            const options = {
-                expiresIn: "365d",
-            }
             try {
-                token = jwt.sign(payload, secret_config.jwtsecret, options)
+                accessToken = jwt.sign(payload, secret_config.jwtsecret, {
+                    expiresIn: '30d',
+                    algorithm: 'HS256',
+                })
+                // refreshToken = jwt.sign({}, secret_config.jwtsecret, {
+                //     expiresIn: '365d',
+                //     algorithm: 'HS256'
+                // })
             } catch (error) {
                 console.log("Error generating token:", error)
             }
@@ -89,7 +95,8 @@ exports.postSignIn = async function (userId, userPw, res) {
         return response(baseResponse.SUCCESS, {
             isSuccess: true,
             userId: userId,
-            token: token,
+            accessToken: accessToken,
+            // refreshToken: refreshToken,
         });
 
     } catch (err) {
@@ -98,9 +105,11 @@ exports.postSignIn = async function (userId, userPw, res) {
     }
 };
 
+// 닉네임 수정
 exports.editUser = async function (userId, userNickname) {
     try {
-        console.log(userId)
+        console.log("editUser.userId:", userId)
+
         const connection = await pool.getConnection(async (conn) => conn);
         const editUserResult = await userDao.updateUserInfo(connection, userId, userNickname)
         connection.release();

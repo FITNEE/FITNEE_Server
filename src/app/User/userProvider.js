@@ -5,6 +5,7 @@ const userDao = require("./userDao");
 
 // Provider: Read 비즈니스 로직 처리
 
+// 유저 리스트 조회
 exports.retrieveUserList = async function (userId) {
   if (!userId) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -22,6 +23,7 @@ exports.retrieveUserList = async function (userId) {
   }
 };
 
+// 유저 조회
 exports.retrieveUser = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
   const userResult = await userDao.selectUserId(connection, userId);
@@ -31,6 +33,7 @@ exports.retrieveUser = async function (userId) {
   return userResult[0];
 };
 
+// 유저 아이디 체크
 exports.userIdCheck = async function (userId) {
   const connection = await pool.getConnection(async (conn) => conn);
   const userIdCheckResult = await userDao.selectUserUserId(connection, userId);
@@ -39,6 +42,7 @@ exports.userIdCheck = async function (userId) {
   return userIdCheckResult;
 };
 
+// 유저 비밀번호 체크
 exports.getPassword = async function (userId) {
   try {
     const connection = await pool.getConnection(async (conn) => conn)
@@ -68,3 +72,11 @@ exports.accountCheck = async function (userId) {
 
   return userAccountResult;
 };
+
+// 닉네임 중복 검사
+exports.nicknameCheck = async function (userNickname) {
+  const connection = await pool.getConnection(async (conn) => conn)
+  const userNicknameResult = await userDao.selectUserByNickname(connection, userNickname)
+  connection.release()
+  return userNicknameResult.length > 0
+}

@@ -31,7 +31,7 @@ exports.getKeywordByIdx = async function (req, res) {
 /**
  *  * API No. 2
  * API Name : parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
- * [GET] /app/exerciseinfo
+ * [GET] /app/dictionary/exerciseinfo
  */
 exports.getInformationByparts = async function (req, res) {
 
@@ -50,7 +50,7 @@ exports.getInformationByparts = async function (req, res) {
 /**
  *  * API No. 3
  * API Name : name 받아서 그 운동의 운동방법과 주의사항 반환
- * [GET] /app/exercisemethod
+ * [GET] /app/dictionary/exercisemethod
  */
 exports.getMethodByName = async function (req, res) {
 
@@ -68,7 +68,7 @@ exports.getMethodByName = async function (req, res) {
 /**
  *  * API No. 4
  * API Name : name 받아서 그 운동의 채팅 반환
- * [GET] /app/exercisechat
+ * [GET] /app/dictionary/exercisechat
  */
 exports.getChattingByName = async function (req, res) {
 
@@ -87,7 +87,7 @@ exports.getChattingByName = async function (req, res) {
 /**
  * API No. 5
  * API Name : 채팅, 유저닉네임 post
- * [POST] /app/chatting
+ * [POST] /app/dictionary/chatting
  * body : name(healthCategory Table), userNickname(User Table), text(healthChatting Table)
  */
 exports.postChatting = async function(req, res) {

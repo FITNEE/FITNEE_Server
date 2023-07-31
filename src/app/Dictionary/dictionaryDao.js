@@ -64,10 +64,13 @@ async function selectExerciseMethod(connection, name) {
 // name 받아서 그 운동의 채팅내용과 채팅 수 반환
 async function selectExerciseChatting(connection, name) {
     const selectExerciseChatInfoQuery = `
-        SELECT HC.userIdx, UC.userNickname, HC.text
+        SELECT HC.userIdx,
+        CASE WHEN UC.status = 2 THEN '(알수없음)' ELSE UC.userNickname END AS userNickname,
+        HC.text
         FROM healthChatting AS HC
         JOIN healthCategory AS HCh ON HC.healthCategoryName = HCh.name
         JOIN User AS UC ON HC.userIdx = UC.userIdx
+        WHERE HC.status = 0
         ORDER BY HC.updatedAt ASC;
     `;
 
@@ -75,7 +78,7 @@ async function selectExerciseChatting(connection, name) {
     const selectExerciseChatNumQuery = `
         SELECT COUNT(*) AS chatCount
         FROM healthChatting AS HC
-        WHERE HC.healthCategoryName = ?;
+        WHERE HC.healthCategoryName = ? AND HC.status = 0;
     `;
 
     const [chattinginfo, chattingnum] = await Promise.all([

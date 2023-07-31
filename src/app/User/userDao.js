@@ -96,6 +96,16 @@ async function updateUserInfo(connection, userId, userNickname) {
   return updateUserRow[0];
 }
 
+// 유저 닉네임 체크
+async function selectUserByNickname(connection, userNickname) {
+  const selectUserByNicknameQuery = `
+    SELECT userId
+    FROM User
+    WHERE userNickname = ?;
+  `;
+  const userNicknameResult = await connection.query(selectUserByNicknameQuery, userNickname)
+  return userNicknameResult
+}
 
 module.exports = {
   selectUser,
@@ -105,4 +115,5 @@ module.exports = {
   getPasswordByUserId,
   selectUserAccount,
   updateUserInfo,
+  selectUserByNickname
 };
