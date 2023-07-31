@@ -13,7 +13,8 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (userId, userPw, userNickname, gender, height, weight, birthYear) {
+// 회원가입
+exports.postSignUp = async function (userId, userPw, userNickname, gender, height, weight, birthYear) {
     try {
         // 이메일 중복 확인
         const userIdRows = await userProvider.userIdCheck(userId);
@@ -37,12 +38,12 @@ exports.createUser = async function (userId, userPw, userNickname, gender, heigh
 
 
     } catch (err) {
-        logger.error(`App - createUser Service error\n: ${err.message}`);
+        logger.error(`App - postSignUp Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };
 
-
+// 로그인
 exports.postSignIn = async function (userId, userPw, res) {
     try {
         // 이메일 여부 확인
@@ -104,6 +105,7 @@ exports.postSignIn = async function (userId, userPw, res) {
     }
 };
 
+// 닉네임 수정
 exports.editUser = async function (userId, userNickname) {
     try {
         console.log("editUser.userId:", userId)

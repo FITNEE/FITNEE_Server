@@ -23,6 +23,7 @@ router.post('/user/login', user.login);
 // jwtMiddleware 사용 방법은 api params에 써주기. -> 로직 보려면 patchUsers 클릭
 router.patch('/user/:userId', jwtMiddleware, user.patchUsers);
 
+// router.get('/auto-login', jwtMiddleware, user.autoLogin)
 
 // module.exports = function(app){
 //     const user = require('./userController');

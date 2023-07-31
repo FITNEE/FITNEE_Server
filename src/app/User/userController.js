@@ -20,7 +20,7 @@ exports.getTest = async function (req, res) {
 /**
  * API No. 1
  * API Name : 유저 생성 (회원가입) API
- * [POST] /app/users
+ * [POST] /app/user
  */
 exports.postUsers = async function (req, res) {
     /**
@@ -54,8 +54,31 @@ exports.postUsers = async function (req, res) {
     if (!regexEmail.test(userId)) return res.send(errResponse(baseResponse.SIGNUP_USERID_ERROR_TYPE));
 
     try {
+        // 닉네임 중복 체크
+        const nicknameExists = await userProvider.nicknameCheck(userNickname)
+        if (nicknameExists) {
+            return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME))
+        }
+
         // 회원 생성 호출
-        const signUpResponse = await userService.createUser(userId, userPw, userNickname, gender, height, weight, birthYear);
+        const signUpResponse = await userService.postSignUp(userId, userPw, userNickname, gender, height, weight, birthYear);
+
+        // 회원가입(signUp) 성공 시, auto Login을 처리하여 accessToken 발급
+        if (signUpResponse.isSuccess) {
+            // 로그인(signIn) 변수 할당
+            const signInResponse = await userService.postSignIn(userId, userPw, res)
+            
+            if (signInResponse.isSuccess) {
+                const accessToken = signInResponse.result.accessToken
+                // 로그인 성공 응답
+                return res.send(response(baseResponse.SUCCESS, {
+                    userId: userId,
+                    userNickname: userNickname,
+                    accessToken: accessToken,
+                    message: "로그인 성공",
+                }))
+            }
+        }
 
         // 회원가입 성공 응답
         return res.send(response(baseResponse.SUCCESS, {
@@ -71,7 +94,7 @@ exports.postUsers = async function (req, res) {
 /**
  * API No. 2
  * API Name : 유저 조회 API (+ 이메일로 검색 조회)
- * [GET] /app/users
+ * [GET] /app/user
  */
 exports.getUsers = async function (req, res) {
 
@@ -97,7 +120,7 @@ exports.getUsers = async function (req, res) {
 /**
  * API No. 3
  * API Name : 특정 유저 조회 API
- * [GET] /app/users/{userId}
+ * [GET] /app/user/{userId}
  */
 exports.getUserById = async function (req, res) {
 
@@ -116,11 +139,10 @@ exports.getUserById = async function (req, res) {
 /**
  * API No. 4
  * API Name : 로그인 API
- * [POST] /app/login
+ * [POST] /app/user/login
  * body : userId, userPw
  */
-exports.login = async function(req, res) {
-    const { userId, userPw } = req.body;
+exports.login = async function(userId, userPw, res) {
 
     // 유효성 검사 : userId와 userPw가 제공되었는지 체크
     if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
@@ -161,7 +183,7 @@ exports.login = async function(req, res) {
 /**
  * API No. 5
  * API Name : 회원 정보 수정 API + JWT + Validation
- * [PATCH] /app/users/:userId
+ * [PATCH] /app/user/:userId
  * path variable : userId
  * body : userNickname
  */
@@ -181,32 +203,44 @@ exports.patchUsers = async function (req, res) {
     console.log("patch.userNickname:", userNickname)
 
     // userId와 jwtMiddleware에서 불러온 userId 검증
-    if (userIdFromJWT != userId) {
-        res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
-    } else {
-        // userNickname이 없을 경우
-        if (!userNickname) return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
+    if (userIdFromJWT != userId) return res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
 
-        const editUserInfo = await userService.editUser(userId, userNickname)
-        return res.send(editUserInfo);
-    }
+    // userNickname이 없을 경우
+    if (!userNickname) return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
+
+    // userNickname이 중복일 경우
+    const userNicknameExists = await userProvider.nicknameCheck(userNickname)
+    if (userNicknameExists) return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME))
+
+    // 수정할 정보
+    const editUserInfo = await userService.editUser(userId, userNickname)
+    return res.send(editUserInfo);
 };
 
 
 
 
-
-
-
-
-
-
-
+/**
+ * API No. 5
+ * API Name : 자동 로그인
+ * [GET] /app/user/auto-login
+ * path variable : userId
+ * body : userNickname
+ */
 /** JWT 토큰 검증 API
  * [GET] /app/auto-login
+ * 230801 보류(박준규)
  */
-exports.check = async function (req, res) {
-    const userIdResult = req.verifiedToken.userId;
-    console.log(userIdResult);
-    return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS));
-};
+// exports.autoLogin = async function (req, res) {
+//     // jwtMiddleware에서 토큰 검증된 userId 호출
+//     const userIdResult = req.decoded.userId;
+//     console.log("autoLogin.userIdResult:", userIdResult);
+
+//     try {
+//         // 자동 로그인 성공
+//         return res.send(response(baseResponse.SUCCESS, { userId: userId }))
+//     } catch (error) {
+//         console.error(`Auto Login API Error: ${error.message}`)
+//         return res.send(errResponse(baseResponse.SERVER_ERROR))
+//     }
+// };
