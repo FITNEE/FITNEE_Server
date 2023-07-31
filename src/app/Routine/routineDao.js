@@ -1,4 +1,5 @@
 const lodash = require('lodash');
+const { exceptions } = require('winston');
 
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
@@ -32,25 +33,25 @@ async function selectRoutine(connection, routineIdx) {
         
         var routineDetailPickBy = lodash.pickBy(routineDetail);
         var detailContent = {};
+
         if (routineDetail) {
             var len = Object.keys(routineDetailPickBy).length-1;
             var detailItem = [];
-            detailContent.healthCategoryIdx = routineDetail.healthCategoryIdx;
-            if (!routineDetail.weight0) { 
-                for (var j=0; j<len; j++) {
+
+            if (!routineDetail.weight0)
+                for (var j=0; j<len; j++)
                     detailItem.push({
                         'rep' : routineDetail['rep'+String(j)]
                     });
-                }
-            } else {
-                for (var j=0; j<len/2; j++) {
+            else
+                for (var j=0; j<len/2; j++)
                     detailItem.push({
                         'rep' : routineDetail['rep'+String(j)],
                         'weight' : routineDetail['weight'+String(j)]
                     });
-                }
-            }
-            detailContent.content = detailItem;
+
+            detailContent['healthCategoryIdx'] = routineDetail.healthCategoryIdx;
+            detailContent['content'] = detailItem;
             routineContent.push(detailContent);
         }
     }
@@ -59,38 +60,74 @@ async function selectRoutine(connection, routineIdx) {
 };
 
 // 루틴 수정
-async function putRoutine(connection, routineIdx, routineContent) {
-    // for (var i=0; i<routineContent.length; i++) {
-    // }
-    const putRoutine = `
-                  INSERT INTO routineDetail (${Object.keys(routineContent[0]).toString()})
-                  VALUES (${Object.values(routineContent[0]).toString()})
-                  `;
+async function putRoutine(connection, userId, weekNum, routineIdx, routineContent) {
+    weekStr = ['monRoutineIdx', 'tueRoutineIdx', 'wedRoutineIdx', 'thuRoutineIdx', 'friRoutineIdx', 'satRoutineIdx', 'sunRoutineIdx']
+    const selectLastInsertIdQuery = `SELECT LAST_INSERT_ID()`;
+    var putRoutineContent = {};
 
-    console.log(Object.keys(routineContent[0]))
-    console.log(Object.values(routineContent[0]))
-    console.log(putRoutine);
+    for (var i=0; i<routineContent.length; i++) {
+        var detailContent = {};
 
-    await connection.query(putRoutine);
+        detailContent['healthCategoryIdx'] = routineContent[i].healthCategoryIdx;
+        for (var j=0; j<routineContent[i].content.length; j++) {
+            detailContent['rep'+String(j)] = routineContent[i].content[j].rep;
+            if (routineContent[i].content[j].weight)
+                detailContent['weight'+String(j)] = routineContent[i].content[j].weight;
+        }
+
+        const insertRoutineDetailQuery = `
+                          INSERT INTO routineDetail
+                          SET ?
+                          `;
+        await connection.query(insertRoutineDetailQuery, detailContent);
+
+        const [[responseInsertRoutineDetail]] = await connection.query(selectLastInsertIdQuery, detailContent);
+        putRoutineContent['detailIdx'+String(i)] = responseInsertRoutineDetail[`LAST_INSERT_ID()`];
+    }
+
+    const insertRoutine = `
+                      INSERT INTO routine
+                      SET ?
+                      `;
+    await connection.query(insertRoutine, putRoutineContent);
+
+    const [[resposneInsertRoutine]] = await connection.query(selectLastInsertIdQuery);
+    const updateRoutineQuery = `
+                      UPDATE routineCalendar
+                      SET ${weekStr[weekNum]} = ?
+                      WHERE userId = ?
+                      `;
+    deleteRoutine(connection, userId, weekNum, routineIdx);
+    await connection.query(updateRoutineQuery, [resposneInsertRoutine[`LAST_INSERT_ID()`], userId]);
 
     return ;
 };
 
 // 루틴 삭제
-async function deleteRoutine(connection, userId, routineIdx) {
-    const deleteRoutineCalendar = `
-                  UPDATE routineCalendar
-                  SET
-                      monRoutineIdx = CASE WHEN monRoutineIdx = ${routineIdx} THEN 0 ELSE monRoutineIdx END,
-                      tueRoutineIdx = CASE WHEN tueRoutineIdx = ${routineIdx} THEN 0 ELSE tueRoutineIdx END,
-                      wedRoutineIdx = CASE WHEN wedRoutineIdx = ${routineIdx} THEN 0 ELSE wedRoutineIdx END,
-                      thuRoutineIdx = CASE WHEN thuRoutineIdx = ${routineIdx} THEN 0 ELSE thuRoutineIdx END,
-                      friRoutineIdx = CASE WHEN friRoutineIdx = ${routineIdx} THEN 0 ELSE friRoutineIdx END,
-                      satRoutineIdx = CASE WHEN satRoutineIdx = ${routineIdx} THEN 0 ELSE satRoutineIdx END,
-                      sunRoutineIdx = CASE WHEN sunRoutineIdx = ${routineIdx} THEN 0 ELSE sunRoutineIdx END
-                  WHERE userId = ?;
+async function deleteRoutine(connection, userId, weekNum, routineIdx) {
+    weekStr = ['monRoutineIdx', 'tueRoutineIdx', 'wedRoutineIdx', 'thuRoutineIdx', 'friRoutineIdx', 'satRoutineIdx', 'sunRoutineIdx']
+    const selectRoutineQuery = `
+                  SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+                  FROM routine
+                  WHERE routineIdx = ?
                   `;
 
+    const [[responseDetailIdx]] = await connection.query(selectRoutineQuery, routineIdx);
+    const responseDetailIdxArray = Object.values(lodash.pickBy(responseDetailIdx));
+    for (var i=0; i<responseDetailIdxArray.length; i++) {
+        const deleteRoutineDetail = `
+                      UPDATE routineDetail
+                      SET status = '1'
+                      WHERE routineDetailIdx = ?
+                      `;
+        await connection.query(deleteRoutineDetail, responseDetailIdxArray[i]);
+    }
+
+    const deleteRoutineCalendar = `
+                  UPDATE routineCalendar
+                  SET ${weekStr[weekNum]} = 0
+                  WHERE userId = ?;
+                  `;
     const deleteRoutine = `
                   UPDATE routine
                   SET status = '1'

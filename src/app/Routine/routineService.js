@@ -4,10 +4,10 @@ const routineDao = require("./routineDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
-exports.putRoutine = async function (routineIdx, routineContent) {
+exports.putRoutine = async function (userId, weekNum, routineIdx, routineContent) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const putRoutine = await routineDao.putRoutine(connection, routineIdx, routineContent);
+        const putRoutine = await routineDao.putRoutine(connection, userId, weekNum, routineIdx, routineContent);
         connection.release();
     
         return response(baseResponse.SUCCESS, putRoutine);
@@ -17,10 +17,10 @@ exports.putRoutine = async function (routineIdx, routineContent) {
     }
 };
 
-exports.deleteRoutine = async function (userId, routineIdx) {
+exports.deleteRoutine = async function (userId, weekNum, routineIdx) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const deleteRoutine = await routineDao.deleteRoutine(connection, userId, routineIdx);
+        const deleteRoutine = await routineDao.deleteRoutine(connection, userId, weekNum, routineIdx);
         connection.release();
     
         return response(baseResponse.SUCCESS, deleteRoutine);
