@@ -34,17 +34,51 @@ tags:
     responses:
       '1000':
         description: 성공
+      '602':
+        description: 운동종목을 입력해 주세요
+
 
 /app/dictionary/exercisechat:
   get:
-    summuary: 운동 name으로 채팅내역 조회
-    params: name
-    description: 운동 name받아서 운동방법, 운동주의사항 return
+    summary: 운동 name으로 채팅내역 조회
+    parameters:
+      - name: name
+        in: query
+        required: true
+        description: 운동 name을 입력하세요.
+        schema:
+          type: string
+    description: 운동 name을 받아서 댓글내용과 댓글 수를 반환합니다.
     tags:
       - Dictionary
     responses:
       '1000':
         description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chatCount:
+                  type: integer
+                  description: 댓글 수
+                comments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      userIdx:
+                        type: integer
+                        description: 사용자 인덱스
+                      userNickname:
+                        type: string
+                        description: 사용자 닉네임
+                      text:
+                        type: string
+                        description: 댓글 내용
+      '602':
+        description: 운동종목을 입력해 주세요
+
 
 /app/dictionary/chatting:
   post:
@@ -79,4 +113,6 @@ tags:
       '603':
         description: 유저 닉네임을 입력해 주세요
       '604':
-        description: 댓글내용을 입력해 주세요    
+        description: 댓글내용을 입력해 주세요  
+      '4000':
+        description: DB error   
