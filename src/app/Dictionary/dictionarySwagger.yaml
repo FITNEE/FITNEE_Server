@@ -74,3 +74,9 @@ tags:
     responses:
       '1000':
         description: 성공
+      '602':
+        description: 운동종목을 입력해 주세요
+      '603':
+        description: 유저 닉네임을 입력해 주세요
+      '604':
+        description: 댓글내용을 입력해 주세요    
