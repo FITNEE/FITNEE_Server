@@ -15,7 +15,7 @@ async function selectUserUserId(connection, userId) {
                 FROM User
                 WHERE userId = ?;
                 `;
-  const [userIdRows] = await connection.query(selectUserUserIdQuery, userId);
+  const [userIdRows] = await connection.query(selectUserUserIdQuery, [userId]);
   return userIdRows;
 }
 
@@ -26,7 +26,7 @@ async function selectUserId(connection, userId) {
                  FROM User
                  WHERE userId = ?;
                  `;
-  const [userRow] = await connection.query(selectUserIdQuery, userId);
+  const [userRow] = await connection.query(selectUserIdQuery, [userId]);
   return userRow;
 }
 
@@ -50,9 +50,9 @@ async function getPasswordByUserId(connection, userId) {
     const getPasswordQuery = `
       SELECT userPw
       FROM User
-      WHERE userId = ?
-      AND status = 0;
+      WHERE userId = ? AND status = '1';
     `;
+    console.log("userId :", userId)
     const [passwordRows] = await connection.query(getPasswordQuery, userId);
     return passwordRows;
   } catch (err) {

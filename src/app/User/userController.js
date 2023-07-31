@@ -56,12 +56,12 @@ exports.postUsers = async function (req, res) {
     try {
         // 회원 생성 호출
         const signUpResponse = await userService.createUser(userId, userPw, userNickname, gender, height, weight, birthYear);
-        
-        // 토큰 발급
-        const token = userService.generateToken(signUpResponse.userId)
 
         // 회원가입 성공 응답
-        return res.send(response(baseResponse.SUCCESS, { accessToken: token }));
+        return res.send(response(baseResponse.SUCCESS, {
+            userId: userId,
+            userNickname: userNickname,
+         }));
     } catch (error) {
         logger.error(`회원 가입 API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
@@ -128,16 +128,23 @@ exports.login = async function(req, res) {
     
     // 
     try {
-        const signInResponse = await userService.postSignIn(userId, userPw);
+        const signInResponse = await userService.postSignIn(userId, userPw, res);
 
         if (!signInResponse.isSuccess) {
             return res.send(signInResponse)
         }
 
-        console.log(signInResponse)
-        const token = userService.generateToken(signInResponse.userId)
-
-        return res.send(response(baseResponse.SUCCESS, { accessToken: token }));
+        const accessToken = signInResponse.result.token
+        
+        // '토큰-> 쿠키' 설정
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 만료 시간 : 1시간
+        })
+        
+        return res.send(response(baseResponse.SUCCESS, { accessToken: accessToken }));
     } catch (error) {
         logger.error(`로그인 API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
