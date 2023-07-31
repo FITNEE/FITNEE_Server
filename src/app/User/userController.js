@@ -137,7 +137,7 @@ exports.login = async function(req, res) {
         const accessToken = signInResponse.result.token
         
         // '토큰-> 쿠키' 설정
-        res.cookie('user', token, {
+        res.cookie('accessToken', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'strict',
