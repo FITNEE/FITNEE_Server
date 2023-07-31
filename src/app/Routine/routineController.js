@@ -28,7 +28,7 @@ exports.getRoutineCalendar = async function (req, res) {
         if (!routineCalendar) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
         else return res.send(response(baseResponse.SUCCESS, routineCalendar));
     }
-}
+};
 
 /**
  * API Name : 루틴 조회 API
@@ -43,26 +43,38 @@ exports.getRoutine = async function (req, res) {
 
     if (!routine) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
     else return res.send(response(baseResponse.SUCCESS, routine));
-}
+};
 
 /**
  * API Name : 루틴 수정 API
- * [PUT] /app/routine
+ * [PUT] /app/routine/:routineIdx
  */
+exports.putRoutine = async function (req, res) {
+    /**
+     * Path Variable: routineIdx
+     * Body : routine (list object)
+     */
+    const routineIdx = req.params.routineIdx;
+    const routineContent = req.body;
+
+    const responsePutRoutine = await routineService.putRoutine(routineIdx, routineContent);
+
+    return res.send(responsePutRoutine);
+};
 
 /**
  * API Name : 루틴 삭제 API
- * [DELETE] /app/routine
+ * [DELETE] /app/routine/:routineIdx
  */
 exports.deleteRoutine = async function (req, res) {
     /**
-     * Body : userId
      * Path Variable : routineIdx
+     * Body : userId
      */
-    const userId = req.body.userId;
     const routineIdx = req.params.routineIdx;
+    const userId = req.body.userId;
 
-    const resposneRoutine = await routineService.deleteRoutine(userId, routineIdx);
+    const resposneDeleteRoutine = await routineService.deleteRoutine(userId, routineIdx);
 
-    return res.send(resposneRoutine);
-}
+    return res.send(resposneDeleteRoutine);
+};
