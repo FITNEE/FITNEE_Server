@@ -134,17 +134,23 @@ exports.login = async function(req, res) {
             return res.send(signInResponse)
         }
 
-        const accessToken = signInResponse.result.token
+        const accessToken = signInResponse.result.accessToken
+        // const refreshToken = signInResponse.result.refreshToken
+
+        console.log("login.accessToken:", accessToken)
         
         // '토큰-> 쿠키' 설정
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: true,
             sameSite: 'strict',
-            expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 만료 시간 : 1시간
+            expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 쿠키 만료 시간 : 1년
         })
         
-        return res.send(response(baseResponse.SUCCESS, { accessToken: accessToken }));
+        return res.send(response(baseResponse.SUCCESS, {
+             accessToken: accessToken,
+            //  refreshToken: refreshToken,
+            }));
     } catch (error) {
         logger.error(`로그인 API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
@@ -160,17 +166,25 @@ exports.login = async function(req, res) {
  * body : userNickname
  */
 exports.patchUsers = async function (req, res) {
-
     // jwt - userId, path variable :userId
+    // jwtMiddleware에서 발급된 decoded()를 받아오기
+    const userIdFromJWT = req.decoded.userId
+    console.log("patchUsers.userIdFromJWT:", userIdFromJWT)
+    console.log("patchUsers.req.decoded:", req.decoded)
 
-    const userIdFromJWT = req.verifiedToken.userId
-
+    // userId 값을 Params에 입력하기
     const userId = req.params.userId;
-    const userNickname = req.body.userNickname;
+    console.log("req.params:", req.params)
 
+    // userNickname 값을 body에 입력하기
+    const userNickname = req.body.userNickname;
+    console.log("patch.userNickname:", userNickname)
+
+    // userId와 jwtMiddleware에서 불러온 userId 검증
     if (userIdFromJWT != userId) {
         res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
     } else {
+        // userNickname이 없을 경우
         if (!userNickname) return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
 
         const editUserInfo = await userService.editUser(userId, userNickname)
