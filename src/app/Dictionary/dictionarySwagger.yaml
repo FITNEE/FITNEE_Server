@@ -4,25 +4,80 @@ tags:
 
 /app/dictionary:
   get:
-    summuary: 최근검색, 인기 키워드 조회(각 5개씩)
-    params: userIdx
-    description: userIdx로 최근검색기록, 인기 키워드 조회하는 api
+    summary: userIdx 받아서 최근 검색키워드 5개, 인기 검색 키워드 5개 조회
+    parameters:
+      - name: userIdx
+        in: query
+        required: true
+        description: userIdx를 입력하세요.
+        schema:
+          type: integer
+    description: userIdx를 받아서 최근 검색키워드 5개, 인기 검색 키워드 5개를 반환합니다.
     tags:
       - Dictionary
     responses:
       '1000':
         description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recentKeywords:
+                  type: array
+                  items:
+                    type: string
+                    description: 최근 검색 키워드
+                popularKeywords:
+                  type: array
+                  items:
+                    type: string
+                    description: 인기 검색 키워드
+      '2012':
+        description: userIdx를 입력해 주세요
+
 
 /app/dictionary/exerciseinfo:
   get:
-    summuary: parts로 운동정보
-    params: parts
-    description: parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
+    summary: 운동 parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
+    parameters:
+      - name: parts
+        in: query
+        required: true
+        description: 운동 parts를 입력하세요.
+        schema:
+          type: string
+    description: 운동 parts를 받아서 운동정보를 반환합니다.
     tags:
       - Dictionary
     responses:
       '1000':
         description: 성공
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 운동 이름
+                  muscle:
+                    type: string
+                    description: 작용 근육
+                  equipment:
+                    type: string
+                    description: 사용하는 장비
+                  time:
+                    type: string
+                    description: 소요 시간
+                  calorie:
+                    type: string
+                    description: 소모 칼로리
+      '601':
+        description: 운동부위를 입력해 주세요
+
 
 /app/dictionary/exercisemethod:
   get:
