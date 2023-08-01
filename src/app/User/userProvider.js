@@ -75,8 +75,9 @@ exports.accountCheck = async function (userId) {
 
 // 닉네임 중복 검사
 exports.nicknameCheck = async function (userNickname) {
-  const connection = await pool.getConnection(async (conn) => conn)
-  const userNicknameResult = await userDao.selectUserByNickname(connection, userNickname)
-  connection.release()
-  return userNicknameResult.length > 0
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userNicknameResult = await userDao.selectUserNickname(connection, userNickname);
+  connection.release();
+  
+  return userNicknameResult;
 }

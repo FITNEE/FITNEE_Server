@@ -23,7 +23,7 @@ router.post('/login', user.login);
 
 // API for modifying member information (JWT verification and validation - using jwtMiddleware in method chaining method)
 // jwtMiddleware 사용 방법은 api params에 써주기. -> 로직 보려면 patchUsers 클릭
-router.patch('/:userId', jwtMiddleware, user.patchUsers);
+router.patch('/', jwtMiddleware, user.patchUsers);
 
 // router.get('/auto-login', jwtMiddleware, user.autoLogin)
 

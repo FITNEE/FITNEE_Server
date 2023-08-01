@@ -4,13 +4,10 @@ const { errResponse } = require("./response")
 const baseResponse = require("./baseResponseStatus");
 
 
-const jwtMiddleware = (req, res, next) => {
-    // 헤더 토큰 발급 검증
-    if(req.headers['authorization']) {
-        // token이 앞에 접두사로 'Bearer ${token}' 이렇게 나타남. 그래서 접두사 Bearer과 '(공백)'을 지워줌. 공백이 %20를 뜻해서 적음
-        const token = req.headers['authorization'].split('Bearer%20')[1] || req.headers['x-access-token']
-        console.log("jwtMiddleware.token:", token)
-
+const jwtMiddleware = async function(req, res, next) {
+    if (req.headers.cookie) {
+        const token = req.headers.cookie.slice(12);
+        
         /** jwt 검증
          * 쿠키에 저장된 token과 secret키를 비교
          * 비동기 작업
@@ -34,9 +31,8 @@ const jwtMiddleware = (req, res, next) => {
             next() // 다음 미들웨어 또는 요청 핸들러로 이동
         })
 
-    } else {
-        res.send(errResponse(baseResponse.TOKEN_EMPTY))
-    }
+    } else res.send(errResponse(baseResponse.TOKEN_EMPTY));
+
     // // 헤더에 있는 token 불러오기
     // const headers = req.headers['authorization']
     // console.log("headers:", headers)

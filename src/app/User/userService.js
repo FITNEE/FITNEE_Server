@@ -44,7 +44,7 @@ exports.postSignUp = async function (userId, userPw, userNickname, gender, heigh
 };
 
 // 로그인
-exports.postSignIn = async function (userId, userPw, res) {
+exports.postSignIn = async function (userId, userPw) {
     try {
         // 이메일 여부 확인
         const userIdRows = await userProvider.userIdCheck(userId);
