@@ -181,6 +181,9 @@ exports.login = async function(req, res) {
  * body : userNickname
  */
 exports.patchUsers = async function (req, res) {
+    console.log(req.headers);
+    console.log("CONTROLLER");
+
     // jwt - userId, path variable :userId
     // jwtMiddleware에서 발급된 decoded()를 받아오기
     const userIdFromJWT = req.decoded.userId
