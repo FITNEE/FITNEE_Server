@@ -1,23 +1,9 @@
 const express = require('./config/express');
 const {logger} = require('./config/winston');
-const cookieParser = require('cookie-parser')
-const { swaggerUi, specs } = require("./swagger/swagger")
+// const cookieParser = require('cookie-parser');
+// const { swaggerUi, specs } = require("./swagger/swagger");
 
-const userRoute = require('./src/app/User/userRoute')
-
-const app = express()
-
-// api 실행
-app.use("/", userRoute)
-
-app.use(cookieParser())
-app.use("/", swaggerUi.serve, swaggerUi.setup(specs))
-
-/**
- * 파라미터 변수 뜻
- * req : request 요청
- * res : response 응답
- */
+// const userRoute = require('./src/app/User/userRoute')
 
 /**
  * @path {GET} https://gpthealth.shop/
@@ -25,6 +11,6 @@ app.use("/", swaggerUi.serve, swaggerUi.setup(specs))
  */
 
 const port = 3000;
-app.listen(port, () => {
+express().listen(port, () => {
     logger.info(`${process.env.NODE_ENV} - API Server Start At Port ${port}`);
 });
