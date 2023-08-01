@@ -133,7 +133,9 @@ exports.getUserById = async function (req, res) {
  * [POST] /app/user/login
  * body : userId, userPw
  */
-exports.login = async function(userId, userPw, res) {
+exports.login = async function(req, res) {
+    const userId = req.body.userId;
+    const userPw = req.body.userPw;
 
     // 유효성 검사 : userId와 userPw가 제공되었는지 체크
     if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
@@ -185,16 +187,9 @@ exports.patchUsers = async function (req, res) {
     console.log("patchUsers.userIdFromJWT:", userIdFromJWT)
     console.log("patchUsers.req.decoded:", req.decoded)
 
-    // userId 값을 Params에 입력하기
-    const userId = req.params.userId;
-    console.log("req.params:", req.params)
-
     // userNickname 값을 body에 입력하기
     const userNickname = req.body.userNickname;
     console.log("patch.userNickname:", userNickname)
-
-    // userId와 jwtMiddleware에서 불러온 userId 검증
-    if (userIdFromJWT != userId) return res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
 
     // userNickname이 없을 경우
     if (!userNickname) return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));

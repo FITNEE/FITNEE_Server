@@ -8,7 +8,8 @@ const jwtMiddleware = (req, res, next) => {
     // 헤더 토큰 발급 검증
     if(req.headers['authorization']) {
         // token이 앞에 접두사로 'Bearer ${token}' 이렇게 나타남. 그래서 접두사 Bearer과 '(공백)'을 지워줌. 공백이 %20를 뜻해서 적음
-        const token = req.headers['authorization'].split('Bearer%20')[1] || req.headers['x-access-token']
+        console.log(req.headers);
+        const token = req.headers['authorization'] || req.headers['x-access-token']
         console.log("jwtMiddleware.token:", token)
 
         /** jwt 검증
