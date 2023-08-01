@@ -2,7 +2,7 @@ module.exports = function(app){
     const routine = require('./routineController');
 
     // 1. 루틴 등록 API
-    // app.post('/app/routine', routine.getRoutine);
+    // app.post('/app/routine', routine.postRoutine);
 
     // 2. 루틴 일정 조회 API
     app.get('/app/routines', routine.getRoutineCalendar);
