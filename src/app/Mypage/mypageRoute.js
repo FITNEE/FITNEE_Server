@@ -1,25 +1,32 @@
-module.exports = function(app){
-    const mypage = require('./mypageController');
+const express = require('express');
+const router = express.Router();
+const jwtMiddleware = require('../../../config/jwtMiddleware');
+const mypage = require('./mypageController');
 
-    // 1. 
-    app.get('/app/mypage', mypage.getExercisedData);
+/**
+ * Mypage API
+ * /app/mypage
+ */
 
-    // 2. 
-    //app.get('/app/mypage', mypage.getExerciseInfo);
+// 1. 
+router.get('/', mypage.getExercisedData);
 
-    // 3. 
-    app.get('/app/record', mypage.getExerciseRecord);
+// 2. 
+//router.get('/', mypage.getExerciseInfo);
 
-    // 4. 유저 정보 조회(
-    //app.get('/app/mypage', mypage.getUserData);
+// 3. 
+router.get('/record', mypage.getExerciseRecord);
 
-    // 5. 유저 정보 업데이트(
-    //app.patch('/app/mypage', mypage.updateUserData);
+// 4. 유저 정보 조회(
+//router.get('/', mypage.getUserData);
 
-    // 6. 비밀번호 수정
-    //app.patch('/app/mypage', mypage.updatePassword);
+// 5. 유저 정보 업데이트(
+//router.patch('/', mypage.updateUserData);
 
-    // 7. user테이블에 동일 닉네임 존재하는지 확인
-    app.get('/app/nickname', mypage.checkUserNameValid);
+// 6. 비밀번호 수정
+//router.patch('/', mypage.updatePassword);
+
+// 7. user테이블에 동일 닉네임 존재하는지 확인
+router.get('/nickname', mypage.checkUserNameValid);
     
-};
+module.exports = router;

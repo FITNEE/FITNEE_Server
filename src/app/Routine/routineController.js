@@ -8,6 +8,9 @@ const {response, errResponse} = require("../../../config/response");
  * API Name : 루틴 등록 API
  * [POST] /app/routine
  */
+// exports.postRoutine = async function (req, res) {
+
+// };
 
 
 /**
@@ -51,13 +54,15 @@ exports.getRoutine = async function (req, res) {
  */
 exports.putRoutine = async function (req, res) {
     /**
-     * Path Variable: routineIdx
-     * Body : routine (list object)
+     * Path Variable : routineIdx
+     * Body : userId, weekNum, routine
      */
     const routineIdx = req.params.routineIdx;
-    const routineContent = req.body;
+    const userId = req.body.userId;
+    const weekNum = req.body.weekNum;
+    const routineContent = req.body.routine;
 
-    const responsePutRoutine = await routineService.putRoutine(routineIdx, routineContent);
+    const responsePutRoutine = await routineService.putRoutine(userId, weekNum, routineIdx, routineContent);
 
     return res.send(responsePutRoutine);
 };
@@ -69,12 +74,13 @@ exports.putRoutine = async function (req, res) {
 exports.deleteRoutine = async function (req, res) {
     /**
      * Path Variable : routineIdx
-     * Body : userId
+     * Body : userId, weekNum
      */
     const routineIdx = req.params.routineIdx;
     const userId = req.body.userId;
+    const weekNum = req.body.weekNum;
 
-    const resposneDeleteRoutine = await routineService.deleteRoutine(userId, routineIdx);
+    const resposneDeleteRoutine = await routineService.deleteRoutine(userId, weekNum, routineIdx);
 
     return res.send(resposneDeleteRoutine);
 };

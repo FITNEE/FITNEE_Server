@@ -1,18 +1,26 @@
-module.exports = function(app){
-    const routine = require('./routineController');
+const express = require('express');
+const router = express.Router();
+const jwtMiddleware = require('../../../config/jwtMiddleware');
+const routine = require('./routineController');
 
-    // 1. 루틴 등록 API
-    // app.post('/app/routine', routine.getRoutine);
+/**
+ * Routine API
+ * /app/routine
+ */
 
-    // 2. 루틴 일정 조회 API
-    app.get('/app/routines', routine.getRoutineCalendar);
+// 1. 루틴 등록 API
+// router.post('/', routine.postRoutine);
 
-    // 3. 루틴 조회 API
-    app.get('/app/routine/:routineIdx', routine.getRoutine);
+// 2. 루틴 일정 조회 API
+router.get('/', routine.getRoutineCalendar);
 
-    // 4. 루틴 수정 API
-    app.put('/app/routine/:routineIdx', routine.putRoutine);
+// 3. 루틴 조회 API
+router.get('/:routineIdx', routine.getRoutine);
 
-    // 4. 루틴 삭제 API
-    app.delete('/app/routine/:routineIdx', routine.deleteRoutine);
-};
+// 4. 루틴 수정 API
+router.put('/:routineIdx', routine.putRoutine);
+
+// 4. 루틴 삭제 API
+router.delete('/:routineIdx', routine.deleteRoutine);
+
+module.exports = router;

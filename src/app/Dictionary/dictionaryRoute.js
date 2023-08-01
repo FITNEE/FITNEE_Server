@@ -1,19 +1,26 @@
-module.exports = function(app){
-    const mypage = require('./dictionaryController');
-    const jwtMiddleware = require('../../../config/jwtMiddleware');
+const express = require('express');
+const router = express.Router();
+const jwtMiddleware = require('../../../config/jwtMiddleware');
+const mypage = require('./dictionaryController');
 
-    // 1. 
-    app.get('/app/dictionary', mypage.getKeywordByIdx);
+/**
+ * Dictionary API
+ * /app/dictionary
+ */
 
-    // 2.
-    app.get('/app/dictionary/exerciseinfo', mypage.getInformationByparts);
+// 1. 
+router.get('/', mypage.getKeywordByIdx);
 
-    // 3.
-    app.get('/app/dictionary/exercisemethod', mypage.getMethodByName);
+// 2.
+router.get('/exerciseinfo', mypage.getInformationByparts);
 
-    // 4.
-    app.get('/app/dictionary/exercisechat', mypage.getChattingByName);
+// 3.
+router.get('/exercisemethod', mypage.getMethodByName);
 
-    // 5.
-    app.post('/app/dictionary/chatting', mypage.postChatting);
-};
+// 4.
+router.get('/exercisechat', mypage.getChattingByName);
+
+// 5.
+router.post('/chatting', mypage.postChatting);
+
+module.exports = router;

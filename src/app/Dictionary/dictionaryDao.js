@@ -66,7 +66,8 @@ async function selectExerciseChatting(connection, name) {
     const selectExerciseChatInfoQuery = `
         SELECT HC.userIdx,
         CASE WHEN UC.status = 2 THEN '(알수없음)' ELSE UC.userNickname END AS userNickname,
-        HC.text
+        HC.text,
+        HC.status
         FROM healthChatting AS HC
         JOIN healthCategory AS HCh ON HC.healthCategoryName = HCh.name
         JOIN User AS UC ON HC.userIdx = UC.userIdx
