@@ -8,6 +8,9 @@ const {response, errResponse} = require("../../../config/response");
  * API Name : 루틴 등록 API
  * [POST] /app/routine
  */
+// exports.postRoutine = async function (req, res) {
+
+// };
 
 
 /**
