@@ -23,13 +23,13 @@ module.exports = function () {
     const routineRoute = require('../src/app/Routine/routineRoute');
     const mypageRoute = require('../src/app/Mypage/mypageRoute');
     const dictionaryRoute = require('../src/app/Dictionary/dictionaryRoute');
-    const processRoute = require('../src/app/Dictionary/processRoute');
+    // const processRoute = require('../src/app/Process/processRoute');
     
     app.use('/app/user', userRoute);
     app.use('/app/routine', routineRoute);
     app.use('/app/mypage', mypageRoute);
     app.use('/app/dictionary', dictionaryRoute);
-    app.use('/app/process', processRoute);
+    // app.use('/app/process', processRoute);
 
     const {swaggerUi, specs} = require("./swagger");
     app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
