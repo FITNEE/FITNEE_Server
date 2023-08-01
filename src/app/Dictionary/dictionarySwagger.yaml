@@ -120,7 +120,7 @@ tags:
         description: 운동 name을 입력하세요.
         schema:
           type: string
-    description: 운동 name을 받아서 댓글내용과 댓글 수를 반환합니다.
+    description: 운동 name을 받아서 댓글내용(userIdx, userNickname, text, status(댓글 삭제, 수정 여부(0기존, 1삭제, 2수정) / 댓글 수를 반환합니다.
     tags:
       - Dictionary
     responses:
