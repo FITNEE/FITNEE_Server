@@ -48,6 +48,7 @@ module.exports = {
     DICTIONARY_NAME_EMPTY : { "isSuccess": false, "code": 602, "message":"운동종목을 입력해 주세요." },
     DICTIONARY_USERNICKNAME_EMPTY : { "isSuccess": false, "code": 603, "message":"유저 닉네임을 입력해 주세요." },
     DICTIONARY_TEXT_EMPTY : { "isSuccess": false, "code": 604, "message":"채팅내용을 입력해 주세요." },
+    DICTIONARY_HEALTHCHATTINGIDX_EMPTY: { "isSuccess": false, "code": 605, "message":"app/dictionary/exercisechat에서 get한 healthChattingIdx를 입력해 주세요." },
 
     //Request error
 
