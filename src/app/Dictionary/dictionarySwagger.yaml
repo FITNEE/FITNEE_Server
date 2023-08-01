@@ -148,6 +148,9 @@ tags:
                       text:
                         type: string
                         description: 댓글 내용
+                      status:
+                        type: integer
+                        description: 댓글 삭제, 수정 여부(0기존, 1삭제, 2수정)
       '602':
         description: 운동종목을 입력해 주세요
 
