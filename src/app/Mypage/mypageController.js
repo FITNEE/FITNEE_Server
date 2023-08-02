@@ -91,14 +91,20 @@ exports.updateUserData = async function (req, res) {
 
 /**
  * API No. 6
- * API Name :
- * [GET] /app/
+ * API Name : 토큰으로 유저 검증후 userPw 수정
+ * [PUT] /app/updatepwd
  */
 exports.updatePassword = async function (req, res) {
 
-    /**
-     * Query String: userID
-     */
+    exports.updateUserData = async function (req, res) {
+        const userIdFromJWT = req.decoded.userId;
+        const { userNickname, birthYear } = req.body;
+    
+        if (!userNickname) return res.send(errResponse(baseResponse.MYPAGE_USERNICKNAME_EMPTY));
+        if (!birthYear) return res.send(errResponse(baseResponse.MYPAGE_BIRTHYEAR_EMPTY));
+        const updateUserInfo = await mypageProvider.updateUser(userIdFromJWT, userNickname, birthYear);
+        return res.send(response(baseResponse.SUCCESS));
+    }
     
 }
 
