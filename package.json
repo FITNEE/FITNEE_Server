@@ -23,13 +23,14 @@
     "mysql2": "^2.0.0",
     "nodemon": "^2.0.22",
     "openai": "^3.3.0",
-    "regex-email": "^1.0.2",
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.2.1"
+    "regex-email": "^1.0.2"
   },
   "devDependencies": {
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.2.1",
     "swagger-autogen": "^2.23.5",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "child_process": "^1.0.2"
   }
 }

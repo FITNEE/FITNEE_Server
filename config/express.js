@@ -2,6 +2,7 @@ const express = require('express');
 const compression = require('compression');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
+const {exec} = require('child_process');
 var cors = require('cors');
 
 module.exports = function () {
@@ -30,6 +31,17 @@ module.exports = function () {
     app.use('/app/mypage', mypageRoute);
     app.use('/app/dictionary', dictionaryRoute);
     // app.use('/app/process', processRoute);
+
+    app.post('/github-webhook', (req, res) => {
+        exec('cd /home/ubuntu/git_clone/healthgpt_backend && git pull', (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+            console.log(stdout);
+            res.sendStatus(200);
+        });
+    });
 
     const {swaggerUi, specs} = require("./swagger");
     app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
