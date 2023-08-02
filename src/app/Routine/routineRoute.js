@@ -12,15 +12,15 @@ const routine = require('./routineController');
 // router.post('/', routine.postRoutine);
 
 // 2. 루틴 일정 조회 API
-router.get('/', routine.getRoutineCalendar);
+router.get('/', jwtMiddleware, routine.getRoutineCalendar);
 
 // 3. 루틴 조회 API
-router.get('/:routineIdx', routine.getRoutine);
+router.get('/:routineIdx', jwtMiddleware, routine.getRoutine);
 
 // 4. 루틴 수정 API
-router.put('/:routineIdx', routine.putRoutine);
+router.put('/:routineIdx', jwtMiddleware, routine.putRoutine);
 
 // 4. 루틴 삭제 API
-router.delete('/:routineIdx', routine.deleteRoutine);
+router.delete('/:routineIdx', jwtMiddleware, routine.deleteRoutine);
 
 module.exports = router;

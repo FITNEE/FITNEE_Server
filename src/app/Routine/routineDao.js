@@ -4,11 +4,12 @@ const { exceptions } = require('winston');
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
     const selectRoutineCalendarQuery = `
+                  SELECT @temp := ?;
                   SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
                   FROM routineCalendar
-                  WHERE status = 0 AND userId = ?
+                  WHERE status = 0 AND userId = @temp COLLATE utf8mb4_unicode_ci;
                   `;
-    const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+    const [routineCalendar] = await connection.query(selectRoutineCalendarQuery, userId);
     return routineCalendar;
 };
 

@@ -15,13 +15,13 @@ const {response, errResponse} = require("../../../config/response");
 
 /**
  * API Name : 루틴 일정 조회 API
- * [GET] /app/routines
+ * [GET] /app/routine
  */
 exports.getRoutineCalendar = async function (req, res) {
     /**
-     * Query Parameters : userId
+     * Decoded : userId
      */
-    const userId = req.query.userId;
+    const userId = req.decoded.userId;
 
     if  (!userId) {
         return res.send(errResponse(baseResponse.QUREY_PARAMETER_WRONG));
@@ -54,11 +54,12 @@ exports.getRoutine = async function (req, res) {
  */
 exports.putRoutine = async function (req, res) {
     /**
+     * Decoded: userId
      * Path Variable : routineIdx
-     * Body : userId, weekNum, routine
+     * Body : weekNum, routine
      */
+    const userId = req.decoded.userId;
     const routineIdx = req.params.routineIdx;
-    const userId = req.body.userId;
     const weekNum = req.body.weekNum;
     const routineContent = req.body.routine;
 
@@ -73,11 +74,12 @@ exports.putRoutine = async function (req, res) {
  */
 exports.deleteRoutine = async function (req, res) {
     /**
+     * Decoded: userId
      * Path Variable : routineIdx
-     * Body : userId, weekNum
+     * Body : weekNum
      */
-    const routineIdx = req.params.routineIdx;
     const userId = req.body.userId;
+    const routineIdx = req.params.routineIdx;
     const weekNum = req.body.weekNum;
 
     const resposneDeleteRoutine = await routineService.deleteRoutine(userId, weekNum, routineIdx);
