@@ -18,7 +18,7 @@ router.get('/', jwtMiddleware, mypage.getExercisedData);
 router.get('/record', mypage.getExerciseRecord);
 
 // 4. 유저 정보 조회(
-//router.get('/', mypage.getUserData);
+router.get('/userinfo',jwtMiddleware, mypage.getUserData);
 
 // 5. 유저 정보 업데이트(
 //router.patch('/', mypage.updateUserData);
