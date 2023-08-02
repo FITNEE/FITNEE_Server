@@ -61,8 +61,7 @@ async function selectRoutine(connection, routineIdx) {
 };
 
 // 루틴 수정
-async function putRoutine(connection, userId, weekNum, routineIdx, routineContent) {
-    weekStr = ['monRoutineIdx', 'tueRoutineIdx', 'wedRoutineIdx', 'thuRoutineIdx', 'friRoutineIdx', 'satRoutineIdx', 'sunRoutineIdx']
+async function putRoutine(connection, userId, routineIdx, routineContent) {
     const selectLastInsertIdQuery = `SELECT LAST_INSERT_ID()`;
     var putRoutineContent = {};
 
@@ -94,18 +93,28 @@ async function putRoutine(connection, userId, weekNum, routineIdx, routineConten
 
     const [[resposneInsertRoutine]] = await connection.query(selectLastInsertIdQuery);
     const updateRoutineQuery = `
+                      SELECT @routineIdx := ?;
+                      SELECT @changeIdx := ?;
+
                       UPDATE routineCalendar
-                      SET ${weekStr[weekNum]} = ?
-                      WHERE userId = ?
-                      `;
-    deleteRoutine(connection, userId, weekNum, routineIdx);
-    await connection.query(updateRoutineQuery, [resposneInsertRoutine[`LAST_INSERT_ID()`], userId]);
+                      SET 
+                        monRoutineIdx = IF(@routineIdx = monRoutineIdx, @changeIdx, monRoutineIdx),
+                        tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, @changeIdx, tueRoutineIdx),
+                        wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, @changeIdx, wedRoutineIdx),
+                        thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, @changeIdx, thuRoutineIdx),
+                        friRoutineIdx = IF(@routineIdx = friRoutineIdx, @changeIdx, friRoutineIdx),
+                        satRoutineIdx = IF(@routineIdx = satRoutineIdx, @changeIdx, satRoutineIdx),
+                        sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
+                      WHERE userId = ?;
+                    `;
+    deleteRoutine(connection, userId, routineIdx);
+    await connection.query(updateRoutineQuery, [routineIdx, resposneInsertRoutine[`LAST_INSERT_ID()`], userId]);
 
     return ;
 };
 
 // 루틴 삭제
-async function deleteRoutine(connection, userId, weekNum, routineIdx) {
+async function deleteRoutine(connection, userId, routineIdx) {
     weekStr = ['monRoutineIdx', 'tueRoutineIdx', 'wedRoutineIdx', 'thuRoutineIdx', 'friRoutineIdx', 'satRoutineIdx', 'sunRoutineIdx']
     const selectRoutineQuery = `
                   SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
@@ -125,8 +134,17 @@ async function deleteRoutine(connection, userId, weekNum, routineIdx) {
     }
 
     const deleteRoutineCalendar = `
+                  SELECT @routineIdx := ?;
+
                   UPDATE routineCalendar
-                  SET ${weekStr[weekNum]} = 0
+                  SET 
+                    monRoutineIdx = IF(@routineIdx = monRoutineIdx, 0, monRoutineIdx),
+                    tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, 0, tueRoutineIdx),
+                    wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, 0, wedRoutineIdx),
+                    thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, 0, thuRoutineIdx),
+                    friRoutineIdx = IF(@routineIdx = friRoutineIdx, 0, friRoutineIdx),
+                    satRoutineIdx = IF(@routineIdx = satRoutineIdx, 0, satRoutineIdx),
+                    sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, 0, sunRoutineIdx)
                   WHERE userId = ?;
                   `;
     const deleteRoutine = `
@@ -136,7 +154,7 @@ async function deleteRoutine(connection, userId, weekNum, routineIdx) {
                   `;
 
     await Promise.all([
-        connection.query(deleteRoutineCalendar, [userId]),
+        connection.query(deleteRoutineCalendar, [routineIdx, userId]),
         connection.query(deleteRoutine, [routineIdx])
     ]);
 
