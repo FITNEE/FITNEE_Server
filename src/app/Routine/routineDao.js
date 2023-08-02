@@ -11,7 +11,7 @@ async function insertRoutine(connection, openai, userId, info) {
 
     // executeGPT(openai);
 
-    // console.log((responseUserInfo.gender==1) ? "male" : "female");
+    console.log((responseUserInfo.gender==1) ? "male" : "female");
     // console.log(responseUserInfo.birthYear);
     // console.log(responseUserInfo.height);
     // console.log(responseUserInfo.weight);
