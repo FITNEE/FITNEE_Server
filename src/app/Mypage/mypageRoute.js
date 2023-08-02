@@ -9,7 +9,7 @@ const mypage = require('./mypageController');
  */
 
 // 1. 
-router.get('/', mypage.getExercisedData);
+router.get('/', jwtMiddleware, mypage.getExercisedData);
 
 // 2. 
 //router.get('/', mypage.getExerciseInfo);
