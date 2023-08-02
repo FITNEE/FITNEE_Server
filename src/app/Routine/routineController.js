@@ -56,14 +56,13 @@ exports.putRoutine = async function (req, res) {
     /**
      * Decoded: userId
      * Path Variable : routineIdx
-     * Body : weekNum, routine
+     * Body : routine
      */
     const userId = req.decoded.userId;
     const routineIdx = req.params.routineIdx;
-    const weekNum = req.body.weekNum;
     const routineContent = req.body.routine;
 
-    const responsePutRoutine = await routineService.putRoutine(userId, weekNum, routineIdx, routineContent);
+    const responsePutRoutine = await routineService.putRoutine(userId, routineIdx, routineContent);
 
     return res.send(responsePutRoutine);
 };
@@ -76,13 +75,11 @@ exports.deleteRoutine = async function (req, res) {
     /**
      * Decoded: userId
      * Path Variable : routineIdx
-     * Body : weekNum
      */
     const userId = req.body.userId;
     const routineIdx = req.params.routineIdx;
-    const weekNum = req.body.weekNum;
 
-    const resposneDeleteRoutine = await routineService.deleteRoutine(userId, weekNum, routineIdx);
+    const resposneDeleteRoutine = await routineService.deleteRoutine(userId, routineIdx);
 
     return res.send(resposneDeleteRoutine);
 };

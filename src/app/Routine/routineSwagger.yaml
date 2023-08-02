@@ -87,12 +87,8 @@ tags:
           schema:
             type: object
             required:
-              - weekNum
               - routine
             properties:
-              'weekNum':
-                type: integer
-                example: 1
               'routine':
                 type: object
                 properties:
