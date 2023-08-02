@@ -14,7 +14,7 @@ exports.postRoutine = async function (req, res) {
      * Body : info
      */
     const userId = req.decoded.userId;
-    const info = req.body.info;
+    const info = req.body;
 
     const responsePostRoutine = await routineService.insertRoutine(userId, info);
 
@@ -64,7 +64,7 @@ exports.putRoutine = async function (req, res) {
      */
     const userId = req.decoded.userId;
     const routineIdx = req.params.routineIdx;
-    const routineContent = req.body.routine;
+    const routineContent = req.body;
 
     const responsePutRoutine = await routineService.updateRoutine(userId, routineIdx, routineContent);
 

@@ -3,14 +3,24 @@ const { exceptions } = require('winston');
 
 async function insertRoutine(connection, openai, userId, info) {
     const selectUserInfo = `
-                  SELECT birthYear, height, weight
+                  SELECT birthYear, gender, height, weight
                   FROM User
                   WHERE userId = ?
                   `;
-    const [responseUserInfo] = await connection.query(selectUserInfo, userId);
+    const [[responseUserInfo]] = await connection.query(selectUserInfo, userId);
 
-    console.log(responseUserInfo);
+    // executeGPT(openai);
 
+    console.log((responseUserInfo.gender==1) ? "male" : "female");
+    console.log(responseUserInfo.birthYear);
+    console.log(responseUserInfo.height);
+    console.log(responseUserInfo.weight);
+    console.log(info);
+    console.log(info.RM);
+    console.log(info.targets);
+    console.log(info.place);
+    console.log(info.dayOfWeeks);
+    
     return responseUserInfo;
 };
 
@@ -174,10 +184,10 @@ async function deleteRoutine(connection, userId, routineIdx) {
     return ;
 }
 
-async function executeGPT(gender, age, tall, weight, RM, targets, place, dayOfWeeks) {
-    var rmSentence = "";
-    if (RM) rmSentence = `I think I can lift up to ${RM}kg when I do squats to the maximum.`;
-    else rmSentence = `I don't even know how many squats I can do at a time.`;
+async function executeGPT(openai, gender, age, tall, weight, RM, targets, place, dayOfWeeks) {
+    const rmSentence = (RM)
+                        ? `I think I can lift up to ${RM}kg when I do squats to the maximum.`
+                        : `I don't even know how many squats I can do at a time.`;
 
     const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo-16k",

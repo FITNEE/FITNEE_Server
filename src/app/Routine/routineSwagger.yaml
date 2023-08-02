@@ -3,6 +3,55 @@ tags:
   description: 루틴 관련 API - 박해승
 
 /app/routine:
+  post:
+    tags:
+      - Routine
+    summary: 루틴 생성 API
+    description: GPT를 활용하여 루틴을 생성하는 API
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - RM
+              - targets
+              - place
+              - dayOfWeeks
+            properties:
+              'RM':
+                type: integer
+                example: 70
+              'targets':
+                type: array
+                items:
+                  type: string
+                  example: ["shoulder", "back"]
+              'place':
+                type: string
+                example: "gym"
+              'dayOfWeeks':
+                type: array
+                items:
+                  type: string
+                  example: ["Monday", "Wednesday"]
+    responses:
+      '1000':
+        description: 성공 - 생성한 루틴들을 반환해줍니다
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'isSuccess':
+                  type: boolean
+                  example: true
+                'code':
+                  type: integer
+                  example: 1000
+                'message':
+                  type: string
+                  example: '성공'
   get:
     tags:
       - Routine
@@ -87,24 +136,22 @@ tags:
           schema:
             type: object
             required:
-              - routine
+              - healthCategoryIdx
+              - content
             properties:
-              'routine':
-                type: object
-                properties:
-                  'healthCategoryIdx':
-                    type: integer
-                    example: 2
-                  'content':
-                    type: array
-                    items:
-                      properties:
-                        'rep':
-                          type: integer
-                          example: 10
-                        'weight':
-                          type: integer
-                          example: 100
+              'healthCategoryIdx':
+                type: integer
+                example: 2
+              'content':
+                type: array
+                items:
+                  properties:
+                    'rep':
+                      type: integer
+                      example: 10
+                    'weight':
+                      type: integer
+                      example: 100
     responses:
       '1000':
         description: 성공
