@@ -13,7 +13,7 @@ router.post('/github-webhook', (req, res) => {
     });
 });
 
-router.post('/npm-install', (req, res) => {
+router.get('/npm-install', (req, res) => {
     exec('cd /home/ubuntu/git_clone/healthgpt_backend && npm install', (err, stdout, stderr) => {
         if (err) {
             console.error(err);
