@@ -21,5 +21,5 @@ router.post('/npm-install', (req, res) => {
         }
         console.log(stdout);
         res.sendStatus(200);
-    })
-})
+    });
+});
