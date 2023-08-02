@@ -23,3 +23,5 @@ router.post('/npm-install', (req, res) => {
         res.sendStatus(200);
     });
 });
+
+module.exports = router;
