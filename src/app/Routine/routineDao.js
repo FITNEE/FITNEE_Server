@@ -174,7 +174,11 @@ async function deleteRoutine(connection, userId, routineIdx) {
     return ;
 }
 
-async function executeGPT() {
+async function executeGPT(gender, age, tall, weight, RM, targets, place, dayOfWeeks) {
+    var rmSentence = "";
+    if (RM) rmSentence = `I think I can lift up to ${RM}kg when I do squats to the maximum.`;
+    else rmSentence = `I don't even know how many squats I can do at a time.`;
+
     const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo-16k",
         messages: [
@@ -210,10 +214,10 @@ async function executeGPT() {
             `
             },
             {role: "user", content: `
-            I am a male born in 2001, I am 174cm tall and weigh 62kg.
-            I think I can lift up to 70kg when I do squats to the maximum.
-            I will do chest, back, and lower body exercises at home.
-            I'm going to exercise on Monday.
+            I am a ${gender} born in ${age}, I am ${tall}cm tall and weight ${weight}kg.
+            ${rmSentence}
+            I will do ${targets} exercises at ${place}.
+            I'm going to exercise on ${dayOfWeeks}.
 
             Say only JSON Object format like {'dayOfWeek': dayOfWeek, 'target': targetArea, 'content': ['exerciseId': exerciseId, 'exerciseName': exerciseName, 'sets': numsOfSet(Only Int), 'reps': numsOfRep(Only Int), 'weights'(If exerciseId is between 19 and 25, that is, bare body exercise, get rid of this.): numsOfWeight(Only List(Int as many as numsOfSet))]}.
             In the case of planks, if 1 rep performs 1 second, that is, 10 seconds, using note(rep of unit), rep should be 10.
