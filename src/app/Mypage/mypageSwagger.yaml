@@ -80,6 +80,27 @@ tags:
       '702':
         description: 수정할 생년을 입력해 주세요.
 
+/app/mypage/updatepwd:
+  put:
+    summary: userinfo 수정 api
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userPw 수정하는 api
+    tags:
+      - Mypage
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userPw:
+                type: string
+    responses:
+      '1000':
+        description: 성공
+      '703':
+        description: 수정할 유저 패스워드를 입력해 주세요.
+
 
 # components:
 #   schemas:

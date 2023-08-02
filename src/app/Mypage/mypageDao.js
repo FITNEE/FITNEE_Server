@@ -33,6 +33,17 @@ async function updateUserInfo(connection, userNickname, birthYear, userIdFromJWT
     return updateInfo;
 }
 
+// userId로 info 수정
+async function updateUserPw(connection, userInfoParams) {
+    const updateUserInfoQuery = `
+                UPDATE User
+                SET userPw = ?
+                WHERE userId = ?;
+                `;
+    const [updatePw] = await connection.query(updateUserInfoQuery, userInfoParams);
+    return updatePw;
+}
+
 // db에 존재하는 닉네임인지 boolean으로 반환
 async function selectUserNickname(connection, userNickName) {
     const selectNicknameQuery = `
@@ -68,6 +79,7 @@ module.exports = {
     selectMyCalendar,
     selectUserInfo,
     updateUserInfo,
+    updateUserPw,
     selectUserNickname,
     selectMyRecord,
   };
