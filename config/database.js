@@ -7,7 +7,8 @@ const pool = mysql.createPool({
     user: 'root',
     port: '3306',
     password: 'healthgpt',
-    database: 'gpthealthDB'
+    database: 'gpthealthDB',
+    multipleStatements: true
 });
 
 module.exports = {
