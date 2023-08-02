@@ -27,3 +27,18 @@ exports.createChatting = async function (name, userNickname, text) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+// 채팅 삭제
+exports.deleteChatt = async function (userId, healthChattingIdx) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const editChattResult = await dictionaryDao.updateChattInfo(connection, userId, healthChattingIdx)
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - deleteChatt Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}

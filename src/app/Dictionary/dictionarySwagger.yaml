@@ -120,7 +120,7 @@ tags:
         description: 운동 name을 입력하세요.
         schema:
           type: string
-    description: 운동 name을 받아서 댓글내용과 댓글 수를 반환합니다.
+    description: 운동 name을 받아서 댓글내용(userIdx, userNickname, text, status(댓글 삭제, 수정 여부(0기존, 1삭제, 2수정) / 댓글 수를 반환합니다.
     tags:
       - Dictionary
     responses:
@@ -191,3 +191,25 @@ tags:
         description: 댓글내용을 입력해 주세요  
       '4000':
         description: DB error   
+
+
+/app/dictionary/deleteChatt/{healthChattingIdx}:
+  delete:
+    summary: 채팅 삭제(healthChatting status 컬럼 0 -> 1)
+    description: login할때 쿠키에 저장된 accesstoken가지고 있어야함.(api 내에서 검증함) app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함.
+    tags:
+      - Dictionary
+    operationId: deleteChatt
+    parameters:
+      - name: healthChattingIdx
+        in: path
+        required: true
+        description: 채팅의 healthChattingIdx를 입력하세요.
+        schema:
+          type: integer
+
+    responses:
+      '1000':
+        description: 채팅 삭제 성공(healthChatting status 컬럼 0 -> 1)
+      '605':
+        description: /app/dictionary/exercisechat에서 get한 healthChattingIdx를 입력해 주세요.

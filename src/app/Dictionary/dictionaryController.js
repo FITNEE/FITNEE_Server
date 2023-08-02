@@ -109,3 +109,23 @@ exports.postChatting = async function(req, res) {
         return res.send(errResponse(baseResponse.SERVER_ERROR));
     }
 };
+
+
+/**
+ * API No. 6
+ * API Name : 채팅 삭제(healthChatting status 컬럼 0 -> 1)
+ * [DELETE] /app/dictionary/deleteChatt
+ * path variable : userId
+ * body : healthChattingIdx
+ */
+exports.deleteChatt = async function (req, res) {
+    // jwt - userId, path variable :userId
+    //app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함.
+    const userIdFromJWT = req.decoded.userId;
+    const healthChattingIdx = req.body.healthChattingIdx;
+    if (!healthChattingIdx) return res.send(errResponse(baseResponse.DICTIONARY_HEALTHCHATTINGIDX_EMPTY));
+
+    // 삭제(status 0 -> 1)할 채팅
+    const deleteChatt = await dictionaryService.deleteChatt(userIdFromJWT, healthChattingIdx);
+    return res.send(deleteChatt);
+};

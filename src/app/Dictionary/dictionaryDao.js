@@ -66,6 +66,7 @@ async function selectExerciseChatting(connection, name) {
     const selectExerciseChatInfoQuery = `
         SELECT HC.userIdx,
         CASE WHEN UC.status = 2 THEN '(알수없음)' ELSE UC.userNickname END AS userNickname,
+        HC.healthChattingIdx,
         HC.text,
         HC.status
         FROM healthChatting AS HC
@@ -106,6 +107,18 @@ async function insertChatting(connection, insertChattingParams) {
     return insertChattingRow;
 }
 
+// 채팅 삭제(healthChatting의 status를 0 -> 1로 변경)
+async function updateChattInfo(connection, userId, healthChattingIdx) {
+    const updateChattingQuery = `
+        UPDATE healthChatting AS HC
+        JOIN User AS U ON HC.userIdx = U.userIdx
+        SET HC.status = '1'
+        WHERE U.userId = ? AND HC.healthChattingIdx = ?;    
+    `;
+
+    const updateChattingRow = await connection.query(updateChattingQuery, [userId, healthChattingIdx]);
+    return updateChattingRow;
+}
 
 module.exports = {
     selectKeyword,
@@ -113,4 +126,5 @@ module.exports = {
     selectExerciseMethod,
     selectExerciseChatting,
     insertChatting,
+    updateChattInfo,
 };

@@ -23,4 +23,7 @@ router.get('/exercisechat', mypage.getChattingByName);
 // 5.
 router.post('/chatting', mypage.postChatting);
 
+// 6.
+router.patch('/deleteChatt', jwtMiddleware, mypage.deleteChatt)
+
 module.exports = router;
