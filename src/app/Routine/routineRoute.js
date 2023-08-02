@@ -23,4 +23,4 @@ router.put('/:routineIdx', jwtMiddleware, routine.putRoutine);
 // 4. 루틴 삭제 API
 router.delete('/:routineIdx', jwtMiddleware, routine.deleteRoutine);
 
-module.exports = router;
+// module.exports = router;
