@@ -8,9 +8,18 @@ const {response, errResponse} = require("../../../config/response");
  * API Name : 루틴 등록 API
  * [POST] /app/routine
  */
-// exports.postRoutine = async function (req, res) {
+exports.postRoutine = async function (req, res) {
+    /**
+     * Decoded : userId
+     * Body : info
+     */
+    const userId = req.decoded.userId;
+    const info = req.body.info;
 
-// };
+    const responsePostRoutine = await routineService.insertRoutine(userId, info);
+
+    return res.send(responsePostRoutine);
+};
 
 
 /**
@@ -23,14 +32,10 @@ exports.getRoutineCalendar = async function (req, res) {
      */
     const userId = req.decoded.userId;
 
-    if  (!userId) {
-        return res.send(errResponse(baseResponse.QUREY_PARAMETER_WRONG));
-    } else {
-        const routineCalendar = await routineProvider.retrieveRoutineCalendar(userId);
+    const routineCalendar = await routineProvider.retrieveRoutineCalendar(userId);
 
-        if (!routineCalendar) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
-        else return res.send(response(baseResponse.SUCCESS, routineCalendar));
-    }
+    if (!routineCalendar) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
+    else return res.send(response(baseResponse.SUCCESS, routineCalendar));
 };
 
 /**
@@ -44,8 +49,7 @@ exports.getRoutine = async function (req, res) {
     const routineIdx = req.params.routineIdx;
     const routine = await routineProvider.retrieveRoutine(routineIdx);
 
-    if (!routine) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
-    else return res.send(response(baseResponse.SUCCESS, routine));
+    return res.send(response(baseResponse.SUCCESS, routine));
 };
 
 /**
@@ -62,7 +66,7 @@ exports.putRoutine = async function (req, res) {
     const routineIdx = req.params.routineIdx;
     const routineContent = req.body.routine;
 
-    const responsePutRoutine = await routineService.putRoutine(userId, routineIdx, routineContent);
+    const responsePutRoutine = await routineService.updateRoutine(userId, routineIdx, routineContent);
 
     return res.send(responsePutRoutine);
 };
