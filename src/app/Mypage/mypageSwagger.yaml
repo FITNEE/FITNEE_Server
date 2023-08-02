@@ -1,10 +1,10 @@
 tags:
   name: Mypage
-  description: 마이페이지 관련 API
+  description: 마이페이지 관련 API - 류재혁
 
 /app/mypage:
   get:
-    summary: month 받아서 쿠키에 가지고 있는 토큰(유저)가 그 month에 운동한 날짜 반환하는 api
+    summary: 해당 month에 운동한 모든 날짜 반환 api
     parameters:
       - name: month
         in: query
@@ -28,7 +28,144 @@ tags:
                   items:
                     type: string
                   description: 유저가 운동한 날짜 목록
-
-              
       '502':
         description: month를 입력해 주세요
+
+/app/mypage/userinfo:
+  get:
+    summary: userinfo 조회 api
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 반환하는 api
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  type: array
+                  items:
+                    type: string
+                  description: 유저info
+
+/app/mypage/updateuser:
+  put:
+    summary: userinfo 수정 api
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 수정하는 api
+    tags:
+      - Mypage
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userNickname:
+                type: string
+                example: 초코맛 프로틴
+                description: 수정할 유저 닉네임
+              birthYear:
+                type: integer
+                example: 1995
+                description: 수정할 생년
+    responses:
+      '1000':
+        description: 성공
+      '701':
+        description: 수정할 유저 닉네임을 입력해 주세요.
+      '702':
+        description: 수정할 생년을 입력해 주세요.
+
+/app/mypage/updatepwd:
+  put:
+    summary: userinfo 수정 api
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userPw 수정하는 api
+    tags:
+      - Mypage
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userPw:
+                type: string
+    responses:
+      '1000':
+        description: 성공
+      '703':
+        description: 수정할 유저 패스워드를 입력해 주세요.
+
+
+# components:
+#   schemas:
+#     User:
+#       type: object
+#       properties:
+#         userIdx:
+#           type: integer
+#           example: 10
+#         userId:
+#           type: string
+#           example: rjh@naver.com
+#         userPw:
+#           type: string
+#           example: 295a7ac9509dec763a28b498525203d06fe5a4d8f2afc7956b110017d8956e00bd9076d4a9c48a6a2b43928d630e6cc0da3f0108bfeb7fbb7cba4f0013138cf7
+#         userName:
+#           type: string
+#           example: 류재혁
+#         birthYear:
+#           type: integer
+#           example: 2001
+#         userNickname:
+#           type: string
+#           example: 초코맛
+#         gender:
+#           type: integer
+#           example: 1
+#         height:
+#           type: string
+#           example: 150
+#         weight:
+#           type: string
+#           example: 70
+#         status:
+#           type: string
+#           example: '1'
+
+
+# components:
+#   schemas:
+#     myCalendar:
+#       type: object
+#       properties:
+#         myCalenderIdx:
+#           type: integer
+#           example: 1
+#         userIdx:
+#           type: integer
+#           example: 10
+#         userId:
+#           type: string
+#           example: rjh@naver.com
+#         routineCalenderIdx:
+#           type: integer
+#           example: 3
+#         totalExerciseTime:
+#           type: integer
+#           example: 0
+#         totalWeight:
+#           type: integer
+#           example: 0
+#         healthDate:
+#           type: string
+#           format: date
+#           example: '2023-07-25'
+#         status:
+#           type: string
+#           example: '0'

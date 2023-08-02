@@ -50,6 +50,10 @@ module.exports = {
     DICTIONARY_TEXT_EMPTY : { "isSuccess": false, "code": 604, "message":"채팅내용을 입력해 주세요." },
     DICTIONARY_HEALTHCHATTINGIDX_EMPTY: { "isSuccess": false, "code": 605, "message":"app/dictionary/exercisechat에서 get한 healthChattingIdx를 입력해 주세요." },
 
+    //mypage error
+    MYPAGE_USERNICKNAME_EMPTY: { "isSuccess": false, "code": 701, "message":"수정할 userNickname을 입력해 주세요." },
+    MYPAGE_BIRTHYEAR_EMPTY: { "isSuccess": false, "code": 702, "message":"수정할 birthYear를 입력해 주세요." },
+    MYPAGE_USERPW_EMPTY: { "isSuccess": false, "code": 703, "message":"수정할 userPw를 입력해 주세요." },
     //Request error
 
     //signup(회원가입)

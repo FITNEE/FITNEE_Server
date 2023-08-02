@@ -12,6 +12,24 @@ exports.searchExercise = async function (userIdFromJWT, month) {
   return myExerciseResult;
 };
 
+//
+exports.searchUserInfo = async function (userIdFromJWT) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userInfoResult = await mypageDao.selectUserInfo(connection,userIdFromJWT);
+  connection.release();
+
+  return userInfoResult;
+};
+
+
+// 유저정보 수정
+exports.updateUser = async function (userIdFromJWT, userNickname, birthYear) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userInfoUpdate = await mypageDao.updateUserInfo(connection, userNickname, birthYear, userIdFromJWT);
+  connection.release();
+
+  return userInfoUpdate;
+};
 
 //
 exports.retrieveNicknameList = async function (userNickName) {
@@ -30,6 +48,7 @@ exports.retrieveNicknameList = async function (userNickName) {
     return nicknameListResult;
   }
 };
+
 
 
 //

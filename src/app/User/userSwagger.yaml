@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
 tags:
   - name: User
-    description: 사용자 관련 API
+    description: 사용자 관련 API - 박준규
 paths:
   /app/users:
     post:
