@@ -12,6 +12,14 @@ exports.searchExercise = async function (userIdFromJWT, month) {
   return myExerciseResult;
 };
 
+//
+exports.searchUserInfo = async function (userIdFromJWT) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userInfoResult = await mypageDao.selectUserInfo(connection,userIdFromJWT);
+  connection.release();
+
+  return userInfoResult;
+};
 
 //
 exports.retrieveNicknameList = async function (userNickName) {

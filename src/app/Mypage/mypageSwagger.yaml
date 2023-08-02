@@ -4,7 +4,7 @@ tags:
 
 /app/mypage:
   get:
-    summary: month 받아서 쿠키에 가지고 있는 토큰(유저)가 그 month에 운동한 날짜 반환하는 api
+    summary: 해당 month에 운동한 모든 날짜 반환 api
     parameters:
       - name: month
         in: query
@@ -28,14 +28,29 @@ tags:
                   items:
                     type: string
                   description: 유저가 운동한 날짜 목록
-
-              
       '502':
         description: month를 입력해 주세요
 
-
-
-
+/app/mypage/userinfo:
+  get:
+    summary: userinfo 조회 api
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 반환하는 api
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  type: array
+                  items:
+                    type: string
+                  description: 유저info
+                  
 
 components:
   schemas:

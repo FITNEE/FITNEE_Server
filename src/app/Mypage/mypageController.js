@@ -39,7 +39,7 @@ exports.getExerciseInfo = async function (req, res) {
 
 /**
  * API Name :
- * [GET] /app/record
+ * [GET] /app/mypage/record
  */
 exports.getExerciseRecord= async function (req, res) {
 
@@ -57,13 +57,16 @@ exports.getExerciseRecord= async function (req, res) {
 
 /**
  * API Name :
- * [GET] /app/
+ * [GET] /app/mypage/userinfo
  */
 exports.getUserData = async function (req, res) {
-
     /**
      * Query String: userID
      */
+    const userIdFromJWT = req.decoded.userId;
+
+    const dataByUserId = await mypageProvider.searchUserInfo(userIdFromJWT);
+    return res.send(response(baseResponse.SUCCESS, dataByUserId));
     
 }
 

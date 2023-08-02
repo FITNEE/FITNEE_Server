@@ -10,6 +10,17 @@ async function selectMyCalendar(connection, userIdFromJWT, month) {
     return myCalendar;
 }
 
+// userId로 info 반환
+async function selectUserInfo(connection, userIdFromJWT) {
+    const selectUserInfoQuery = `
+                SELECT userNickname, birthYear, userId
+                FROM User
+                WHERE userId = ?;
+                `;
+    const [myInfo] = await connection.query(selectUserInfoQuery, [userIdFromJWT]);
+    return myInfo;
+}
+
 // db에 존재하는 닉네임인지 boolean으로 반환
 async function selectUserNickname(connection, userNickName) {
     const selectNicknameQuery = `
@@ -43,6 +54,7 @@ async function selectMyRecord(connection, month, day) {
 
 module.exports = {
     selectMyCalendar,
+    selectUserInfo,
     selectUserNickname,
     selectMyRecord,
   };
