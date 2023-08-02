@@ -4,10 +4,18 @@ const routineDao = require("./routineDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
+const {Configuration, OpenAIApi} = require('openai');
+const secret = require("../../../config/secret");
+
 exports.insertRoutine = async function (userId, info) {
     try {
+        const openaiConfig = new Configuration({
+            organization: secret.openaiOrganization,
+            apiKey: secret.openaiSecret,
+        });
+        const openai = new OpenAIApi(openaiConfig);
         const connection = await pool.getConnection(async (conn) => conn);
-        const insertRoutine = await routineDao.insertRoutine(connection, userId, info);
+        const insertRoutine = await routineDao.insertRoutine(connection, openai, userId, info);
         connection.release();
     
         return response(baseResponse.SUCCESS, insertRoutine);
