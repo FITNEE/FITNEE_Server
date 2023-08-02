@@ -11,15 +11,15 @@ async function insertRoutine(connection, openai, userId, info) {
 
     // executeGPT(openai);
 
-    console.log((responseUserInfo.gender==1) ? "male" : "female");
-    console.log(responseUserInfo.birthYear);
-    console.log(responseUserInfo.height);
-    console.log(responseUserInfo.weight);
-    console.log(info);
-    console.log(info.RM);
-    console.log(info.targets);
-    console.log(info.place);
-    console.log(info.dayOfWeeks);
+    // console.log((responseUserInfo.gender==1) ? "male" : "female");
+    // console.log(responseUserInfo.birthYear);
+    // console.log(responseUserInfo.height);
+    // console.log(responseUserInfo.weight);
+    // console.log(info);
+    // console.log(info.RM);
+    // console.log(info.targets);
+    // console.log(info.place);
+    // console.log(info.dayOfWeeks);
     
     return responseUserInfo;
 };
