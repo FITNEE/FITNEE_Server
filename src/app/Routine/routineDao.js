@@ -1,6 +1,19 @@
 const lodash = require('lodash');
 const { exceptions } = require('winston');
 
+async function insertRoutine(connection, userId, info) {
+    const selectUserInfo = `
+                  SELECT birthYear, height, weight
+                  FROM User
+                  WHERE userId = ?
+                  `;
+    const [responseUserInfo] = await connection.query(selectUserInfo, userId);
+
+    console.log(responseUserInfo);
+
+    return responseUserInfo;
+};
+
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
     const selectRoutineCalendarQuery = `
@@ -61,7 +74,7 @@ async function selectRoutine(connection, routineIdx) {
 };
 
 // 루틴 수정
-async function putRoutine(connection, userId, routineIdx, routineContent) {
+async function updateRoutine(connection, userId, routineIdx, routineContent) {
     const selectLastInsertIdQuery = `SELECT LAST_INSERT_ID()`;
     var putRoutineContent = {};
 
@@ -162,8 +175,9 @@ async function deleteRoutine(connection, userId, routineIdx) {
 }
   
 module.exports = {
+    insertRoutine,
     selectRoutineCalendar,
     selectRoutine,
-    putRoutine,
+    updateRoutine,
     deleteRoutine,
 };

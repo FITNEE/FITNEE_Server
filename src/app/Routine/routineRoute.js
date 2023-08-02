@@ -9,7 +9,7 @@ const routine = require('./routineController');
  */
 
 // 1. 루틴 등록 API
-// router.post('/', routine.postRoutine);
+router.post('/', jwtMiddleware, routine.postRoutine);
 
 // 2. 루틴 일정 조회 API
 router.get('/', jwtMiddleware, routine.getRoutineCalendar);
