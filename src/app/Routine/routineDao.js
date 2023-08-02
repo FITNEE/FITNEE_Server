@@ -1,7 +1,7 @@
 const lodash = require('lodash');
 const { exceptions } = require('winston');
 
-async function insertRoutine(connection, userId, info) {
+async function insertRoutine(connection, openai, userId, info) {
     const selectUserInfo = `
                   SELECT birthYear, height, weight
                   FROM User
