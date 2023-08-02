@@ -21,6 +21,16 @@ exports.searchUserInfo = async function (userIdFromJWT) {
   return userInfoResult;
 };
 
+
+// 유저정보 수정
+exports.updateUser = async function (userIdFromJWT, userNickname, birthYear) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const userInfoUpdate = await mypageDao.updateUserInfo(connection, userNickname, birthYear, userIdFromJWT);
+  connection.release();
+
+  return userInfoUpdate;
+};
+
 //
 exports.retrieveNicknameList = async function (userNickName) {
   if (!userNickName) {
@@ -38,6 +48,7 @@ exports.retrieveNicknameList = async function (userNickName) {
     return nicknameListResult;
   }
 };
+
 
 
 //
