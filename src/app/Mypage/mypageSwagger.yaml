@@ -1,0 +1,34 @@
+tags:
+  name: Mypage
+  description: 마이페이지 관련 API
+
+/app/mypage:
+  get:
+    summary: month 받아서 쿠키에 가지고 있는 토큰(유저)가 그 month에 운동한 날짜 반환하는 api
+    parameters:
+      - name: month
+        in: query
+        required: true
+        description: month를 입력하세요.
+        schema:
+          type: integer
+    description: month 받아서 쿠키에 가지고 있는 토큰(유저)가 그 month에 운동한 날짜 반환합니다.
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  type: array
+                  items:
+                    type: string
+                  description: 유저가 운동한 날짜 목록
+
+              
+      '502':
+        description: month를 입력해 주세요

@@ -4,9 +4,9 @@ const mypageDao = require("./mypageDao");
 
 
 //
-exports.searchExercise = async function (userIdx, month) {
+exports.searchExercise = async function (userIdFromJWT, month) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const myExerciseResult = await mypageDao.selectMyCalendar(connection,userIdx, month);
+  const myExerciseResult = await mypageDao.selectMyCalendar(connection,userIdFromJWT, month);
   connection.release();
 
   return myExerciseResult;
