@@ -1,6 +1,6 @@
 tags:
   name: Routine
-  description: 루틴 관련 API
+  description: 루틴 관련 API - 박해승
 
 /app/routine:
   get:

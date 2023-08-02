@@ -1,6 +1,6 @@
 tags:
   name: Dictionary
-  description: 운동사전 관련 API
+  description: 운동사전 관련 API - 류재혁
 
 /app/dictionary:
   get:
