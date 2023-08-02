@@ -14,14 +14,14 @@ const {emit} = require("nodemon");
  */
 exports.getExercisedData = async function (req, res) {
     /**
-     * Query String: userIdx, month
+     * Query String: month
      */
-    const { userIdx, month } = req.query;
+    const userIdFromJWT = req.decoded.userId;
+    const month = req.query.month;
 
-    if (!userIdx) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
     if (!month) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
 
-    const exerciseByMonth = await mypageProvider.searchExercise(userIdx, month);
+    const exerciseByMonth = await mypageProvider.searchExercise(userIdFromJWT, month);
     return res.send(response(baseResponse.SUCCESS, exerciseByMonth));
 }
 
