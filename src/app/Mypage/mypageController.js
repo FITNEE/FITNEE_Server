@@ -1,5 +1,4 @@
 const {logger} = require("../../../config/winston");
-const jwtMiddleware = require("../../../config/jwtMiddleware");
 const mypageProvider = require("./mypageProvider");
 const mypageService = require("./mypageService");
 const baseResponse = require("../../../config/baseResponseStatus");

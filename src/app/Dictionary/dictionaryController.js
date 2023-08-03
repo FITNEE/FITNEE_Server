@@ -1,5 +1,4 @@
 const {logger} = require("../../../config/winston");
-const jwtMiddleware = require("../../../config/jwtMiddleware");
 const dictionaryProvider = require("./dictionaryProvider");
 const dictionaryService = require("./dictionaryService");
 const baseResponse = require("../../../config/baseResponseStatus");
