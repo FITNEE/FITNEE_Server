@@ -1,28 +1,37 @@
 const lodash = require('lodash');
 
 // 운동 전 Detail 조회
-async function selectBeforeProcessDetail(connection, routineDetailIdx) {
-    const selectBeforeProcessDetailQuery = `
-    SELECT 'total_not_null_count' AS data_type, 
-        COUNT(*) AS data_value
-    FROM routineDetail
-    WHERE routineDetailIdx = ? 
-        AND COALESCE(rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9) IS NOT NULL
-UNION
-    SELECT 'data_weight0' AS data_type, 
-        weight0 AS data_value
-    FROM routineDetail
-    WHERE routineDetailIdx = ? 
-    LIMIT 1
-UNION
-    SELECT 'data_rep0' AS data_type, 
-        rep0 AS data_value
-    FROM routineDetail
-    WHERE routineDetailIdx = ? 
-    LIMIT 1;
-    `;
-    const [beforeProcessDetail] = await connection.query(selectBeforeProcessDetailQuery, routineDetailIdx)
-    return beforeProcessDetail
+async function selectBeforeProcessDetail(connection, routine_list) {
+    if (!routine_list || routine_list.length === 0) {
+        return [];
+      }
+    
+      const selectBeforeProcessDetailQuery = `
+        SELECT
+          routineDetailIdx,
+          -- Count non-null data from rep0 to rep9 in routineDetail
+          SUM(CASE WHEN rep0 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep1 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep2 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep3 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep4 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep5 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep6 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep7 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep8 IS NOT NULL THEN 1 ELSE 0 END +
+            CASE WHEN rep9 IS NOT NULL THEN 1 ELSE 0 END) AS total_not_null_count,
+          -- Select rep0 data from routineDetail
+          MAX(CASE WHEN rep0 IS NOT NULL THEN rep0 END) AS data_rep0,
+          -- Select weight0 data from routineDetail
+          MAX(CASE WHEN rep0 IS NOT NULL THEN weight0 END) AS data_weight0
+        FROM routineDetail 
+        WHERE routineDetailIdx IN (?)
+        GROUP BY routineDetailIdx
+      `;
+    
+      const [beforeProcessDetail] = await connection.query(selectBeforeProcessDetailQuery, [routine_list]);
+    
+      return beforeProcessDetail;
 }
 
 // 운동 중 / 세트, 무게, 횟수
@@ -48,46 +57,6 @@ async function selectRoutineDetail(connection, routineIdx) {
     }
     return [routineDetail]
 }
-
-// 루틴 일정 조희
-async function selectRoutineCalendar(connection, userId) {
-    const selectRoutineCalendarQuery = `
-                  SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
-                  FROM routineCalendar
-                  WHERE status = 0 AND userId = ?
-                  `;
-    const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
-    return routineCalendar;
-};
-
-// 루틴 조회
-async function selectRoutine(connection, routineIdx) {
-    const selectRoutineQuery = `
-                  SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
-                  FROM routine
-                  WHERE status = 0 AND routineIdx = ?
-                  `;
-    const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
-    if (!routine) return routine;
-
-    var routineContent = [];
-    for (var i=0; i<10; i++) {
-        const selectRoutineDetailQuery = `
-                      SELECT healthCategoryIdx, skip, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
-                      FROM routineDetail
-                      WHERE status = 0 AND routineDetailIdx = ?
-                      `;
-        const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routine['detailIdx'+String(i)]);
-        
-        var detailContent = lodash.pickBy(routineDetail);
-        if (routineDetail) {
-            routineContent.push(detailContent);
-        };
-    };
-
-    return routineContent;
-};
-
   
 module.exports = {
     selectBeforeProcessDetail,

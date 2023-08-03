@@ -14,7 +14,7 @@ const process = require('./processController')
 router.get('/:routineIdx', jwtMiddleware, routine.getRoutine);
 
 // 2. 운동별 과정 전 조회 API
-router.get('/before/:routineDetailIdx', jwtMiddleware, process.getBeforeProcessDetail)
+router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)
 
 // 3. 운동별 과정 중 조회 API
 router.get('/:routineDetailIdx', jwtMiddleware, process.getProcessDetail)

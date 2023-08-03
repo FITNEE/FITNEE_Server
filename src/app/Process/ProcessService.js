@@ -1,6 +1,6 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
-const routineDao = require("./routineDao");
+// const routineDao = require("./routineDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 

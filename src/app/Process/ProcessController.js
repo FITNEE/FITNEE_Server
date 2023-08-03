@@ -15,11 +15,12 @@ const {response, errResponse} = require("../../../config/response");
  * [GET] /app/process/before/:routineIdx
  */
 exports.getBeforeProcessDetail = async function (req, res) {
+
     /**
      * Path Variable : routineIdx
      */
-    const beforeProcessIdx = req.params.routineIdx
-    const beforeProcessDetail = await processProvider.retrieveBeforeProcessDetail(beforeProcessIdx)
+    const routineIdx = req.params.routineIdx
+    const beforeProcessDetail = await processProvider.retrieveBeforeProcessDetail(routineIdx)
 
     return res.send(response(baseResponse.SUCCESS, beforeProcessDetail))
 }
