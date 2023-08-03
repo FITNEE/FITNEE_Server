@@ -228,6 +228,7 @@ async function executeGPT(openai, gender, age, tall, weight, RM, targets, place,
             ${rmSentence}
             I will do ${targets} exercises at ${place}.
             I'm going to exercise on ${dayOfWeeks}.
+            Please recommend 3 different routines.
 
             Say only JSON Object format like {'dayOfWeek': dayOfWeek, 'target': targetArea, 'content': ['exerciseId': exerciseId, 'exerciseName': exerciseName, 'sets': numsOfSet(Only Int), 'reps': numsOfRep(Only Int), 'weights'(If exerciseId is between 19 and 25, that is, bare body exercise, get rid of this.): numsOfWeight(Only List(Int as many as numsOfSet))]}.
             In the case of planks, if 1 rep performs 1 second, that is, 10 seconds, using note(rep of unit), rep should be 10.
