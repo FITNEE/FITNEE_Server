@@ -33,6 +33,19 @@ async function updateUserInfo(connection, userNickname, birthYear, userIdFromJWT
     return updateInfo;
 }
 
+
+// userId로 pw 조회
+async function searchUserPw(connection, userIdFromJWT) {
+    const searchUserPwQuery = `
+                SELECT userPw
+                FROM User
+                WHERE userId = ?;
+                `;
+    const [searchPw] = await connection.query(searchUserPwQuery, [userIdFromJWT]);
+    return searchPw;
+}
+
+
 // userId로 info 수정
 async function updateUserPw(connection, userInfoParams) {
     const updateUserInfoQuery = `
@@ -79,6 +92,7 @@ module.exports = {
     selectMyCalendar,
     selectUserInfo,
     updateUserInfo,
+    searchUserPw,
     updateUserPw,
     selectUserNickname,
     selectMyRecord,

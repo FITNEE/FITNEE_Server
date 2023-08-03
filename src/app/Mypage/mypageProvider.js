@@ -31,6 +31,16 @@ exports.updateUser = async function (userIdFromJWT, userNickname, birthYear) {
   return userInfoUpdate;
 };
 
+// 유저pw 조회
+exports.searchPw = async function (userIdFromJWT) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const searchUserPw = await mypageDao.searchUserPw(connection, userIdFromJWT);
+  connection.release();
+  
+  return searchUserPw;
+};
+
+
 //
 exports.retrieveNicknameList = async function (userNickName) {
   if (!userNickName) {
