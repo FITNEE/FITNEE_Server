@@ -5,6 +5,7 @@ const processDao = require("./processDao");
 
 // Provider: Read 비즈니스 로직 처리
 
+// 오늘 루틴 리스트 뽑아오기
 exports.retrieveRoutineRow = async function (routineIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const [routineRow] = await connection.query(

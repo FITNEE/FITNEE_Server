@@ -10,14 +10,14 @@ const process = require('./processController')
  */
 
 
-// 1. 운동 루틴 조회 API
+// 1. 운동 루틴 조회 API(완)
 router.get('/:routineIdx', jwtMiddleware, routine.getRoutine);
 
-// 2. 운동별 과정 전 조회 API
+// 2. 운동별 과정 전 조회 API(완)
 router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)
 
 // 3. 운동별 과정 중 조회 API
-router.get('/:routineDetailIdx', jwtMiddleware, process.getProcessDetail)
+router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
 
 // 3. 운동 루틴 대체 API
 router.patch('/part/:routineIdx', jwtMiddleware, );

@@ -31,7 +31,7 @@ exports.getBeforeProcessDetail = async function (req, res) {
  */
 exports.getProcessDetail = async function (req, res) {
     /**
-     * Path Variable : routineIdx
+     * Path Variable : routineDetailIdx
      */
     const routineIdx = req.params.routineIdx
     const routineDetail = await processProvider.retrieveProcessDetail(routineIdx)
