@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const secret_config = require('./secret');
-const { errResponse } = require("./response")
-const baseResponse = require("./baseResponseStatus");
+const secret_config = require('../../config/secret');
+const { errResponse } = require("../../config/response")
+const baseResponse = require("../../config/baseResponseStatus");
 
 
 const jwtMiddleware = async function(req, res, next) {

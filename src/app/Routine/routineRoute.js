@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const jwtMiddleware = require('../../../config/jwtMiddleware');
+const jwtMiddleware = require('../../middleware/jwtMiddleware');
 const routine = require('./routineController');
 
 /**
@@ -8,19 +8,21 @@ const routine = require('./routineController');
  * /app/routine
  */
 
+router.use(jwtMiddleware);
+
 // 1. 루틴 등록 API
-router.post('/', jwtMiddleware, routine.postRoutine);
+router.post('/', routine.postRoutine);
 
 // 2. 루틴 일정 조회 API
-router.get('/', jwtMiddleware, routine.getRoutineCalendar);
+router.get('/', routine.getRoutineCalendar);
 
 // 3. 루틴 조회 API
-router.get('/:routineIdx', jwtMiddleware, routine.getRoutine);
+router.get('/:routineIdx', routine.getRoutine);
 
 // 4. 루틴 수정 API
-router.put('/:routineIdx', jwtMiddleware, routine.putRoutine);
+router.put('/:routineIdx', routine.putRoutine);
 
 // 4. 루틴 삭제 API
-router.delete('/:routineIdx', jwtMiddleware, routine.deleteRoutine);
+router.delete('/:routineIdx', routine.deleteRoutine);
 
 module.exports = router;

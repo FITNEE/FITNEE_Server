@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const jwtMiddleware = require('../../../config/jwtMiddleware');
+const jwtMiddleware = require('../../middleware/jwtMiddleware');
 const routine = require('../Routine/routineController');
 const process = require('./processController')
 

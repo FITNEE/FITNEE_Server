@@ -34,7 +34,7 @@ module.exports = function () {
 
 
 
-    const serverRoute = require('../src/serverRoute');
+    const serverRoute = require('../src/middleware/serverRoute');
     app.use("/server", serverRoute);
     
     const {swaggerUi, specs} = require("./swagger");
