@@ -102,6 +102,46 @@ tags:
         description: 수정할 유저 패스워드를 입력해 주세요.
       '704':
       description: 수정할 userPw와 기존 userPw가 동일합니다.
+      
+        
+/app/mypage/nickname:
+  get:
+    summary: API NO.7 - 닉네임 변경할때 중복 닉네임 있는지 검사하는 api
+    parameters:
+      - name: userNickname
+        in: query
+        required: true
+        description: 수정할 userNickname을 입력하세요.
+        schema:
+          type: string
+    description: userNickname 입력방식에 따라 닉네임 변경할 때 중복 닉네임 있는지 검사함.
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isSuccess:
+                  type: boolean
+                code:
+                  type: integer
+                message:
+                  type: string
+                result:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      userNickname:
+                        type: string
+                      userIdx:
+                        type: integer
+      '705':
+        description: 수정할 userNickname과 동일한 userNickname이 존재합니다.
 
 
 # components:
