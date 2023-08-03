@@ -5,6 +5,8 @@ const mypageService = require("./mypageService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
+const crypto = require("crypto");
+
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
@@ -91,15 +93,33 @@ exports.updateUserData = async function (req, res) {
 
 /**
  * API No. 6
- * API Name : 토큰으로 유저 검증후 userPw 수정
+ * API Name : 토큰으로 유저 검증후 userPw 수정 todo: 기존 비밀번호와 같으면 수정x
  * [PUT] /app/mypage/updatepwd
  */
 exports.updatePassword = async function (req, res) {
     const userIdFromJWT = req.decoded.userId;
     const { userPw } = req.body;
     if (!userPw) return res.send(errResponse(baseResponse.MYPAGE_USERPW_EMPTY));
-    const updateUserPw = await mypageService.updatePassword(userIdFromJWT, userPw);
-    return res.send(response(baseResponse.SUCCESS));
+
+    // 비밀번호 암호화
+    const hashedPassword = crypto
+    .createHash("sha512")
+    .update(userPw)
+    .digest("hex");
+
+    // 기존pw와 body.userPw비교(같으면 수정X)
+    const originPw = await mypageProvider.searchPw(userIdFromJWT)
+    console.log("originPw:",originPw[0].userPw);
+    console.log("hasshePW:",hashedPassword);
+    
+    // 기존 pw와 수정할 pw가 같을때 -> 수정x
+    if (hashedPassword === originPw[0].userPw) return res.send(errResponse(baseResponse.MYPAGE_USERPW_EQUAL));
+    else {
+        console.log("3");
+        // 기존 pw와 다른 pw를 입력했을때 -> 수정
+        const updateUserPw = await mypageService.updatePassword(userIdFromJWT, hashedPassword);
+        return res.send(response(baseResponse.SUCCESS));
+    }
 }
     
 

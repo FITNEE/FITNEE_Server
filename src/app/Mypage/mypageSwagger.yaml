@@ -4,7 +4,7 @@ tags:
 
 /app/mypage:
   get:
-    summary: 해당 month에 운동한 모든 날짜 반환 api
+    summary: API NO.1 - 해당 month에 운동한 모든 날짜 반환 api
     parameters:
       - name: month
         in: query
@@ -33,7 +33,7 @@ tags:
 
 /app/mypage/userinfo:
   get:
-    summary: userinfo 조회 api
+    summary: API NO.4 - userinfo 조회 api
     description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 반환하는 api
     tags:
       - Mypage
@@ -53,7 +53,7 @@ tags:
 
 /app/mypage/updateuser:
   put:
-    summary: userinfo 수정 api
+    summary: API NO.5 - userinfo 수정 api
     description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 수정하는 api
     tags:
       - Mypage
@@ -82,7 +82,7 @@ tags:
 
 /app/mypage/updatepwd:
   put:
-    summary: userinfo 수정 api
+    summary: API NO.6 - userPw 수정 api
     description: 쿠키에 가지고 있는 토큰(유저)으로 userPw 수정하는 api
     tags:
       - Mypage
@@ -100,6 +100,8 @@ tags:
         description: 성공
       '703':
         description: 수정할 유저 패스워드를 입력해 주세요.
+      '704':
+      description: 수정할 userPw와 기존 userPw가 동일합니다.
 
 
 # components:
