@@ -53,34 +53,39 @@ async function selectProcessDetail(connection, routineIdx) {
         }
     }
 
-    const result = [];
-    for (const detailIdxValue of routine_list) {
-        const selectRoutineDetailQuery = `
-            SELECT routineDetailIdx, rep${detailIdxValue} AS rep, weight${detailIdxValue} AS weight
-            FROM routineDetail
-            WHERE status = 0 AND routineDetailIdx = ? AND rep${detailIdxValue} IS NOT NULL
-        `;
-        const [routineDetailRows] = await connection.query(selectRoutineDetailQuery, detailIdxValue);
 
-        if (routineDetailRows.length > 0) {
-            const existingDetailIdx = result.findIndex(item => item.routineDetailIdx === routineDetailRows[0].routineDetailIdx);
-            if (existingDetailIdx === -1) {
-                result.push({
-                    routineDetailIdx: routineDetailRows[0].routineDetailIdx,
-                    sets: routineDetailRows.map((row, index) => ({
-                        set: index + 1, // Correct the set number calculation here
-                        [`rep${detailIdxValue}`]: row.rep,
-                        [`weight${detailIdxValue}`]: row.weight,
-                    })),
-                });
-            } else {
-                result[existingDetailIdx].sets.push(...routineDetailRows.map((row, index) => ({
-                    set: index + 1, // Correct the set number calculation here
-                    [`rep${detailIdxValue}`]: row.rep,
-                    [`weight${detailIdxValue}`]: row.weight,
-                })));
-            }
+    const result = [];
+    for (const routineDetailIdx of routine_list) {
+        const selectRoutineDetailQuery = `
+            SELECT routineDetailIdx, rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
+                   weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9
+            FROM routineDetail
+            WHERE status = 0 AND routineDetailIdx = ?;
+        `;
+        const [routineDetailRows] = await connection.query(selectRoutineDetailQuery, routineDetailIdx);
+
+        if (routineDetailRows.length === 0) {
+            continue; // Skip to the next iteration if routineDetailRows is empty
         }
+
+        const exerciseSets = [];
+        let setCounter = 0; // Initialize the set counter here
+        for (let i = 0; i < 10; i++) {
+            const repValue = routineDetailRows[0][`rep${i}`];
+            if (repValue === null) {
+                break; // Break the loop if rep is null
+            }
+            exerciseSets.push({
+                set: setCounter++, // Increment the set number for non-null rep
+                rep: repValue,
+                weight: routineDetailRows[0][`weight${i}`], // Get the corresponding weight value
+            });
+        }
+
+        result.push({
+            routineDetailIdx: routineDetailRows[0].routineDetailIdx,
+            sets: exerciseSets,
+        });
     }
 
     return result;
