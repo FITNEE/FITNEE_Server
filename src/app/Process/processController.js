@@ -135,20 +135,19 @@ exports.patchProcess = async function (req, res) {
  * 6 API Name : 운동 건너뛰기 API
  * [PATCH] /app/process/:routineDetailIdx
  */
-exports.patchProcessDetail = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Path Variable : routineDetailIdx
-     * Body : skip
-     */
-    const userId = req.decoded.userId
-    const routineDetailIdx = req.params.routineDetailIdx
-    const routineSkip = req.body
+exports.skipExercise = async function (req, res) {
+    try {
+        const { routineDetailIdx } = req.params
 
-    const responsePatchProcessDetail = await processService.skipProcessDatail(userId, routineDetailIdx, routineSkip)
+        // 운동 건너뛰기 (skip 값을 1로 업데이트)
+        await processService.updateSkipValue(routineDetailIdx);
 
-    return res.send(responsePatchProcessDetail)
-}
+        return res.send(response(baseResponse.SUCCESS));
+    } catch (err) {
+        console.error(`Error in skipExercise Controller: ${err}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
+};
 
 /** // 물어보기
  * 7 API Name : 운동 루틴 캘린더 기록 API

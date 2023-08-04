@@ -10,6 +10,7 @@ exports.updateRoutineAndRoutineDetail = async function (routineIdx, detailIdx, s
     try {
         const connection = await pool.getConnection(async (conn) => conn);
 
+
         // routineDetail 수정
         const updateRoutineDetailAndRoutine = await processDao.updateHealthCategoryIdx(connection, selectedHealthCategoryIdx, routineIdx, detailIdx)
 
@@ -19,4 +20,14 @@ exports.updateRoutineAndRoutineDetail = async function (routineIdx, detailIdx, s
     } catch (err) {
         throw err;
     }
+};
+
+// 스킵
+exports.updateSkipValue = async function (routineDetailIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+
+    const skipValue = await processDao.updateSkipValue(connection, routineDetailIdx);
+    connection.release()
+    return skipValue
 };

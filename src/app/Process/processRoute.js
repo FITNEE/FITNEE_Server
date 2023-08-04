@@ -25,14 +25,11 @@ router.get('/replace/:detailIdx', jwtMiddleware, process.getReplacementRecommend
 // 4-2. 운동 루틴 대체 수정
 router.patch('/replace/exercise', jwtMiddleware, process.replaceExerciseInRoutine);
 
-
-// 
 // 5. 운동 루틴 '전체' 중단 API
 router.patch('/:routineIdx', jwtMiddleware, )
 
-// Routine Detail Skip
 // 6. 운동 건너뛰기 API
-router.patch('/:routineDetailIdx', jwtMiddleware, )
+router.patch('/:routineDetailIdx', jwtMiddleware, process.skipExercise)
 
 // 물어보기
 // 7. 운동 루틴 캘린더 기록 API

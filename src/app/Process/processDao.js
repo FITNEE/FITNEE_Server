@@ -188,6 +188,17 @@ async function updateRoutineStatus(connection, routineDetailIdx) {
 };
 
 
+// skip
+async function updateSkipValue(connection, routineDetailIdx) {
+    const updateSkipValueQuery = `
+            UPDATE routineDetail
+            SET skip = '1'
+            WHERE routineDetailIdx = ?;
+        `;
+    await connection.query(updateSkipValueQuery, [routineDetailIdx]);
+}
+
+
 module.exports = {
     selectBeforeProcessDetail,
     selectProcessDetail,
@@ -197,4 +208,5 @@ module.exports = {
     getReplacementExercisesLimited,
     updateRoutineDetail,
     updateRoutineStatus,
+    updateSkipValue,
 };
