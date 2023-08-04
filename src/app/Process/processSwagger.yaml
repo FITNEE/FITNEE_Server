@@ -101,39 +101,9 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
-components:
+/components:
   schemas:
-    RoutineCalendar:
-      type: object
-      properties:
-        'monRoutineIdx': 
-          type: integer
-          example: 32
-        'tueRoutineIdx': 
-          type: integer
-          example: 0
-        'wedRoutineIdx': 
-          type: integer
-          example: 442
-        'thuRoutineIdx': 
-          type: integer
-          example: 0
-        'friRoutineIdx': 
-          type: integer
-          example: 12
-        'satRoutineIdx': 
-          type: integer
-          example: 0
-        'sunRoutineIdx': 
-          type: integer
-          example: 0
-
     Routine:
-      type: array
-      items:
-        $ref: '#/components/schemas/RoutineDetail'
-
-    RoutineDetail:
       type: object
       properties:
         'healthCategoryIdx':
@@ -142,10 +112,13 @@ components:
         'content':
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/RoutineContentA'
-              - $ref: '#/components/schemas/RoutineContentB'
-      
+            $ref: '#/components/schemas/RoutineContent'  # Reference to RoutineContent schema
+
+    RoutineContent:
+      oneOf:
+        - $ref: '#/components/schemas/RoutineContentA'
+        - $ref: '#/components/schemas/RoutineContentB'
+
     RoutineContentA:
       type: object
       properties:
@@ -162,3 +135,28 @@ components:
         'rep':
           type: integer
           example: 50
+
+    RoutineCalendar:
+      type: object
+      properties:
+        'monRoutineIdx':
+          type: integer
+          example: 32
+        'tueRoutineIdx':
+          type: integer
+          example: 0
+        'wedRoutineIdx':
+          type: integer
+          example: 442
+        'thuRoutineIdx':
+          type: integer
+          example: 0
+        'friRoutineIdx':
+          type: integer
+          example: 12
+        'satRoutineIdx':
+          type: integer
+          example: 0
+        'sunRoutineIdx':
+          type: integer
+          example: 0

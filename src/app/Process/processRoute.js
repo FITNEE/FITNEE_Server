@@ -23,7 +23,7 @@ router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
 router.get('/replace/:detailIdx', jwtMiddleware, process.getReplacementRecommendations)
 
 // 4-2. 운동 루틴 대체 수정
-router.patch('/replace/:routineIdx', jwtMiddleware, process.saveReplacementRoutine)
+router.patch('/replace/exercise', jwtMiddleware, process.replaceExerciseInRoutine);
 
 
 // 
