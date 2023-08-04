@@ -9,7 +9,7 @@ const openai = new OpenAIApi(configuration);
 
 const temp = async function() {
     const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo-16k",
+        model: "gpt-3.5-turbo",
         messages: [
             {role: "system", content: "You're a fitness trainer who recommends exercise routines."},
             {role: "system", content: `

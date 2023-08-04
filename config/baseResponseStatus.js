@@ -55,7 +55,7 @@ module.exports = {
     MYPAGE_BIRTHYEAR_EMPTY: { "isSuccess": false, "code": 702, "message":"수정할 birthYear를 입력해 주세요." },
     MYPAGE_USERPW_EMPTY: { "isSuccess": false, "code": 703, "message":"수정할 userPw를 입력해 주세요." },   
     MYPAGE_USERPW_EQUAL: { "isSuccess": false, "code": 704, "message":"수정할 userPw와 기존 userPw가 동일합니다." },
-   
+    MYPAGE_USERNICKNAME_EQUAL: { "isSuccess": false, "code": 705, "message":"수정할 userNickname과 동일한 userNickname이 존재합니다." },
     //Request error
 
     //signup(회원가입)
@@ -102,5 +102,6 @@ module.exports = {
     SERVER_ERROR : { "isSuccess": false, "code": 4001, "message": "서버 에러"},
     TRANSACTION_ERROR : { "isSuccess": false, "code": 4002, "message": "통신 오류"},
  
- 
+    //GPT Transaction 오류
+    GPT_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},
 }

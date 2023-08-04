@@ -26,7 +26,7 @@ tags:
                 type: array
                 items:
                   type: string
-                  example: ["shoulder", "back"]
+                  example: "shoulder"
               'place':
                 type: string
                 example: "gym"
@@ -34,7 +34,7 @@ tags:
                 type: array
                 items:
                   type: string
-                  example: ["Monday", "Wednesday"]
+                  example: "Monday"
     responses:
       '1000':
         description: 성공 - 생성한 루틴들을 반환해줍니다

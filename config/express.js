@@ -31,11 +31,6 @@ module.exports = function () {
     app.use('/app/mypage', mypageRoute);
     app.use('/app/dictionary', dictionaryRoute);
     app.use('/app/process', processRoute);
-
-
-
-    const serverRoute = require('../src/middleware/serverRoute');
-    app.use("/server", serverRoute);
     
     const {swaggerUi, specs} = require("./swagger");
     app.use("/", swaggerUi.serve, swaggerUi.setup(specs));

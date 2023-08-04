@@ -18,12 +18,12 @@ exports.getKeywordByIdx = async function (req, res) {
     /**
      * Path Variable: userIdx
      */
-    const userIdx = req.query.userIdx;
+    const userIdFromJWT = req.decoded.userId;
 
-    if (!userIdx) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    if (!userIdFromJWT) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
 
-    const keywordByUserIdx = await dictionaryProvider.retrieveKeyword(userIdx);
-    return res.send(response(baseResponse.SUCCESS, keywordByUserIdx));
+    const keywordByUserId = await dictionaryProvider.retrieveKeyword(userIdFromJWT);
+    return res.send(response(baseResponse.SUCCESS, keywordByUserId));
 };
 
 

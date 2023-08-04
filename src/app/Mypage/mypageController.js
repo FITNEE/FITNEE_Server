@@ -126,7 +126,7 @@ exports.updatePassword = async function (req, res) {
 /**
  * API No. 7
  * API Name : 닉네임 변경할때 중복 닉네임 있는지 검사
- * [GET] /app/nickname
+ * [GET] /app/mypage/nickname
  */
 
 exports.checkUserNameValid = async function (req, res) {

@@ -3,9 +3,9 @@ const { logger } = require("../../../config/winston");
 const dictionaryDao = require("./dictionaryDao");
 
 
-exports.retrieveKeyword = async function (userIdx) {
+exports.retrieveKeyword = async function (userIdFromJWT) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const keywordCheckResult = await dictionaryDao.selectKeyword(connection, userIdx);
+    const keywordCheckResult = await dictionaryDao.selectKeyword(connection, userIdFromJWT);
     connection.release();
   
     return keywordCheckResult;
