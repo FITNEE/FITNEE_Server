@@ -328,7 +328,7 @@ components:
         'exercises':
           type: array
           items:
-            $ref : '#/componenets/schemas/RecRoutineDetails'
+            $ref : '#/components/schemas/RecRoutineDetails'
 
     RecRoutineDetails:
       type: object
