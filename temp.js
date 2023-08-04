@@ -1,313 +1,4 @@
-const t = '[\n' +
-    '    {\n' +
-    `        'Title': "등 운동",\n` +
-    "        'Monday': {\n" +
-    "            'target': '등',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 13,\n" +
-    "                    'exerciseName': 'Seated Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [20, 25, 30]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 5,\n" +
-    "                    'exerciseName': 'Lat Pull down',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 6,\n" +
-    "                    'exerciseName': 'Barbell Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [30, 40, 50]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        },\n' +
-    "        'Wednesday': {\n" +
-    "            'target': '등',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 13,\n" +
-    "                    'exerciseName': 'Seated Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [25, 30, 35]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 5,\n" +
-    "                    'exerciseName': 'Lat Pull down',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [35, 40, 45]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 6,\n" +
-    "                    'exerciseName': 'Barbell Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [35, 45, 50]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        },\n' +
-    "        'Friday': {\n" +
-    "            'target': '등',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 13,\n" +
-    "                    'exerciseName': 'Seated Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 5,\n" +
-    "                    'exerciseName': 'Lat Pull down',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [40, 45, 50]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 6,\n" +
-    "                    'exerciseName': 'Barbell Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [40, 50, 55]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        }\n' +
-    '    },\n' +
-    '    {\n' +
-    `        'Title': "하체 운동",\n` +
-    "        'Monday': {\n" +
-    "            'target': '하체',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 4,\n" +
-    "                    'exerciseName': 'Leg Extension',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [20, 25, 30]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 14,\n" +
-    "                    'exerciseName': 'Leg Curl',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [20, 25, 30]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 15,\n" +
-    "                    'exerciseName': 'Leg Press',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [60, 80, 100]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        },\n' +
-    "        'Wednesday': {\n" +
-    "            'target': '하체',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 4,\n" +
-    "                    'exerciseName': 'Leg Extension',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [25, 30, 35]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 14,\n" +
-    "                    'exerciseName': 'Leg Curl',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [25, 30, 35]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 15,\n" +
-    "                    'exerciseName': 'Leg Press',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [80, 100, 120]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        },\n' +
-    "        'Friday': {\n" +
-    "            'target': '하체',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 4,\n" +
-    "                    'exerciseName': 'Leg Extension',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 14,\n" +
-    "                    'exerciseName': 'Leg Curl',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 15,\n" +
-    "                    'exerciseName': 'Leg Press',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [100, 120, 140]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        }\n' +
-    '    },\n' +
-    '    {\n' +
-    `        'Title': "전신 운동",\n` +
-    "        'Monday': {\n" +
-    "            'target': '전신',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 13,\n" +
-    "                    'exerciseName': 'Seated Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [20, 25, 30]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 5,\n" +
-    "                    'exerciseName': 'Lat Pull down',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 6,\n" +
-    "                    'exerciseName': 'Barbell Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [30, 40, 50]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 4,\n" +
-    "                    'exerciseName': 'Leg Extension',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [20, 25, 30]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 14,\n" +
-    "                    'exerciseName': 'Leg Curl',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [20, 25, 30]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 15,\n" +
-    "                    'exerciseName': 'Leg Press',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [60, 80, 100]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        },\n' +
-    "        'Wednesday': {\n" +
-    "            'target': '전신',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 13,\n" +
-    "                    'exerciseName': 'Seated Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [25, 30, 35]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 5,\n" +
-    "                    'exerciseName': 'Lat Pull down',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [35, 40, 45]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 6,\n" +
-    "                    'exerciseName': 'Barbell Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [35, 45, 50]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 4,\n" +
-    "                    'exerciseName': 'Leg Extension',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [25, 30, 35]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 14,\n" +
-    "                    'exerciseName': 'Leg Curl',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [25, 30, 35]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 15,\n" +
-    "                    'exerciseName': 'Leg Press',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [80, 100, 120]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        },\n' +
-    "        'Friday': {\n" +
-    "            'target': '전신',\n" +
-    "            'content': [\n" +
-    '                {\n' +
-    "                    'exerciseId': 13,\n" +
-    "                    'exerciseName': 'Seated Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 5,\n" +
-    "                    'exerciseName': 'Lat Pull down',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [40, 45, 50]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 6,\n" +
-    "                    'exerciseName': 'Barbell Row',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [40, 50, 55]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 4,\n" +
-    "                    'exerciseName': 'Leg Extension',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 12,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 14,\n" +
-    "                    'exerciseName': 'Leg Curl',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [30, 35, 40]\n" +
-    '                },\n' +
-    '                {\n' +
-    "                    'exerciseId': 15,\n" +
-    "                    'exerciseName': 'Leg Press',\n" +
-    "                    'sets': 3,\n" +
-    "                    'reps': 10,\n" +
-    "                    'weights': [100, 120, 140]\n" +
-    '                }\n' +
-    '            ]\n' +
-    '        }\n' +
-    '    }\n' +
-    ']';
-
-    const te = [
+const responseContent = [
         {
             'Title': "등 운동",
             'Monday': {
@@ -616,5 +307,66 @@ const t = '[\n' +
         }
     ];
 
-console.log(JSON.stringify(te));
-console.log(JSON.parse(JSON.stringify(te)));
+
+const responseRoutines = [];
+for (var i=0; i<3; i++) {
+    const responseKeys = Object.keys(responseContent[i]);
+    const responseValues = Object.values(responseContent[i]);
+    const tempRoutineCalendar = {
+        id : i+1,
+        title : responseContent[i].Title,
+        item : []
+    };
+
+    for (var j=0; j<responseKeys.length-1; j++) {
+        const recRoutine = responseValues[j+1].content;
+        const resRoutine = {
+            routineIdx : 0,
+            day : responseKeys[j+1],
+            parts : responseValues[j+1].target,
+            exercises : []
+        };
+        const tempRoutine = {};
+
+        for (var k=0; k<recRoutine.length; k++) {
+            const recDetail = recRoutine[k];
+            resRoutine.exercises.push({
+                healthCategoryIdx : recDetail.exerciseId,
+                name : "ㅁㄴㅇㄹ",
+                set : recDetail.sets
+            });
+
+            const tempRoutineDetail = {
+                healthCategoryIdx : recDetail.exerciseId
+            };
+            for (var l=0; l<recDetail.sets; l++) {
+                tempRoutineDetail['rep'+String(l)] = recDetail.reps;
+                if (recDetail.weights) {
+                    tempRoutineDetail['weight'+String(l)] = recDetail.weights[l];
+                }
+            };
+
+            // const tempRoutineDetailQuery = `
+            //                       INSERT INTO routineDetail
+            //                       SET ?;
+            //                       SELECT LAST_INSERT_ID();
+            //                       `;
+            // const [reponseTempRDIdx] = await connection.query(tempRoutineDetailQuery, tempRoutineDetail);
+            // tempRoutine['detailIdx'+String(k)] = reponseTempRDIdx[1][0]['LAST_INSERT_ID()'];
+        };
+
+        // const tempRoutineQuery = `
+        //                   INSERT INTO routine
+        //                   SET ?;
+        //                   SELECT LAST_INSERT_ID();
+        //                   `;
+        // const [responseTempRIdx] = await connection.query(tempRoutineQuery, tempRoutine);
+        // resRoutine.id = responseTempRIdx[1][0]['LAST_INSERT_ID()'];
+
+        console.log(tempRoutine);
+        tempRoutineCalendar.item.push(resRoutine);
+    };
+    responseRoutines.push(tempRoutineCalendar);
+};
+
+console.log(JSON.stringify(responseRoutines, null, 2));
