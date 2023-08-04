@@ -27,8 +27,8 @@ async function insertRoutine(connection, userId, info, gpt) {
 
     const responseCompletion = await openai.createChatCompletion(completion);
     console.log("---------- gpt completion ----------");
-    console.log(responseCompletion.data.choices[0].message);
-    const responseContent = JSON.parse(JSON.stringify(responseCompletion.data.choices[0].message.content));
+    const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content.replaceAll('\'', '"').replaceAll('`', '"'));
+    console.log(responseContent);
 
     const selectExerciseListQuery = `
                           SELECT name
@@ -50,7 +50,7 @@ async function insertRoutine(connection, userId, info, gpt) {
         for (var j=0; j<responseKeys.length-1; j++) {
             const recRoutine = responseValues[j+1].content;
             const resRoutine = {
-                id : 0,
+                routineIdx : 0,
                 day : responseKeys[j+1],
                 parts : responseValues[j+1].target,
                 exercises : []
@@ -60,7 +60,7 @@ async function insertRoutine(connection, userId, info, gpt) {
             for (var k=0; k<recRoutine.length; k++) {
                 const recDetail = recRoutine[k];
                 resRoutine.exercises.push({
-                    id : recDetail.exerciseId,
+                    healthCategoryIdx : recDetail.exerciseId,
                     name : exerciseList[recDetail.exerciseId-1].name,
                     set : recDetail.sets
                 });
