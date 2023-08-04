@@ -112,24 +112,24 @@ exports.replaceExerciseInRoutine = async function (req, res) {
     }
 };
 
-/**
- * 5 API Name : 운동 루틴 '전체' 중단 API
- * [PATCH] /app/process/:routineIdx
- */
-exports.patchProcess = async function (req, res) {
-    /**
-     * Decoded: userId
-     * Path Variable : routineIdx
-     * Body : status
-     */
-    const userId = req.decoded.userId
-    const routineIdx = req.params.routineIdx
-    const routineStatus = req.body
+// /**
+//  * 5 API Name : 운동 루틴 '전체' 중단 API
+//  * [PATCH] /app/process/:routineIdx
+//  */
+// exports.patchProcess = async function (req, res) {
+//     /**
+//      * Decoded: userId
+//      * Path Variable : routineIdx
+//      * Body : status
+//      */
+//     const userId = req.decoded.userId
+//     const routineIdx = req.params.routineIdx
+//     const routineStatus = req.body
     
-    const responsePatchProcess = await ProcessService.updateProcess(userId, routineIdx, routineStatus)
+//     const responsePatchProcess = await ProcessService.updateProcess(userId, routineIdx, routineStatus)
 
-    return res.send(responsePatchProcess)
-}
+//     return res.send(responsePatchProcess)
+// }
 
 /**
  * 6 API Name : 운동 건너뛰기 API
@@ -149,61 +149,61 @@ exports.skipExercise = async function (req, res) {
     }
 };
 
-/** // 물어보기
- * 7 API Name : 운동 루틴 캘린더 기록 API
- * [POST] /app/process/:routineIdx/end
- */
-exports.saveTime = async function (req, res) {
-    try {
-        const { routineDetailIdx , timeInMinutes } = req.params;
-        const userId = req.decoded.userId
+// /** // 물어보기
+//  * 7 API Name : 운동 루틴 캘린더 기록 API
+//  * [POST] /app/process/:routineIdx/end
+//  */
+// exports.saveTime = async function (req, res) {
+//     try {
+//         const { routineDetailIdx , timeInMinutes } = req.params;
+//         const userId = req.decoded.userId
 
-        const saveTimeResult = await processService.saveTime(userId, routineDetailIdx, timeInMinutes);
+//         const saveTimeResult = await processService.saveTime(userId, routineDetailIdx, timeInMinutes);
 
-        if (saveTimeResult) {
-            return res.send(response(baseResponse.SUCCESS));
-        } else {
-            return res.send(response(baseResponse.DB_ERROR));
-        }
-    } catch (err) {
-        console.error(`Error in saveTime Controller: ${err}`);
-        return res.send(response({ message: '서버 오류' }));
-    }
-};
+//         if (saveTimeResult) {
+//             return res.send(response(baseResponse.SUCCESS));
+//         } else {
+//             return res.send(response(baseResponse.DB_ERROR));
+//         }
+//     } catch (err) {
+//         console.error(`Error in saveTime Controller: ${err}`);
+//         return res.send(response({ message: '서버 오류' }));
+//     }
+// };
 
-/**
- * 8 API Name : 운동 결과 개요 API
- * [GET] /app/process/:routineIdx/end
- */
-exports.getProcessEnd = async function (req, res) {
-    /**
-     * Decoded : userId
-     */
-    const userId = req.decoded.userId
+// /**
+//  * 8 API Name : 운동 결과 개요 API
+//  * [GET] /app/process/:routineIdx/end
+//  */
+// exports.getProcessEnd = async function (req, res) {
+//     /**
+//      * Decoded : userId
+//      */
+//     const userId = req.decoded.userId
 
-    const ProcessEnd = await processProvider.retrieveProcessEnd(userId)
+//     const ProcessEnd = await processProvider.retrieveProcessEnd(userId)
 
-    if(!ProcessEnd) return res.send(errResponse)
-    else return res.send(baseResponse.SUCCESS, ProcessEnd)
-}
+//     if(!ProcessEnd) return res.send(errResponse)
+//     else return res.send(baseResponse.SUCCESS, ProcessEnd)
+// }
 
 
-// 관련 운동 추천 아닌가? (보류)
-/**
- * 9 API Name : 운동 분석 API
- * [GET] /app/process/:routineIdx/end/detail
- */
-exports.getProcessEndDetail = async function (req, res) {
-    /**
-     * Decoded : userId
-     */
-    const userId = req.decoded.userId
+// // 관련 운동 추천 아닌가? (보류)
+// /**
+//  * 9 API Name : 운동 분석 API
+//  * [GET] /app/process/:routineIdx/end/detail
+//  */
+// exports.getProcessEndDetail = async function (req, res) {
+//     /**
+//      * Decoded : userId
+//      */
+//     const userId = req.decoded.userId
 
-    const ProcessEndDetail = await processProvider.retrieveProcessEndDetail(userId)
+//     const ProcessEndDetail = await processProvider.retrieveProcessEndDetail(userId)
 
-    if(!ProcessEndDetail) return res.send(errResponse)
-    else return res.send(baseResponse.SUCCESS, ProcessEndDetail)
-}
+//     if(!ProcessEndDetail) return res.send(errResponse)
+//     else return res.send(baseResponse.SUCCESS, ProcessEndDetail)
+// }
 
 
 // /** [일단 보류, 프론트가 한다네 ㅎ]

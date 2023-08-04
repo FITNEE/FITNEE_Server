@@ -32,12 +32,12 @@ exports.updateSkipValue = async function (routineDetailIdx) {
     return skipValue
 };
 
-// 시간 저장
-exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
-    try {
-        const saveTimeResult = await processProvider.saveTime(userId, routineDetailIdx, timeInMinutes);
-        return saveTimeResult;
-    } catch (err) {
-        throw err;
-    }
-};
+// // 시간 저장
+// exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
+//     try {
+//         const saveTimeResult = await processProvider.saveTime(userId, routineDetailIdx, timeInMinutes);
+//         return saveTimeResult;
+//     } catch (err) {
+//         throw err;
+//     }
+// };

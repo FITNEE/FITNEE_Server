@@ -200,37 +200,37 @@ async function updateSkipValue(connection, routineDetailIdx) {
     await connection.query(updateSkipValueQuery, [routineDetailIdx]);
 }
 
-// time
-async function saveTime(connection, userId, routineDetailIdx, timeInMinutes) {
+// // time
+// async function saveTime(connection, userId, routineDetailIdx, timeInMinutes) {
 
-        // 시간 데이터 저장
-        const insertTimeQuery = `
-            INSERT INTO timeTable (routineDetailIdx, timeInMinutes)
-            VALUES (?, ?);
-        `;
-        const [timeResult] = await connection.query(insertTimeQuery, [routineDetailIdx, timeInMinutes]);
+//         // 시간 데이터 저장
+//         const insertTimeQuery = `
+//             INSERT INTO timeTable (routineDetailIdx, timeInMinutes)
+//             VALUES (?, ?);
+//         `;
+//         const [timeResult] = await connection.query(insertTimeQuery, [routineDetailIdx, timeInMinutes]);
 
-        if (timeResult.affectedRows === 1) {
-            // myCalendar 테이블에 시간 데이터 추가
-            const insertCalendarQuery = `
-                INSERT INTO myCalendar (userIdx, userId, routineIdx, totalExerciseTime, healthDate)
-                VALUES (?, ?, ?, ?, NOW());
-            `;
-            await connection.query(insertCalendarQuery, [userId, userId, routineDetailIdx, timeInMinutes]);
+//         if (timeResult.affectedRows === 1) {
+//             // myCalendar 테이블에 시간 데이터 추가
+//             const insertCalendarQuery = `
+//                 INSERT INTO myCalendar (userIdx, userId, routineIdx, totalExerciseTime, healthDate)
+//                 VALUES (?, ?, ?, ?, NOW());
+//             `;
+//             await connection.query(insertCalendarQuery, [userId, userId, routineDetailIdx, timeInMinutes]);
 
-            // detailIdx가 0이 아닌 경우 루틴 캘린더에 저장하는 로직 추가
-            if (routineDetailIdx !== 0) {
-                const updateRoutineCalendarQuery = `
-                    UPDATE routineCalendar
-                    SET totalExerciseTime = totalExerciseTime + ?
-                    WHERE userId = ? AND routineIdx = ?;
-                `;
-                await connection.query(updateRoutineCalendarQuery, [timeInMinutes, userId, routineDetailIdx]);
-            }
-        }
+//             // detailIdx가 0이 아닌 경우 루틴 캘린더에 저장하는 로직 추가
+//             if (routineDetailIdx !== 0) {
+//                 const updateRoutineCalendarQuery = `
+//                     UPDATE routineCalendar
+//                     SET totalExerciseTime = totalExerciseTime + ?
+//                     WHERE userId = ? AND routineIdx = ?;
+//                 `;
+//                 await connection.query(updateRoutineCalendarQuery, [timeInMinutes, userId, routineDetailIdx]);
+//             }
+//         }
 
-        return true;
-}
+//         return true;
+// }
 
 module.exports = {
     selectBeforeProcessDetail,
@@ -242,5 +242,5 @@ module.exports = {
     updateRoutineDetail,
     updateRoutineStatus,
     updateSkipValue,
-    saveTime,
+    // saveTime,
 };

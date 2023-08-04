@@ -118,14 +118,14 @@ exports.updateHealthCategoryInRoutineDetail = async function (selectedHealthCate
     }
 };
 
-exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
-    const connection = await pool.getConnection(async (conn) => conn)
-    try {
-        const saveTimeResult = await processDao.saveTime(connection, userId, routineDetailIdx, timeInMinutes);
+// exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
+//     const connection = await pool.getConnection(async (conn) => conn)
+//     try {
+//         const saveTimeResult = await processDao.saveTime(connection, userId, routineDetailIdx, timeInMinutes);
 
-        connection.release()
-        return saveTimeResult;
-    } catch (err) {
-        throw err;
-    }
-};
+//         connection.release()
+//         return saveTimeResult;
+//     } catch (err) {
+//         throw err;
+//     }
+// };
