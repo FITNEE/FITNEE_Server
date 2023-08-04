@@ -35,7 +35,7 @@ module.exports = function() {
             console.log('-------------- send logs --------------');
             console.log(stdout);
             console.log('-------------- send logs --------------');
-            res.send(stdout);
+            res.send(stdout.replace('\r', '\n'));
         });
     });
 
