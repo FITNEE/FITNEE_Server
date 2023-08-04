@@ -11,16 +11,16 @@ const {response, errResponse} = require("../../../config/response");
 exports.postRoutine = async function (req, res) {
     /**
      * Decoded : userId
-     * Body : info
+     * Body : routineCalendar
      */
     const userId = req.decoded.userId;
     const info = req.body;
-    
+
     const gpt = req.gpt;
 
-    const responsePostRoutine = await routineService.insertRoutine(userId, info, gpt);
+    const responsePostRoutineCalendar = await routineService.insertRoutine(userId, info, gpt);
 
-    return res.send(responsePostRoutine);
+    return res.send(responsePostRoutineCalendar);
 };
 
 /**
@@ -33,9 +33,9 @@ exports.postRoutineCalendar = async function (req, res) {
      * Body : info
      */
     const userId = req.decoded.userId;
-    const info = req.body;
+    const inroutineCalendarfo = req.body;
     
-    const responsePostRoutine = await routineService.insertRoutineCalendar(userId, info);
+    const responsePostRoutine = await routineService.insertRoutineCalendar(userId, routineCalendar);
 
     return res.send(responsePostRoutine);
 };

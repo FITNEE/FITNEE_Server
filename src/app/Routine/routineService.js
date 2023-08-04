@@ -17,13 +17,13 @@ exports.insertRoutine = async function (userId, info, gpt) {
     }
 };
 
-exports.insertRoutineCalendar = async function (userId, info) {
+exports.insertRoutineCalendar = async function (userId, routineCalendar) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const insertRoutine = await routineDao.insertRoutine(connection, userId, info);
+        const insertRoutineCalendar = await routineDao.insertRoutineCalendar(connection, userId, routineCalendar);
         connection.release();
     
-        return response(baseResponse.SUCCESS, insertRoutine);
+        return response(baseResponse.SUCCESS, insertRoutineCalendar);
     } catch (err) {
         logger.error(`App - insertRoutineCalendar Service error\n: ${err.message}`);
         return errResponse(baseResponse.TRANSACTION_ERROR);
