@@ -90,7 +90,7 @@ async function insertRoutine(connection, userId, info, gpt) {
                               SELECT LAST_INSERT_ID();
                               `;
             const [responseTempRIdx] = await connection.query(tempRoutineQuery, tempRoutine);
-            resRoutine.id = responseTempRIdx[1][0]['LAST_INSERT_ID()'];
+            resRoutine.routineIdx = responseTempRIdx[1][0]['LAST_INSERT_ID()'];
 
             tempRoutineCalendar.item.push(resRoutine);
         };

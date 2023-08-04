@@ -18,8 +18,6 @@ exports.postRoutine = async function (req, res) {
 
     const gpt = req.gpt;
 
-    req.setTimeout(120000);
-
     const responsePostRoutineCalendar = await routineService.insertRoutine(userId, info, gpt);
 
     return res.send(responsePostRoutineCalendar);
