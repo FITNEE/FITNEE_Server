@@ -54,6 +54,7 @@ exports.retrieveProcessDetail = async function (routineIdx) {
     return routineDetail;
 }
 
+// 오늘 날짜를 요일로 변환
 exports.getTodayRoutineIdx = async function (userId) {
     function getDayOfWeek() {
         const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -100,23 +101,21 @@ exports.getReplacementExercises = async function (detailIdx, exercisePart) {
 
 };
 
-exports.updateRoutineDetail = async function (routineDetailIdx, reps, weights, skip) {
-    const connection = await pool.getConnection(async (conn) => conn);
+// 대체한 운동의 healthCategoryIdx로 routineDetail 수정
+exports.updateHealthCategoryInRoutineDetail = async function (selectedHealthCategoryIdx, routineDetailIdx) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
 
-    const updateRoutineDetailQuery = `
-        UPDATE routineDetail
-        SET rep0 = ?, rep1 = ?, weight0 = ?, weight1 = ?, skip = ?
-        WHERE routineDetailIdx = ?;
-    `;
+        // routineDetail 수정
+        await processDao.updateRoutineDetail(connection, selectedHealthCategoryIdx, routineDetailIdx);
 
-    const [updateResult] = await connection.query(updateRoutineDetailQuery, [reps[0], reps[1], weights[0], weights[1], skip, routineDetailIdx]);
-    connection.release();
+        // 대체한 운동의 status를 1로 업데이트
+        await processDao.updateRoutineStatus(connection, routineDetailIdx);
 
-    if (updateResult.affectedRows === 0) {
-        return null;
+        connection.release();
+    } catch (err) {
+        throw err;
     }
-
-    return { routineDetailIdx, reps, weights, skip };
 };
 
 // 시간, 총무게, 소요칼로리(db 추가)

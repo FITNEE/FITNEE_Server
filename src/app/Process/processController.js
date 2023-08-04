@@ -85,56 +85,32 @@ exports.getReplacementRecommendations = async function (req, res) {
         return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))
     } catch (err) {
         console.error(`App - getReplacementRecommendations Error: ${err.message}`);
-        return res.status(500).send(response(baseResponse.INTERNAL_SERVER_ERROR));
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
     }
 }
 
-exports.saveReplacementRoutine = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Path Variable : detailIdx
-     * Request Body: replacementData
-     * Example of replacementData:
-     * {
-     *    "routineDetailIdx": 123,
-     *    "reps": [10, 12],
-     *    "weights": [20, 25],
-     *    "skip": false
-     * }
-     */
+
+/**
+ *  4-2 API 이름 : 대체된 운동 정보 업데이트 API
+ * [PATCH] /app/process/replace/exercise
+ */
+exports.replaceExerciseInRoutine = async function (req, res) {
     try {
-        const { detailIdx } = req.params;
-        const { routineDetailIdx, reps, weights, skip } = req.body;
+        const { routineDetailIdx, selectedHealthCategoryIdx } = req.body;
 
         // 유효성 검증
-        if (!Number.isInteger(parseInt(detailIdx)) || parseInt(detailIdx) <= 0) {
-            console.log("Invalid detailIdx");
-            return res.send(response(baseResponse.INVALID_DETAIL_IDX));
+        if (!Number.isInteger(parseInt(routineDetailIdx)) || parseInt(routineDetailIdx) <= 0) {
+            return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
         }
 
-        // 유저 담당 detailIdx 검증
-        const userId = req.decoded.userId;
-        const isDetailIdxBelongsToUser = await processProvider.isDetailIdxBelongsToUser(userId, detailIdx);
+        await processProvider.updateHealthCategoryInRoutineDetail(selectedHealthCategoryIdx, routineDetailIdx)
 
-        if (!isDetailIdxBelongsToUser) {
-            console.log("The detailIdx does not belong to the user");
-            return res.send(response(baseResponse.DETAIL_IDX_NOT_BELONGS_TO_USER));
-        }
-
-        // routineDetail 수정
-        const updatedRoutineDetail = await processProvider.updateRoutineDetail(routineDetailIdx, reps, weights, skip);
-
-        if (!updatedRoutineDetail) {
-            console.log("Failed to update routineDetail");
-            return res.send(response(baseResponse.UPDATE_ROUTINE_DETAIL_FAILED));
-        }
-
-        return res.send(response(baseResponse.SUCCESS, { updatedRoutineDetail }));
+        return res.send(response(baseResponse.SUCCESS));
     } catch (err) {
-        console.error(`App - saveReplacementRoutine Error: ${err.message}`);
-        return res.status(500).send(response(baseResponse.INTERNAL_SERVER_ERROR));
+        console.error(`Error in replaceExerciseInRoutine Controller: ${err}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
     }
-}
+};
 
 /**
  * 5 API Name : 운동 루틴 '전체' 중단 API
@@ -159,20 +135,19 @@ exports.patchProcess = async function (req, res) {
  * 6 API Name : 운동 건너뛰기 API
  * [PATCH] /app/process/:routineDetailIdx
  */
-exports.patchProcessDetail = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Path Variable : routineDetailIdx
-     * Body : skip
-     */
-    const userId = req.decoded.userId
-    const routineDetailIdx = req.params.routineDetailIdx
-    const routineSkip = req.body
+exports.skipExercise = async function (req, res) {
+    try {
+        const { routineDetailIdx } = req.params
 
-    const responsePatchProcessDetail = await processService.skipProcessDatail(userId, routineDetailIdx, routineSkip)
+        // 운동 건너뛰기 (skip 값을 1로 업데이트)
+        await processService.updateSkipValue(routineDetailIdx);
 
-    return res.send(responsePatchProcessDetail)
-}
+        return res.send(response(baseResponse.SUCCESS));
+    } catch (err) {
+        console.error(`Error in skipExercise Controller: ${err}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
+};
 
 /** // 물어보기
  * 7 API Name : 운동 루틴 캘린더 기록 API
