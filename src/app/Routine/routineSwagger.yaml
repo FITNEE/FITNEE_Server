@@ -52,6 +52,10 @@ tags:
                 'message':
                   type: string
                   example: '성공'
+                'result':
+                  type: array
+                  items: 
+                    $ref : '#/components/schemas/RecRoutineCalendar'
 
 /app/routine/calendar:
   post:
@@ -297,3 +301,44 @@ components:
         'rep':
           type: integer
           example: 50
+
+    RecRoutineCalendar:
+      type: object
+      properties:
+        'id':
+          type: integer
+          example: 1
+        'item':
+          type: array
+          items:
+            $ref : '#/components/schemas/RecRoutines'
+
+    RecRoutines:
+      type: object
+      properties:
+        'routineIdx':
+          type: integer
+          example: 121
+        'day':
+          type: string  
+          example: "Monday"
+        'parts':
+          type: string
+          example: "전신"
+        'exercises':
+          type: array
+          items:
+            $ref : '#/componenets/schemas/RecRoutineDetails'
+
+    RecRoutineDetails:
+      type: object
+      properties:
+        'healthCategoryIdx':
+          type: integer
+          example: 6
+        'name':
+          type: string
+          example: "바벨 로우"
+        'set':
+          type: integer
+          example: 3
