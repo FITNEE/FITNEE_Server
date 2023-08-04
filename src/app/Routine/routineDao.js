@@ -1,7 +1,7 @@
 const lodash = require('lodash');
 const { exceptions } = require('winston');
 
-async function insertRoutine(connection, openai, userId, info) {
+async function insertRoutine(connection, userId, info, gpt) {
     const selectUserInfo = `
                   SELECT birthYear, gender, height, weight
                   FROM User
@@ -9,19 +9,27 @@ async function insertRoutine(connection, openai, userId, info) {
                   `;
     const [[responseUserInfo]] = await connection.query(selectUserInfo, userId);
 
-    // executeGPT(openai);
+    const openai = gpt.openai;
+    const rmSentence = (info.RM)
+                        ? `I think I can lift up to ${info.RM}kg when I do squats to the maximum.`
+                        : `I don't even know how many squats I can do at a time.`;
+    const infoSentence = `
+                    I am a ${(responseUserInfo.gender==1) ? "male" : "female"} born in ${responseUserInfo.birthYear},
+                    I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.
+                    ${rmSentence}
+                    I will do ${info.targets} exercises at ${info.place}.
+                    I'm going to exercise on ${info.dayOfWeeks}.
+                    `;
 
-    console.log((responseUserInfo.gender==1) ? "male" : "female");
-    // console.log(responseUserInfo.birthYear);
-    // console.log(responseUserInfo.height);
-    // console.log(responseUserInfo.weight);
-    // console.log(info);
-    // console.log(info.RM);
-    // console.log(info.targets);
-    // console.log(info.place);
-    // console.log(info.dayOfWeeks);
+    const content = infoSentence + gpt.chatContent;
+    const completion = gpt.chatCompletion;
+    completion.messages[2].content = content;
+
+    const responseCompletion = await openai.createChatCompletion(completion);
+    const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content);
+
     
-    return responseUserInfo;
+    return responseContent;
 };
 
 // 루틴 일정 조희
@@ -182,63 +190,6 @@ async function deleteRoutine(connection, userId, routineIdx) {
     ]);
 
     return ;
-}
-
-async function executeGPT(openai, gender, age, tall, weight, RM, targets, place, dayOfWeeks) {
-    const rmSentence = (RM)
-                        ? `I think I can lift up to ${RM}kg when I do squats to the maximum.`
-                        : `I don't even know how many squats I can do at a time.`;
-
-    const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo-16k",
-        messages: [
-            {role: "system", content: "You're a fitness trainer who recommends exercise routines."},
-            {role: "system", content: `
-            exerciseId-exerciseName-note(rep of unit),
-            1-Bench Press,
-            2-Incline Dumbbell Press,
-            3-Chest Press Machine,
-            4-Leg Extension,
-            5-Lat Pull down,
-            6-Barbell Row,
-            7-Deadlift,
-            8-Dumbbell Row,
-            9-Shoulder Press,
-            10-Side Lateral Raise,
-            11-Front Dumbbell Raise,
-            12-Bent Over Lateral Raise,
-            13-Seated Row,
-            14-Leg Curl,
-            15-Leg Press,
-            16-Bench Fly,
-            17-Hip Thrust,
-            18-Hip Raise,
-            19-Chest Dips,
-            20-Pull Up,
-            21-Push Up,
-            22-Front Plank-(1sec),
-            23-Side Plank-(1sec),
-            24-Running-(100m),
-            25-Cycling-(100m)
-            Create a routine with these exercises
-            `
-            },
-            {role: "user", content: `
-            I am a ${gender} born in ${age}, I am ${tall}cm tall and weight ${weight}kg.
-            ${rmSentence}
-            I will do ${targets} exercises at ${place}.
-            I'm going to exercise on ${dayOfWeeks}.
-            Please recommend 3 different routines.
-
-            Say only JSON Object format like {'dayOfWeek': dayOfWeek, 'target': targetArea, 'content': ['exerciseId': exerciseId, 'exerciseName': exerciseName, 'sets': numsOfSet(Only Int), 'reps': numsOfRep(Only Int), 'weights'(If exerciseId is between 19 and 25, that is, bare body exercise, get rid of this.): numsOfWeight(Only List(Int as many as numsOfSet))]}.
-            In the case of planks, if 1 rep performs 1 second, that is, 10 seconds, using note(rep of unit), rep should be 10.
-            In the case of Running and Cycling, if 1 rep performs 100m, that is, 500m, using note(rep of unit), rep should be 5.
-            Never Explain.
-            `}
-        ],
-    });
-
-    return completion.data.choices[0].message.content;
 }
   
 module.exports = {
