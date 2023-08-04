@@ -118,11 +118,14 @@ exports.updateHealthCategoryInRoutineDetail = async function (selectedHealthCate
     }
 };
 
-// 시간, 총무게, 소요칼로리(db 추가)
-exports.retrieveProcessEnd = async function (userId) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const processEnd = await processDao.selectMyCalendar(connection, userId);
-    connection.release();
+// exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
+//     const connection = await pool.getConnection(async (conn) => conn)
+//     try {
+//         const saveTimeResult = await processDao.saveTime(connection, userId, routineDetailIdx, timeInMinutes);
 
-    return routine;
-};
+//         connection.release()
+//         return saveTimeResult;
+//     } catch (err) {
+//         throw err;
+//     }
+// };
