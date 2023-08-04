@@ -27,7 +27,7 @@ module.exports = function() {
     });
 
     app.get('/cat-log', (req, res) => {
-        exec('tail -20 /home/ubuntu/.forever/5QEB.log', (err, stdout, stderr) => {
+        exec('tail -50 /home/ubuntu/.forever/5QEB.log', (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return res.sendStatus(500);
@@ -49,13 +49,13 @@ module.exports = function() {
             return res.sendStatus(501);
         }
 
-        exec(`tail -${20*len} /home/ubuntu/.forever/5QEB.log`, (err, stdout, stderr) => {
+        exec(`tail -${30*len} /home/ubuntu/.forever/5QEB.log`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return res.sendStatus(500);
             }
             console.log('-------------- send logs --------------');
-            res.send(stdout);
+            res.send(stdout.replaceAll('\r', '\n').replaceAll('\n', '<br>'));
         });
     });
 
