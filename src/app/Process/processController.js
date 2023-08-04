@@ -153,16 +153,23 @@ exports.skipExercise = async function (req, res) {
  * 7 API Name : 운동 루틴 캘린더 기록 API
  * [POST] /app/process/:routineIdx/end
  */
-exports.postMyCalendar = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Body : userIdx, routineCalendarIdx, totalExerciseTime, totalWeight, healthDate
-     */
-    const { userIdx, routineCalendarIdx, totalExerciseTime, totalWeight, healthDate } = req.body
+exports.saveTime = async function (req, res) {
+    try {
+        const { routineDetailIdx , timeInMinutes } = req.params;
+        const userId = req.decoded.userId
 
-    // 유효성 검증
-    if (!userIdx) return res.send(errResponse)
-}
+        const saveTimeResult = await processService.saveTime(userId, routineDetailIdx, timeInMinutes);
+
+        if (saveTimeResult) {
+            return res.send(response(baseResponse.SUCCESS));
+        } else {
+            return res.send(response(baseResponse.DB_ERROR));
+        }
+    } catch (err) {
+        console.error(`Error in saveTime Controller: ${err}`);
+        return res.send(response({ message: '서버 오류' }));
+    }
+};
 
 /**
  * 8 API Name : 운동 결과 개요 API
