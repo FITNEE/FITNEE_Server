@@ -52,7 +52,6 @@ async function getPasswordByUserId(connection, userId) {
       FROM User
       WHERE userId = ? AND status = '1';
     `;
-    console.log("userId :", userId)
     const [passwordRows] = await connection.query(getPasswordQuery, userId);
     return passwordRows;
   } catch (err) {

@@ -1,18 +1,43 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
-// const routineDao = require("./routineDao");
+const processProvider = require("./processProvider")
+const processDao = require("./processDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
-exports.deleteRoutine = async function (userId, routineIdx) {
+// 기존 데이터 수정
+exports.updateRoutineAndRoutineDetail = async function (routineIdx, detailIdx, selectedHealthCategoryIdx) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const deleteRoutine = await routineDao.deleteRoutine(connection, userId, routineIdx);
+
+
+        // routineDetail 수정
+        const updateRoutineDetailAndRoutine = await processDao.updateHealthCategoryIdx(connection, selectedHealthCategoryIdx, routineIdx, detailIdx)
+
         connection.release();
 
-        return response(baseResponse.SUCCESS, deleteRoutine);
+        return updateRoutineDetailAndRoutine
     } catch (err) {
-        logger.error(`App - deleteRoutine Service error\n: ${err.message}`);
-        return errResponse(baseResponse.TRANSACTION_ERROR);
+        throw err;
     }
 };
+
+// 스킵
+exports.updateSkipValue = async function (routineDetailIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+
+    const skipValue = await processDao.updateSkipValue(connection, routineDetailIdx);
+    connection.release()
+    return skipValue
+};
+
+// // 시간 저장
+// exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
+//     try {
+//         const saveTimeResult = await processProvider.saveTime(userId, routineDetailIdx, timeInMinutes);
+//         return saveTimeResult;
+//     } catch (err) {
+//         throw err;
+//     }
+// };

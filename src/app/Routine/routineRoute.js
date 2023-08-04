@@ -11,19 +11,25 @@ const routine = require('./routineController');
 
 router.use(jwtMiddleware);
 
-// 1. 루틴 등록 API
+// 루틴 예시 생성 API
 router.post('/', gptMiddleware, routine.postRoutine);
 
-// 2. 루틴 일정 조회 API
-router.get('/', routine.getRoutineCalendar);
+// 루틴 등록 API
+router.post('/calendar', routine.postRoutineCalendar);
 
-// 3. 루틴 조회 API
+// 루틴 일정 조회 API
+router.get('/calendar', routine.getRoutineCalendar);
+
+// 루틴 일정 수정 API
+router.put('/calendar', routine.putRoutineCalendar);
+
+// 루틴 조회 API
 router.get('/:routineIdx', routine.getRoutine);
 
-// 4. 루틴 수정 API
+// 루틴 수정 API
 router.put('/:routineIdx', routine.putRoutine);
 
-// 4. 루틴 삭제 API
+// 루틴 삭제 API
 router.delete('/:routineIdx', routine.deleteRoutine);
 
 module.exports = router;

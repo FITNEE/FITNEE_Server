@@ -54,16 +54,78 @@ exports.retrieveProcessDetail = async function (routineIdx) {
     return routineDetail;
 }
 
-// 시간, 총무게, 소요칼로리(db 추가)
-exports.retrieveProcessEnd = async function (userId) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const processEnd = await processDao.selectMyCalendar(connection, userId);
-    connection.release();
+// 오늘 날짜를 요일로 변환
+exports.getTodayRoutineIdx = async function (userId) {
+    function getDayOfWeek() {
+        const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+        const today = new Date();
+        const dayIndex = today.getDay();
+        return daysOfWeek[dayIndex];
+    }
+    const connection = await pool.getConnection(async (conn) => conn)
 
-    return routine;
+    const dayOfWeek = getDayOfWeek();
+    const routineIdx = await processDao.getTodayRoutineIdx(userId, dayOfWeek)
+    connection.release()
+
+    return routineIdx
+}
+
+// userId 매치 검증
+exports.isDetailIdxBelongsToUser = async function (userId, detailIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+    const result = await processDao.checkDetailIdx(connection, userId, detailIdx);
+    connection.release()
+
+    return result;
 };
 
-// gpt콜..
-exports.retrieveProcessEndDetail = async function (userId) {
+// parts 추출
+exports.getExercisePart = async function (detailIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+    const exercisePart = processDao.getExercisePart(connection, detailIdx);
+    connection.release()
 
-}
+    return exercisePart;
+};
+
+// 대체 운동 get
+exports.getReplacementExercises = async function (detailIdx, exercisePart) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const maxRecommendations = 3;
+    const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, detailIdx, exercisePart, maxRecommendations);
+    connection.release()
+
+    return replacementRecommendations;
+
+};
+
+// 대체한 운동의 healthCategoryIdx로 routineDetail 수정
+exports.updateHealthCategoryInRoutineDetail = async function (selectedHealthCategoryIdx, routineDetailIdx) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        // routineDetail 수정
+        await processDao.updateRoutineDetail(connection, selectedHealthCategoryIdx, routineDetailIdx);
+
+        // 대체한 운동의 status를 1로 업데이트
+        await processDao.updateRoutineStatus(connection, routineDetailIdx);
+
+        connection.release();
+    } catch (err) {
+        throw err;
+    }
+};
+
+// exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
+//     const connection = await pool.getConnection(async (conn) => conn)
+//     try {
+//         const saveTimeResult = await processDao.saveTime(connection, userId, routineDetailIdx, timeInMinutes);
+
+//         connection.release()
+//         return saveTimeResult;
+//     } catch (err) {
+//         throw err;
+//     }
+// };

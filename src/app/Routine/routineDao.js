@@ -26,21 +26,111 @@ async function insertRoutine(connection, userId, info, gpt) {
     completion.messages[2].content = content;
 
     const responseCompletion = await openai.createChatCompletion(completion);
-    const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content);
+    console.log("---------- gpt completion ----------");
+    const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content.replaceAll('\'', '"').replaceAll('`', '"'));
+    console.log(responseContent);
 
-    
-    return responseContent;
+    const selectExerciseListQuery = `
+                          SELECT name
+                          FROM healthCategory
+                          `;
+    const [exerciseList] = await connection.query(selectExerciseListQuery);
+
+    //
+    const responseRoutines = [];
+    for (var i=0; i<3; i++) {
+        const responseKeys = Object.keys(responseContent[i]);
+        const responseValues = Object.values(responseContent[i]);
+        const tempRoutineCalendar = {
+            id : i+1,
+            title : responseContent[i].Title,
+            item : []
+        };
+
+        for (var j=0; j<responseKeys.length-1; j++) {
+            const recRoutine = responseValues[j+1].content;
+            const resRoutine = {
+                routineIdx : 0,
+                day : responseKeys[j+1],
+                parts : responseValues[j+1].target,
+                exercises : []
+            };
+            const tempRoutine = {};
+
+            for (var k=0; k<recRoutine.length; k++) {
+                const recDetail = recRoutine[k];
+                resRoutine.exercises.push({
+                    healthCategoryIdx : recDetail.exerciseId,
+                    name : exerciseList[recDetail.exerciseId-1].name,
+                    set : recDetail.sets
+                });
+
+                const tempRoutineDetail = {
+                    healthCategoryIdx : recDetail.exerciseId
+                };
+                for (var l=0; l<recDetail.sets; l++) {
+                    tempRoutineDetail['rep'+String(l)] = recDetail.reps;
+                    if (recDetail.weights) {
+                        tempRoutineDetail['weight'+String(l)] = recDetail.weights[l];
+                    }
+                };
+
+                const tempRoutineDetailQuery = `
+                                      INSERT INTO routineDetail
+                                      SET ?;
+                                      SELECT LAST_INSERT_ID();
+                                      `;
+                const [reponseTempRDIdx] = await connection.query(tempRoutineDetailQuery, tempRoutineDetail);
+                tempRoutine['detailIdx'+String(k)] = reponseTempRDIdx[1][0]['LAST_INSERT_ID()'];
+            };
+
+            const tempRoutineQuery = `
+                              INSERT INTO routine
+                              SET ?;
+                              SELECT LAST_INSERT_ID();
+                              `;
+            const [responseTempRIdx] = await connection.query(tempRoutineQuery, tempRoutine);
+            resRoutine.routineIdx = responseTempRIdx[1][0]['LAST_INSERT_ID()'];
+
+            tempRoutineCalendar.item.push(resRoutine);
+        };
+        responseRoutines.push(tempRoutineCalendar);
+    };
+
+    return responseRoutines;
+};
+
+async function insertRoutineCalendar(connection, userId, routineCalendar) {
+    const existCheckQuery = `
+                      SELECT *
+                      FROM routineCalendar
+                      WHERE status = 0 AND userId = ?
+                      `;
+
+    const [[responseExistCheck]] = await connection.query(existCheckQuery, userId);
+
+    if (responseExistCheck) {
+        updateRoutineCalendar(connection, userId, routineCalendar);
+    } else {
+        routineCalendar.userId = userId;
+        const insertRoutineCalendarQuery = `
+                            INSERT INTO routineCalendar
+                            SET ?
+                            `;
+        await connection.query(insertRoutineCalendarQuery, routineCalendar);
+    }
+
+    return ;
 };
 
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
     const selectRoutineCalendarQuery = `
-                  SELECT @temp := ?;
                   SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
                   FROM routineCalendar
-                  WHERE status = 0 AND userId = @temp COLLATE utf8mb4_unicode_ci;
+                  WHERE status = 0 AND userId = ?;
                   `;
-    const [routineCalendar] = await connection.query(selectRoutineCalendarQuery, userId);
+    const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
     return routineCalendar;
 };
 
@@ -49,7 +139,7 @@ async function selectRoutine(connection, routineIdx) {
     const selectRoutineQuery = `
                   SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
                   FROM routine
-                  WHERE status = 0 AND routineIdx = ?
+                  WHERE routineIdx = ?
                   `;
     const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
     if (!routine) return routine;
@@ -59,7 +149,7 @@ async function selectRoutine(connection, routineIdx) {
         const selectRoutineDetailQuery = `
                       SELECT healthCategoryIdx, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
                       FROM routineDetail
-                      WHERE status = 0 AND routineDetailIdx = ?
+                      WHERE routineDetailIdx = ?
                       `;
         const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routine['detailIdx'+String(i)]);
         
@@ -90,6 +180,18 @@ async function selectRoutine(connection, routineIdx) {
 
     return routineContent;
 };
+
+// 루틴 일정 수정
+async function updateRoutineCalendar(connection, userId, routineCalendar) {
+    const updateRoutineCalendarQuery = `
+                              UPDATE routineCalendar
+                              SET ?
+                              WHERE userId = ?
+                              `;
+    await connection.query(updateRoutineCalendarQuery, [routineCalendar, userId]);
+
+    return ;
+}
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
@@ -194,7 +296,9 @@ async function deleteRoutine(connection, userId, routineIdx) {
   
 module.exports = {
     insertRoutine,
+    insertRoutineCalendar,
     selectRoutineCalendar,
+    updateRoutineCalendar,
     selectRoutine,
     updateRoutine,
     deleteRoutine,

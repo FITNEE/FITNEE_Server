@@ -40,118 +40,179 @@ exports.getProcessDetail = async function (req, res) {
 }
 
 /**
- * 3 API Name : 운동 루틴 대체 API
- * [PATCH] /app/process/samePart/:routineIdx
+ *  4-1 API Name : 운동 루틴 대체 추천 API\
+ * [GET] /app/process/replace/:detailIdx
  */
-exports.patchSamePartProcess = async function (req, res) {
+exports.getReplacementRecommendations = async function (req, res) {
     /**
-     * Decoded: userId
-     * Path Variable : routineIdx
-     * Body : routineDetailIdx
+     * Decoded : userId
+     * Path Variable : detailIdx
      */
-    const userId = req.decoded.userId
-    const routineIdx = req.params.routineIdx
-    const routineDetailIdx = req.body
+    try {
+        const { detailIdx } = req.params
 
-    const responsePatchSamePartProcess = await processService.updateSamePart(userId, routineIdx, routineDetailIdx)
+        // 유효성 검증
+        if (!Number.isInteger(parseInt(detailIdx)) || parseInt(detailIdx) <= 0) {
+            console.log("Invaild detailIdx")
+            return res.send(response(baseResponse.INVALID_DETAIL_IDX))
+        }
 
-    return res.send(responsePatchSamePartProcess)
+        // 유저 담당 detailIdx 검증
+        const userId = req.decoded.userId
+        const isDetailIdxBelongsToUser = await processProvider.isDetailIdxBelongsToUser(userId, detailIdx) // await 추가
+
+        if (!isDetailIdxBelongsToUser) {
+            console.log("The detailIdx does not belong to the user")
+            return res.send(response(baseResponse.DETAIL_IDX_NOT_BELONGS_TO_USER))
+        }
+
+        // 동일 parts
+        const exercisePart = await processProvider.getExercisePart(detailIdx) // await 추가
+
+        if (!exercisePart) {
+            console.log("Exercise part unknown")
+            return res.send(response(baseResponse.EXERCISE_NOT_FOUND))
+        }
+
+        // 동일 parts 내에서 랜덤 추출
+        const replacementRecommendations = await processProvider.getReplacementExercises(detailIdx, exercisePart)
+
+        if (replacementRecommendations.length === 0) {
+            console.log("No replacement exercises found")
+            return res.send(response(baseResponse.REPLACEMENT_EXERCISES_NOT_FOUND))
+        }
+
+        return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))
+    } catch (err) {
+        console.error(`App - getReplacementRecommendations Error: ${err.message}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
 }
 
+
 /**
- * 4 API Name : 운동 루틴 '전체' 중단 API
- * [PATCH] /app/process/:routineIdx
+ *  4-2 API 이름 : 대체된 운동 정보 업데이트 API
+ * [PATCH] /app/process/replace/exercise
  */
-exports.patchProcess = async function (req, res) {
-    /**
-     * Decoded: userId
-     * Path Variable : routineIdx
-     * Body : status
-     */
-    const userId = req.decoded.userId
-    const routineIdx = req.params.routineIdx
-    const routineStatus = req.body
+exports.replaceExerciseInRoutine = async function (req, res) {
+    try {
+        const { routineDetailIdx, selectedHealthCategoryIdx } = req.body;
+
+        // 유효성 검증
+        if (!Number.isInteger(parseInt(routineDetailIdx)) || parseInt(routineDetailIdx) <= 0) {
+            return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
+        }
+
+        await processProvider.updateHealthCategoryInRoutineDetail(selectedHealthCategoryIdx, routineDetailIdx)
+
+        return res.send(response(baseResponse.SUCCESS));
+    } catch (err) {
+        console.error(`Error in replaceExerciseInRoutine Controller: ${err}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
+};
+
+// /**
+//  * 5 API Name : 운동 루틴 '전체' 중단 API
+//  * [PATCH] /app/process/:routineIdx
+//  */
+// exports.patchProcess = async function (req, res) {
+//     /**
+//      * Decoded: userId
+//      * Path Variable : routineIdx
+//      * Body : status
+//      */
+//     const userId = req.decoded.userId
+//     const routineIdx = req.params.routineIdx
+//     const routineStatus = req.body
     
-    const responsePatchProcess = await ProcessService.updateProcess(userId, routineIdx, routineStatus)
+//     const responsePatchProcess = await ProcessService.updateProcess(userId, routineIdx, routineStatus)
 
-    return res.send(responsePatchProcess)
-}
+//     return res.send(responsePatchProcess)
+// }
 
 /**
- * API Name : 운동 건너뛰기 API
+ * 6 API Name : 운동 건너뛰기 API
  * [PATCH] /app/process/:routineDetailIdx
  */
-exports.patchProcessDetail = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Path Variable : routineDetailIdx
-     * Body : skip
-     */
-    const userId = req.decoded.userId
-    const routineDetailIdx = req.params.routineDetailIdx
-    const routineSkip = req.body
+exports.skipExercise = async function (req, res) {
+    try {
+        const { routineDetailIdx } = req.params
 
-    const responsePatchProcessDetail = await processService.skipProcessDatail(userId, routineDetailIdx, routineSkip)
+        // 운동 건너뛰기 (skip 값을 1로 업데이트)
+        await processService.updateSkipValue(routineDetailIdx);
 
-    return res.send(responsePatchProcessDetail)
-}
+        return res.send(response(baseResponse.SUCCESS));
+    } catch (err) {
+        console.error(`Error in skipExercise Controller: ${err}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
+};
 
-/** // 물어보기
- * API Name : 운동 루틴 캘린더 기록 API
- * [POST] /app/process/:routineIdx/end
- */
-exports.postCalendar = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Body : userIdx, routineCalendarIdx, totalExerciseTime, totalWeight, healthDate
-     */
-    const { userIdx, routineCalendarIdx, totalExerciseTime, totalWeight, healthDate } = req.body
+// /** // 물어보기
+//  * 7 API Name : 운동 루틴 캘린더 기록 API
+//  * [POST] /app/process/:routineIdx/end
+//  */
+// exports.saveTime = async function (req, res) {
+//     try {
+//         const { routineDetailIdx , timeInMinutes } = req.params;
+//         const userId = req.decoded.userId
 
-    // 유효성 검증
-    if (!userIdx) return res.send(errResponse)
-}
+//         const saveTimeResult = await processService.saveTime(userId, routineDetailIdx, timeInMinutes);
 
-/**
- * API Name : 운동 결과 개요 API
- * [GET] /app/process/:routineIdx/end
- */
-exports.getProcessEnd = async function (req, res) {
-    /**
-     * Decoded : userId
-     */
-    const userId = req.decoded.userId
+//         if (saveTimeResult) {
+//             return res.send(response(baseResponse.SUCCESS));
+//         } else {
+//             return res.send(response(baseResponse.DB_ERROR));
+//         }
+//     } catch (err) {
+//         console.error(`Error in saveTime Controller: ${err}`);
+//         return res.send(response({ message: '서버 오류' }));
+//     }
+// };
 
-    const ProcessEnd = await processProvider.retrieveProcessEnd(userId)
+// /**
+//  * 8 API Name : 운동 결과 개요 API
+//  * [GET] /app/process/:routineIdx/end
+//  */
+// exports.getProcessEnd = async function (req, res) {
+//     /**
+//      * Decoded : userId
+//      */
+//     const userId = req.decoded.userId
 
-    if(!ProcessEnd) return res.send(errResponse)
-    else return res.send(baseResponse.SUCCESS, ProcessEnd)
-}
+//     const ProcessEnd = await processProvider.retrieveProcessEnd(userId)
+
+//     if(!ProcessEnd) return res.send(errResponse)
+//     else return res.send(baseResponse.SUCCESS, ProcessEnd)
+// }
 
 
-// 관련 운동 추천 아닌가? (보류)
-/**
- * API Name : 운동 분석 API
- * [GET] /app/process/:routineIdx/end/detail
- */
-exports.getProcessEndDetail = async function (req, res) {
-    /**
-     * Decoded : userId
-     */
-    const userId = req.decoded.userId
+// // 관련 운동 추천 아닌가? (보류)
+// /**
+//  * 9 API Name : 운동 분석 API
+//  * [GET] /app/process/:routineIdx/end/detail
+//  */
+// exports.getProcessEndDetail = async function (req, res) {
+//     /**
+//      * Decoded : userId
+//      */
+//     const userId = req.decoded.userId
 
-    const ProcessEndDetail = await processProvider.retrieveProcessEndDetail(userId)
+//     const ProcessEndDetail = await processProvider.retrieveProcessEndDetail(userId)
 
-    if(!ProcessEndDetail) return res.send(errResponse)
-    else return res.send(baseResponse.SUCCESS, ProcessEndDetail)
-}
+//     if(!ProcessEndDetail) return res.send(errResponse)
+//     else return res.send(baseResponse.SUCCESS, ProcessEndDetail)
+// }
 
-/**
- * API Name : 결과 공유 API
- * [POST] /app/process/:routineIdx/end/detail
- */
-exports.postProcessEndDetail = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Body : sharingMethod, ana
-     */
-}
+
+// /** [일단 보류, 프론트가 한다네 ㅎ]
+//  * API Name : 결과 공유 API
+//  * [POST] /app/process/:routineIdx/end/detail
+//  */
+// exports.postProcessEndDetail = async function (req, res) {
+//     /**
+//      * Decoded : userId
+//      * Body : sharingMethod, ana
+//      */
+// }

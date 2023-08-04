@@ -52,6 +52,25 @@ tags:
                 'message':
                   type: string
                   example: '성공'
+                'result':
+                  type: array
+                  items: 
+                    $ref : '#/components/schemas/RecRoutineCalendar'
+
+/app/routine/calendar:
+  post:
+    tags:
+      - Routine
+    summary: 루틴 일정 등록 API
+    description: 루틴 생성을 통해 추천 받은 루틴 Idx를 통해 주간 루틴 일정을 등록하는 API
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoutineCalendar'
+    responses:
+      '1000':
+        description: 성공 - 각 요일별 루틴 Idx 값을 통해 수정합니다. 
   get:
     tags:
       - Routine
@@ -80,6 +99,19 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+  put:
+    tags:
+      - Routine
+    summary: 루틴 일정 수정 API
+    description: 주간 루틴 일정을 수정하는 API
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoutineCalendar'
+    responses:
+      '1000':
+        description: 성공 - 각 요일별 루틴 Idx 값을 통해 수정합니다. 
 
 /app/routine/{routineIdx}:
   get:
@@ -269,3 +301,44 @@ components:
         'rep':
           type: integer
           example: 50
+
+    RecRoutineCalendar:
+      type: object
+      properties:
+        'id':
+          type: integer
+          example: 1
+        'item':
+          type: array
+          items:
+            $ref : '#/components/schemas/RecRoutines'
+
+    RecRoutines:
+      type: object
+      properties:
+        'routineIdx':
+          type: integer
+          example: 121
+        'day':
+          type: string  
+          example: "Monday"
+        'parts':
+          type: string
+          example: "전신"
+        'exercises':
+          type: array
+          items:
+            $ref : '#/components/schemas/RecRoutineDetails'
+
+    RecRoutineDetails:
+      type: object
+      properties:
+        'healthCategoryIdx':
+          type: integer
+          example: 6
+        'name':
+          type: string
+          example: "바벨 로우"
+        'set':
+          type: integer
+          example: 3

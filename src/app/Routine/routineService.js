@@ -17,6 +17,32 @@ exports.insertRoutine = async function (userId, info, gpt) {
     }
 };
 
+exports.insertRoutineCalendar = async function (userId, routineCalendar) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const insertRoutineCalendar = await routineDao.insertRoutineCalendar(connection, userId, routineCalendar);
+        connection.release();
+    
+        return response(baseResponse.SUCCESS, insertRoutineCalendar);
+    } catch (err) {
+        logger.error(`App - insertRoutineCalendar Service error\n: ${err.message}`);
+        return errResponse(baseResponse.TRANSACTION_ERROR);
+    }
+};
+
+exports.updateRoutineCalendar = async function (userId, routineCalendar) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const updateRoutineCalendar = await routineDao.updateRoutineCalendar(connection, userId, routineCalendar);
+        connection.release();
+    
+        return response(baseResponse.SUCCESS, updateRoutineCalendar);
+    } catch (err) {
+        logger.error(`App - updateRoutineCalendar Service error\n: ${err.message}`);
+        return errResponse(baseResponse.TRANSACTION_ERROR);
+    }
+}
+
 exports.updateRoutine = async function (userId, routineIdx, routineContent) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);

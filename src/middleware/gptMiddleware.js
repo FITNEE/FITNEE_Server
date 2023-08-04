@@ -11,7 +11,6 @@ const gptMiddleware = async function (req, res, next)  {
             organization: secret.openaiOrganization,
             apiKey: secret.openaiSecret,
         });
-
         req.gpt.openai = new OpenAIApi(configuration);
 
         req.gpt.chatCompletion = {
@@ -59,8 +58,9 @@ const gptMiddleware = async function (req, res, next)  {
         Say only JSON Object format like
         [
             {
+                'Title': thisRoutineTitle(Only Korean)
                 'dayOfWeek'(day of week name): {
-                    'target': targetArea,
+                    'target': targetArea(Only Korean),
                     'content': [
                         {
                             'exerciseId': exerciseId,
@@ -79,8 +79,9 @@ const gptMiddleware = async function (req, res, next)  {
         example
         [
             {
+                'Title': "전신 근력 운동",
                 'Monday': {
-                    'target': 'Back',
+                    'target': '등',
                     'content': [
                         {
                             'exerciseId': 13,
@@ -113,7 +114,7 @@ const gptMiddleware = async function (req, res, next)  {
                     ]
                 }
                 'Friday': {
-                    'target': 'Lower Body',
+                    'target': '하체',
                     'content': [
                         {
                             "exerciseId": 4,
@@ -133,8 +134,9 @@ const gptMiddleware = async function (req, res, next)  {
                 }
             },
             {
+                'Title': "기초 체력 운동",
                 'Monday': {
-                    'target': 'Back',
+                    'target': '등',
                     'content': [
                         {
                             "exerciseId": 6,
@@ -153,7 +155,7 @@ const gptMiddleware = async function (req, res, next)  {
                     ]
                 }
                 'Friday': {
-                    'target': 'Lower Body',
+                    'target': '하체',
                     'content': [
                         {
                             "exerciseId": 21,
