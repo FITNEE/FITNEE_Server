@@ -25,20 +25,79 @@ async function insertRoutine(connection, userId, info, gpt) {
     const completion = gpt.chatCompletion;
     completion.messages[2].content = content;
 
-    // const responseCompletion = await openai.createChatCompletion(completion);
-    // const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content);
-
-    // console.log(responseContent);
+    const responseCompletion = await openai.createChatCompletion(completion);
+    console.log("---------- gpt completion ----------");
+    console.log(responseCompletion.data.choices[0].message);
+    const responseContent = JSON.parse(JSON.stringify(responseCompletion.data.choices[0].message.content));
 
     const selectExerciseListQuery = `
-                          SELECT healthCategoryIdx, name
+                          SELECT name
                           FROM healthCategory
                           `;
-    const exerciseList = await connection.query(selectExerciseListQuery);
+    const [exerciseList] = await connection.query(selectExerciseListQuery);
 
-    console.log(exerciseList);
+    //
+    const responseRoutines = [];
+    for (var i=0; i<3; i++) {
+        const responseKeys = Object.keys(responseContent[i]);
+        const responseValues = Object.values(responseContent[i]);
+        const tempRoutineCalendar = {
+            id : i+1,
+            title : responseContent[i].Title,
+            item : []
+        };
 
-    return responseContent;
+        for (var j=0; j<responseKeys.length-1; j++) {
+            const recRoutine = responseValues[j+1].content;
+            const resRoutine = {
+                id : 0,
+                day : responseKeys[j+1],
+                parts : responseValues[j+1].target,
+                exercises : []
+            };
+            const tempRoutine = {};
+
+            for (var k=0; k<recRoutine.length; k++) {
+                const recDetail = recRoutine[k];
+                resRoutine.exercises.push({
+                    id : recDetail.exerciseId,
+                    name : exerciseList[recDetail.exerciseId-1].name,
+                    set : recDetail.sets
+                });
+
+                const tempRoutineDetail = {
+                    healthCategoryIdx : recDetail.exerciseId
+                };
+                for (var l=0; l<recDetail.sets; l++) {
+                    tempRoutineDetail['rep'+String(l)] = recDetail.reps;
+                    if (recDetail.weights) {
+                        tempRoutineDetail['weight'+String(l)] = recDetail.weights[l];
+                    }
+                };
+
+                const tempRoutineDetailQuery = `
+                                      INSERT INTO routineDetail
+                                      SET ?;
+                                      SELECT LAST_INSERT_ID();
+                                      `;
+                const [reponseTempRDIdx] = await connection.query(tempRoutineDetailQuery, tempRoutineDetail);
+                tempRoutine['detailIdx'+String(k)] = reponseTempRDIdx[1][0]['LAST_INSERT_ID()'];
+            };
+
+            const tempRoutineQuery = `
+                              INSERT INTO routine
+                              SET ?;
+                              SELECT LAST_INSERT_ID();
+                              `;
+            const [responseTempRIdx] = await connection.query(tempRoutineQuery, tempRoutine);
+            resRoutine.id = responseTempRIdx[1][0]['LAST_INSERT_ID()'];
+
+            tempRoutineCalendar.item.push(resRoutine);
+        };
+        responseRoutines.push(tempRoutineCalendar);
+    };
+
+    return responseRoutines;
 };
 
 async function insertRoutineCalendar(connection, userId, routineCalendar) {
