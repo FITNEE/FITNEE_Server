@@ -52,6 +52,8 @@ tags:
                 'message':
                   type: string
                   example: '성공'
+
+/app/routine/calendar:
   get:
     tags:
       - Routine
@@ -80,6 +82,19 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+  put:
+    tags:
+      - Routine
+    summary: 루틴 일정 수정 API
+    description: 주간 루틴 일정을 수정하는 API
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoutineCalendar'
+    responses:
+      '1000':
+        description: 성공 - 각 요일별 루틴 Idx 값을 통해 수정합니다. 
 
 /app/routine/{routineIdx}:
   get:

@@ -33,7 +33,14 @@ module.exports = function() {
                 return res.sendStatus(500);
             }
             console.log('-------------- send logs --------------');
-            res.send(stdout.replaceAll('\r', '\n').replaceAll('\n', '<br>'));
+            
+            var logContent = stdout;
+            logContent = logContent.replaceAll('\r', '\n').replaceAll('\n', '<br>');
+            logContent = logContent.replaceAll('[31m', '<span style="color:red;">');
+            logContent = logContent.replaceAll('[32m', '<span style="color:green;">');
+            logContent = logContent.replaceAll('[33m', '<span style="color:Goldenrod;;">');
+            logContent = logContent.replaceAll('[39m', '</span>');
+            res.send(logContent);
         });
     });
 
@@ -60,7 +67,7 @@ module.exports = function() {
             logContent = logContent.replaceAll('\r', '\n').replaceAll('\n', '<br>');
             logContent = logContent.replaceAll('[31m', '<span style="color:red;">');
             logContent = logContent.replaceAll('[32m', '<span style="color:green;">');
-            logContent = logContent.replaceAll('[33m', '<span style="color:yellow;">');
+            logContent = logContent.replaceAll('[33m', '<span style="color:Goldenrod;;">');
             logContent = logContent.replaceAll('[39m', '</span>');
             res.send(logContent);
         });

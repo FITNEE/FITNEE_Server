@@ -5,7 +5,7 @@ const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
 /**
- * API Name : 루틴 등록 API
+ * API Name : 루틴 생성 API
  * [POST] /app/routine
  */
 exports.postRoutine = async function (req, res) {
@@ -23,10 +23,27 @@ exports.postRoutine = async function (req, res) {
     return res.send(responsePostRoutine);
 };
 
+/**
+ * API Name : 루틴 등록 API
+ * [POST] /app/routine/calendar
+*/
+exports.postRoutineCalendar = async function (req, res) {
+    /**
+     * Decoded : userId
+     * Body : info
+     */
+    const userId = req.decoded.userId;
+    const info = req.body;
+    
+    const responsePostRoutine = await routineService.insertRoutineCalendar(userId, info);
+
+    return res.send(responsePostRoutine);
+};
+
 
 /**
  * API Name : 루틴 일정 조회 API
- * [GET] /app/routine
+ * [GET] /app/routine/calendar
  */
 exports.getRoutineCalendar = async function (req, res) {
     /**
@@ -38,6 +55,23 @@ exports.getRoutineCalendar = async function (req, res) {
 
     if (!routineCalendar) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
     else return res.send(response(baseResponse.SUCCESS, routineCalendar));
+};
+
+/**
+ * API Name : 루틴 일정 수정 API
+ * [PUT] /app/routine/calendar
+ */
+exports.putRoutineCalendar = async function (req, res) {
+    /**
+     * Decoded : userId
+     * Body : routineCalendar
+     */
+    const userId = req.decoded.userId;
+    const routineCalendar = req.body;
+
+    const responsePutRoutineCalendar = await routineService.updateRoutineCalendar(userId, routineCalendar);
+
+    return res.send(responsePutRoutineCalendar);
 };
 
 /**
