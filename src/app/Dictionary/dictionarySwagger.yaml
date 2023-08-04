@@ -4,7 +4,7 @@ tags:
 
 /app/dictionary:
   get:
-    summary: userIdx 받아서 최근 검색키워드 5개, 인기 검색 키워드 5개 조회
+    summary: API NO.1 - userIdx 받아서 최근 검색키워드 5개, 인기 검색 키워드 5개 조회
     parameters:
       - name: userIdx
         in: query
@@ -39,7 +39,7 @@ tags:
 
 /app/dictionary/exerciseinfo:
   get:
-    summary: 운동 parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
+    summary: API NO.2 - 운동 parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
     parameters:
       - name: parts
         in: query
@@ -81,7 +81,7 @@ tags:
 
 /app/dictionary/exercisemethod:
   get:
-    summary: 운동 name으로 운동방법, 운동주의사항 조회
+    summary: API NO.3 - 운동 name으로 운동방법, 운동주의사항 조회
     parameters:
       - name: name
         in: query
@@ -112,7 +112,7 @@ tags:
 
 /app/dictionary/exercisechat:
   get:
-    summary: 운동 name으로 채팅내역 조회
+    summary: API NO.4 - 운동 name으로 채팅내역 조회
     parameters:
       - name: name
         in: query
@@ -157,7 +157,7 @@ tags:
 
 /app/dictionary/chatting:
   post:
-    summuary: 운동 name, userNickname, text post
+    summuary: API NO.5 - 운동 name, userNickname, text post
     description: 운동 name, userNickname, text post해서 db에 넣기
     tags:
       - Dictionary
@@ -195,7 +195,7 @@ tags:
 
 /app/dictionary/deleteChatt/{healthChattingIdx}:
   delete:
-    summary: 채팅 삭제(healthChatting status 컬럼 0 -> 1)
+    summary: API NO.6 - 채팅 삭제(healthChatting status 컬럼 0 -> 1)
     description: login할때 쿠키에 저장된 accesstoken가지고 있어야함.(api 내에서 검증함) app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함.
     tags:
       - Dictionary

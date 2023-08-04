@@ -1,11 +1,12 @@
-// 검색 키워드, 인기 키워드 조회
-async function selectKeyword(connection, userIdx) {
+//검색 키워드, 인기 키워드 조회
+async function selectKeyword(connection, userIdFromJWT) {
     const selectRecentKeywordsQuery = `
-        SELECT text, COUNT(*) as searchCount
-        FROM keyword
-        WHERE userIdx = ?
-        GROUP BY text
-        ORDER BY MAX(createdAt) DESC
+        SELECT U.userId, K.text, K.createdAt
+        FROM User U
+        INNER JOIN keyword K ON U.userIdx = K.userIdx
+        WHERE U.userId = ?
+        GROUP BY K.text
+        ORDER BY K.createdAt DESC
         LIMIT 5;
     `;
 
@@ -18,7 +19,7 @@ async function selectKeyword(connection, userIdx) {
     `;
 
     const [recentKeywords, popularKeywords] = await Promise.all([
-        connection.query(selectRecentKeywordsQuery, [userIdx]),
+        connection.query(selectRecentKeywordsQuery, [userIdFromJWT]),
         connection.query(selectPopularKeywordsQuery)
     ]);
 

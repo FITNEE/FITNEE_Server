@@ -9,7 +9,7 @@ const mypage = require('./dictionaryController');
  */
 
 // 1. 
-router.get('/', mypage.getKeywordByIdx);
+router.get('/', jwtMiddleware, mypage.getKeywordByIdx);
 
 // 2.
 router.get('/exerciseinfo', mypage.getInformationByparts);
