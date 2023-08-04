@@ -54,6 +54,19 @@ tags:
                   example: '성공'
 
 /app/routine/calendar:
+  post:
+    tags:
+      - Routine
+    summary: 루틴 일정 등록 API
+    description: 루틴 생성을 통해 추천 받은 루틴 Idx를 통해 주간 루틴 일정을 등록하는 API
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoutineCalendar'
+    responses:
+      '1000':
+        description: 성공 - 각 요일별 루틴 Idx 값을 통해 수정합니다. 
   get:
     tags:
       - Routine

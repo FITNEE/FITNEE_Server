@@ -25,11 +25,43 @@ async function insertRoutine(connection, userId, info, gpt) {
     const completion = gpt.chatCompletion;
     completion.messages[2].content = content;
 
-    const responseCompletion = await openai.createChatCompletion(completion);
-    const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content);
+    // const responseCompletion = await openai.createChatCompletion(completion);
+    // const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content);
 
-    
+    // console.log(responseContent);
+
+    const selectExerciseListQuery = `
+                          SELECT healthCategoryIdx, name
+                          FROM healthCategory
+                          `;
+    const exerciseList = await connection.query(selectExerciseListQuery);
+
+    console.log(exerciseList);
+
     return responseContent;
+};
+
+async function insertRoutineCalendar(connection, userId, routineCalendar) {
+    const existCheckQuery = `
+                      SELECT *
+                      FROM routineCalendar
+                      WHERE status = 0 AND userId = ?
+                      `;
+
+    const [[responseExistCheck]] = await connection.query(existCheckQuery, userId);
+
+    if (responseExistCheck) {
+        updateRoutineCalendar(connection, userId, routineCalendar);
+    } else {
+        routineCalendar.userId = userId;
+        const insertRoutineCalendarQuery = `
+                            INSERT INTO routineCalendar
+                            SET ?
+                            `;
+        await connection.query(insertRoutineCalendarQuery, routineCalendar);
+    }
+
+    return ;
 };
 
 // 루틴 일정 조희
@@ -39,7 +71,7 @@ async function selectRoutineCalendar(connection, userId) {
                   FROM routineCalendar
                   WHERE status = 0 AND userId = ?;
                   `;
-    const [routineCalendar] = await connection.query(selectRoutineCalendarQuery, userId);
+    const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
     return routineCalendar;
 };
 
@@ -48,7 +80,7 @@ async function selectRoutine(connection, routineIdx) {
     const selectRoutineQuery = `
                   SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
                   FROM routine
-                  WHERE status = 0 AND routineIdx = ?
+                  WHERE routineIdx = ?
                   `;
     const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
     if (!routine) return routine;
@@ -58,7 +90,7 @@ async function selectRoutine(connection, routineIdx) {
         const selectRoutineDetailQuery = `
                       SELECT healthCategoryIdx, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
                       FROM routineDetail
-                      WHERE status = 0 AND routineDetailIdx = ?
+                      WHERE routineDetailIdx = ?
                       `;
         const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routine['detailIdx'+String(i)]);
         
@@ -93,10 +125,10 @@ async function selectRoutine(connection, routineIdx) {
 // 루틴 일정 수정
 async function updateRoutineCalendar(connection, userId, routineCalendar) {
     const updateRoutineCalendarQuery = `
-                            UPDATE routineCalendar
-                            SET ?
-                            WHERE userId = ?
-                            `;
+                              UPDATE routineCalendar
+                              SET ?
+                              WHERE userId = ?
+                              `;
     await connection.query(updateRoutineCalendarQuery, [routineCalendar, userId]);
 
     return ;
@@ -205,6 +237,7 @@ async function deleteRoutine(connection, userId, routineIdx) {
   
 module.exports = {
     insertRoutine,
+    insertRoutineCalendar,
     selectRoutineCalendar,
     updateRoutineCalendar,
     selectRoutine,
