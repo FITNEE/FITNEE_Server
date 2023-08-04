@@ -62,7 +62,7 @@ module.exports = function() {
             logContent = logContent.replaceAll('[32m', '<span style="color:green;">');
             logContent = logContent.replaceAll('[33m', '<span style="color:yellow;">');
             logContent = logContent.replaceAll('[39m', '</span>');
-            res.send(stdout);
+            res.send(logContent);
         });
     });
 
