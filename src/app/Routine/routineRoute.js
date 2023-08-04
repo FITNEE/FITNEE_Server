@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwtMiddleware = require('../../middleware/jwtMiddleware');
+const gptMiddleware = require('../../middleware/gptMiddleware');
 const routine = require('./routineController');
 
 /**
@@ -11,7 +12,7 @@ const routine = require('./routineController');
 router.use(jwtMiddleware);
 
 // 1. 루틴 등록 API
-router.post('/', routine.postRoutine);
+router.post('/', gptMiddleware, routine.postRoutine);
 
 // 2. 루틴 일정 조회 API
 router.get('/', routine.getRoutineCalendar);
