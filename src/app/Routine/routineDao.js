@@ -35,10 +35,9 @@ async function insertRoutine(connection, userId, info, gpt) {
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
     const selectRoutineCalendarQuery = `
-                  SELECT @temp := ?;
                   SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
                   FROM routineCalendar
-                  WHERE status = 0 AND userId = @temp COLLATE utf8mb4_unicode_ci;
+                  WHERE status = 0 AND userId = ?;
                   `;
     const [routineCalendar] = await connection.query(selectRoutineCalendarQuery, userId);
     return routineCalendar;
@@ -90,6 +89,18 @@ async function selectRoutine(connection, routineIdx) {
 
     return routineContent;
 };
+
+// 루틴 일정 수정
+async function updateRoutineCalendar(connection, userId, routineCalendar) {
+    const updateRoutineCalendarQuery = `
+                            UPDATE routineCalendar
+                            SET ?
+                            WHERE userId = ?
+                            `;
+    await connection.query(updateRoutineCalendarQuery, [routineCalendar, userId]);
+
+    return ;
+}
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
@@ -195,6 +206,7 @@ async function deleteRoutine(connection, userId, routineIdx) {
 module.exports = {
     insertRoutine,
     selectRoutineCalendar,
+    updateRoutineCalendar,
     selectRoutine,
     updateRoutine,
     deleteRoutine,
