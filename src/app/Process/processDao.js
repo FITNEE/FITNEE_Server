@@ -91,15 +91,213 @@ async function selectProcessDetail(connection, routineIdx) {
     return result;
 }
 
+// 운동별 parts get
+async function getExercisePart(connection, detailIdx) {
+
+    const getExercisePartQuery = `
+        SELECT parts
+        FROM healthCategory
+        WHERE healthCategoryIdx = (
+            SELECT healthCategoryIdx
+            FROM routineDetail
+            WHERE routineDetailIdx = ?
+        )
+    `;
+    const [exercisePartRows] = await connection.query(getExercisePartQuery, [detailIdx]);
+
+    if (exercisePartRows.length === 0) {
+        console.log("")
+        return null;
+    }
+
+    return exercisePartRows[0].parts;
+};
+
+// routineCalendar에서 오늘 운동을 위한 routineIdx 추출
+async function getTodayRoutineIdx (userId, dayOfWeek) {
+    const getRoutineIdxQuery = `
+        SELECT ${dayOfWeek}RoutineIdx AS routineIdx
+        FROM routineCalendar
+        WHERE userId = ?
+    `;
+    const [rows] = await connection.query(getRoutineIdxQuery, [userId]);
+    return rows[0].routineIdx;
+}
+
+// Check if the detailIdx belongs to the user
+async function checkDetailIdx (connection, userId, detailIdx) {
+
+    const checkDetailIdxQuery = `
+        SELECT EXISTS (
+            SELECT 1
+            FROM routine
+            WHERE routineIdx IN (
+                SELECT routineIdx
+                FROM routineCalendar
+                WHERE userId = ?
+            ) AND (detailIdx0 = ? OR detailIdx1 = ? OR detailIdx2 = ? OR detailIdx3 = ? OR detailIdx4 = ? OR detailIdx5 = ? OR detailIdx6 = ? OR detailIdx7 = ? OR detailIdx8 = ? OR detailIdx9 = ?)
+        ) AS exist;
+    `;
+
+    const [rows] = await connection.query(checkDetailIdxQuery, [userId, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx]);
+    return rows[0].exist === 1;
+}
+
+// 랜덤추천
+async function getReplacementExercisesLimited(connection, detailIdx, exercisePart, maxRecommendations) {
+
+    // 현재 바꾸려는 운동 제외해서 대체 운동 추천
+    const getReplacementExercisesQuery = `
+        SELECT healthCategoryIdx
+        FROM healthCategory
+        WHERE parts = ?
+        AND healthCategoryIdx <> ?
+        ORDER BY RAND()
+        LIMIT ?;
+    `;
+
+    const [replacementExerciseRows] = await connection.query(getReplacementExercisesQuery, [exercisePart, detailIdx, maxRecommendations]);
+    const replacementRecommendations = replacementExerciseRows.map((row) => row.healthCategoryIdx);
+
+    return replacementRecommendations;
+};
+
+// 대체하기 바탕으로 루틴 수정
+async function updateRoutineDetailIdx(connection, routineIdx, detailIdx) {
+
+    const getRoutineDetailIdxQuery = `
+            SELECT routineDetailIdx
+            FROM routineDetail
+            WHERE healthCategoryIdx = ?
+        `;
+        const [routineDetailRows] = await connection.query(getRoutineDetailIdxQuery, [selectedHealthCategoryIdx]);
+
+        // Check if the selectedHealthCategoryIdx exists in the routineDetail table
+        if (routineDetailRows.length === 0) {
+            console.log("Selected healthCategoryIdx does not exist in routineDetail");
+            return;
+        }
+
+        const newRoutineDetailIdx = routineDetailRows[0].routineDetailIdx;
+
+        // Update the routineDetail table with the new routineDetailIdx for the corresponding healthCategoryIdx
+        const updateRoutineDetailIdxQuery = `
+            UPDATE routineDetail
+            SET routineDetailIdx = ?
+            WHERE healthCategoryIdx = ?;
+        `;
+        await connection.query(updateRoutineDetailIdxQuery, [newRoutineDetailIdx, selectedHealthCategoryIdx]);
+
+        // Update the routine table with the new routineDetailIdx for the corresponding detailIdx
+        const updateRoutineQuery = `
+            UPDATE routine
+            SET 
+                detailIdx0 = IF(detailIdx0 = ?, ?, detailIdx0),
+                detailIdx1 = IF(detailIdx1 = ?, ?, detailIdx1),
+                detailIdx2 = IF(detailIdx2 = ?, ?, detailIdx2),
+                detailIdx3 = IF(detailIdx3 = ?, ?, detailIdx3),
+                detailIdx4 = IF(detailIdx4 = ?, ?, detailIdx4),
+                detailIdx5 = IF(detailIdx5 = ?, ?, detailIdx5),
+                detailIdx6 = IF(detailIdx6 = ?, ?, detailIdx6),
+                detailIdx7 = IF(detailIdx7 = ?, ?, detailIdx7),
+                detailIdx8 = IF(detailIdx8 = ?, ?, detailIdx8),
+                detailIdx9 = IF(detailIdx9 = ?, ?, detailIdx9)
+            WHERE routineIdx = ?;
+        `;
+
+        const queryParams = [
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            detailIdx, newRoutineDetailIdx,
+            routineIdx
+        ];
+
+        await connection.query(updateRoutineQuery, queryParams);
+
+        console.log("Successfully updated routineDetailIdx in routineDetail and routine tables");
+};
 
 
+async function checkRoutineBelongsToUser(connection, userId, routineIdx) {
+    const checkRoutineBelongsToUserQuery = `
+        SELECT EXISTS (
+            SELECT 1
+            FROM routineCalendar
+            WHERE userId = ? AND (
+                sunRoutineIdx = ? OR monRoutineIdx = ? OR tueRoutineIdx = ? OR
+                wedRoutineIdx = ? OR thuRoutineIdx = ? OR friRoutineIdx = ? OR
+                satRoutineIdx = ?
+            )
+        ) AS exist;
+    `;
 
+    const [rows] = await connection.query(checkRoutineBelongsToUserQuery, [
+        userId,
+        routineIdx,
+        routineIdx,
+        routineIdx,
+        routineIdx,
+        routineIdx,
+        routineIdx,
+        routineIdx,
+        routineIdx
+    ]);
 
+    return rows[0].exist === 1;
+}
 
+// Update routine with the alternative exercise based on substitution
+async function updateRoutineWithAlternativeExercise(connection, routineIdx, detailIdx) {
+    const newHealthCategoryIdx = await getExerciseHealthCategoryIdx(connection, detailIdx);
 
+    const updateRoutineQuery = `
+        UPDATE routine
+        SET
+            detailIdx0 = IF(detailIdx0 = ?, ?, detailIdx0),
+            detailIdx1 = IF(detailIdx1 = ?, ?, detailIdx1),
+            detailIdx2 = IF(detailIdx2 = ?, ?, detailIdx2),
+            detailIdx3 = IF(detailIdx3 = ?, ?, detailIdx3),
+            detailIdx4 = IF(detailIdx4 = ?, ?, detailIdx4),
+            detailIdx5 = IF(detailIdx5 = ?, ?, detailIdx5),
+            detailIdx6 = IF(detailIdx6 = ?, ?, detailIdx6),
+            detailIdx7 = IF(detailIdx7 = ?, ?, detailIdx7),
+            detailIdx8 = IF(detailIdx8 = ?, ?, detailIdx8),
+            detailIdx9 = IF(detailIdx9 = ?, ?, detailIdx9)
+        WHERE routineIdx = ?;
+    `;
 
+    const queryParams = [
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        detailIdx, newHealthCategoryIdx,
+        routineIdx
+    ];
+
+    await connection.query(updateRoutineQuery, queryParams);
+}
 
 module.exports = {
     selectBeforeProcessDetail,
     selectProcessDetail,
+    getExercisePart,
+    getTodayRoutineIdx,
+    checkDetailIdx,
+    getReplacementExercisesLimited,
+    updateRoutineDetailIdx,
+    checkRoutineBelongsToUser,
+    updateRoutineWithAlternativeExercise
 };

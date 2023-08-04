@@ -54,6 +54,71 @@ exports.retrieveProcessDetail = async function (routineIdx) {
     return routineDetail;
 }
 
+exports.getTodayRoutineIdx = async function (userId) {
+    function getDayOfWeek() {
+        const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+        const today = new Date();
+        const dayIndex = today.getDay();
+        return daysOfWeek[dayIndex];
+    }
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const dayOfWeek = getDayOfWeek();
+    const routineIdx = await processDao.getTodayRoutineIdx(userId, dayOfWeek)
+    connection.release()
+
+    return routineIdx
+}
+
+// userId 매치 검증
+exports.isDetailIdxBelongsToUser = async function (userId, detailIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+    const result = await processDao.checkDetailIdx(connection, userId, detailIdx);
+    connection.release()
+
+    return result;
+};
+
+// parts 추출
+exports.getExercisePart = async function (detailIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+    const exercisePart = processDao.getExercisePart(connection, detailIdx);
+    connection.release()
+
+    return exercisePart;
+};
+
+// 대체 운동 get
+exports.getReplacementExercises = async function (detailIdx, exercisePart) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const maxRecommendations = 3;
+    const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, detailIdx, exercisePart, maxRecommendations);
+    connection.release()
+
+    return replacementRecommendations;
+
+};
+
+exports.updateRoutineDetail = async function (routineDetailIdx, reps, weights, skip) {
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    const updateRoutineDetailQuery = `
+        UPDATE routineDetail
+        SET rep0 = ?, rep1 = ?, weight0 = ?, weight1 = ?, skip = ?
+        WHERE routineDetailIdx = ?;
+    `;
+
+    const [updateResult] = await connection.query(updateRoutineDetailQuery, [reps[0], reps[1], weights[0], weights[1], skip, routineDetailIdx]);
+    connection.release();
+
+    if (updateResult.affectedRows === 0) {
+        return null;
+    }
+
+    return { routineDetailIdx, reps, weights, skip };
+};
+
 // 시간, 총무게, 소요칼로리(db 추가)
 exports.retrieveProcessEnd = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -62,8 +127,3 @@ exports.retrieveProcessEnd = async function (userId) {
 
     return routine;
 };
-
-// gpt콜..
-exports.retrieveProcessEndDetail = async function (userId) {
-
-}
