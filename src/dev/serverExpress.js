@@ -33,9 +33,7 @@ module.exports = function() {
                 return res.sendStatus(500);
             }
             console.log('-------------- send logs --------------');
-            console.log(stdout);
-            console.log('-------------- send logs --------------');
-            res.send(stdout.replace('\r', '\n'));
+            res.send(stdout.replace('\r', '\n').replace('\n', '<br>'));
         });
     });
 
