@@ -16,31 +16,36 @@ router.get('/:routineIdx', jwtMiddleware, routine.getRoutine);
 // 2. 운동별 과정 전 조회 API(완)
 router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)
 
-// 3. 운동별 과정 중 조회 API
+// 3. 운동별 과정 중 조회 API(완)
 router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
 
-// // 3. 운동 루틴 대체 API
-// router.patch('/part/:routineIdx', jwtMiddleware, );
+// 4-1 운동 루틴 대체 추천 API
+router.get('/replace/:detailIdx', jwtMiddleware, process.getReplacementRecommendations)
 
-// // db에 routine.status를 운동 유무 boolean (default : 0)
-// // 4. 운동 루틴 '전체' 중단 API
-// router.patch('/:routineIdx', jwtMiddleware, )
+// 4-2. 운동 루틴 대체 수정
+router.patch('/replace/:routineIdx', jwtMiddleware, process.saveReplacementRoutine)
 
-// // Routine Detail Skip
-// // 5. 운동 건너뛰기 API
-// router.patch('/:routineDetailIdx', jwtMiddleware, )
 
-// // 물어보기
-// // 6. 운동 루틴 캘린더 기록 API
-// router.patch('/:routineIdx/end', jwtMiddleware, )
+// 
+// 5. 운동 루틴 '전체' 중단 API
+router.patch('/:routineIdx', jwtMiddleware, )
 
-// // 7. 운동 결과 개요 API
-// router.get('/:routineIdx/end', jwtMiddleware, )
+// Routine Detail Skip
+// 6. 운동 건너뛰기 API
+router.patch('/:routineDetailIdx', jwtMiddleware, )
 
-// // 8. 운동 분석 API
-// router.get('/:routineIdx/end/detail', jwtMiddleware, )
+// 물어보기
+// 7. 운동 루틴 캘린더 기록 API
+router.patch('/:routineIdx/end', jwtMiddleware, )
 
-// // 9. 결과 공유 API
+// 8. 운동 결과 개요 API
+router.get('/:routineIdx/end', jwtMiddleware, )
+
+// 9. 운동 분석 API
+router.get('/:routineIdx/end/detail', jwtMiddleware, )
+
+// 보류
+// // 10. 결과 공유 API
 // router.post('/:routineIdx/end/detail', jwtMiddleware, )
 
 module.exports = router;

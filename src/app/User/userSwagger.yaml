@@ -6,7 +6,7 @@ tags:
   - name: User
     description: 사용자 관련 API - 박준규
 paths:
-  /app/users:
+  /app/user:
     post:
       tags:
         - User
@@ -83,7 +83,7 @@ paths:
                     type: string
                     example: 서버 에러
 
-  /app/login:
+  /app/user/login:
     post:
       tags:
         - User
@@ -103,15 +103,19 @@ paths:
                 - userId
                 - userPw
       responses:
-        '200':
+        '1000':
           description: 성공
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  isSuccess:
+                    type: boolean
+                    example: true
                   accessToken:
                     type: string
+                    example: [생성된 액세스 토큰]
         '400':
           description: 실패
           content:
