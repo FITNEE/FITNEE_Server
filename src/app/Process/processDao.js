@@ -109,61 +109,70 @@ async function selectBeforeProcessDetail(connection, routine_list) {
 // 운동 중 / 세트, 무게, 횟수 (Detail) 조회
 async function selectProcessDetail(connection, routineIdx) {
     const selectRoutineQuery = `
-            SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
-            FROM routine
-            WHERE status = 0 AND routineIdx = ?
-        `;
+        SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+        FROM routine
+        WHERE routineIdx = ?
+    `;
 
-        const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
-        if (!routine) return [];
+    const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
 
-        const routine_list = [];
-        for (let i = 0; i < 10; i++) {
-            const detailIdxValue = routine[`detailIdx${i}`];
-            if (detailIdxValue !== null && detailIdxValue > 0) {
-                routine_list.push(detailIdxValue);
-            }
+    if (!routine) return [];
+
+    const routine_list = [];
+    for (let i = 0; i < 10; i++) {
+        const detailIdxValue = routine[`detailIdx${i}`];
+        if (detailIdxValue !== null && detailIdxValue > 0) {
+            routine_list.push(detailIdxValue);
         }
-
-        const result = [];
-        for (const routineDetailIdx of routine_list) {
-            const selectRoutineDetailQuery = `
-                SELECT routineDetailIdx, rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
-                       weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9
-                FROM routineDetail
-                WHERE status = 0 AND routineDetailIdx = ?;
-            `;
-            const [routineDetailRows] = await connection.query(selectRoutineDetailQuery, routineDetailIdx);
-
-            if (routineDetailRows.length === 0) {
-                result.push({
-                    routineDetailIdx: routineDetailIdx,
-                    sets: [],
-                });
-            } else {
-                const exerciseSets = [];
-                let setCounter = 0; // Initialize the set counter here
-                for (let i = 0; i < 10; i++) {
-                    const repValue = routineDetailRows[0][`rep${i}`];
-                    if (repValue === null) {
-                        break; // Break the loop if rep is null
-                    }
-                    exerciseSets.push({
-                        set: setCounter++, // Increment the set number for non-null rep
-                        rep: repValue,
-                        weight: routineDetailRows[0][`weight${i}`], // Get the corresponding weight value
-                    });
-                }
-
-                result.push({
-                    routineDetailIdx: routineDetailIdx,
-                    sets: exerciseSets,
-                });
-            }
-        }
-
-        return result;
     }
+
+    const result = [];
+    for (const routineDetailIdx of routine_list) {
+        const selectRoutineDetailQuery = `
+            SELECT rd.routineDetailIdx,
+                   GROUP_CONCAT(rd.healthCategoryIdx) AS healthCategoryIdxList,
+                   GROUP_CONCAT(hc.englishName) AS exerciseNames,
+                   rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
+                   weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9
+            FROM routineDetail rd
+            LEFT JOIN healthCategory hc ON rd.healthCategoryIdx = hc.healthCategoryIdx
+            WHERE rd.status = 0 AND rd.routineDetailIdx = ?
+        `;
+        const [[routineDetailRow]] = await connection.query(selectRoutineDetailQuery, routineDetailIdx);
+
+        if (!routineDetailRow || routineDetailRow.healthCategoryIdxList === null) {
+            result.push({
+                routineDetailIdx: routineDetailIdx,
+                sets: [],
+            });
+        } else {
+            const healthCategoryIdxList = routineDetailRow.healthCategoryIdxList.split(',');
+            const exerciseNames = routineDetailRow.exerciseNames.split(',');
+            const exerciseSets = [];
+            for (let i = 0; i < 10; i++) {
+                if (routineDetailRow[`rep${i}`] === null) {
+                    break;
+                }
+                exerciseSets.push({
+                    set: i,
+                    rep: routineDetailRow[`rep${i}`],
+                    weight: routineDetailRow[`weight${i}`],
+                });
+            }
+
+            result.push({
+                routineDetailIdx: routineDetailRow.routineDetailIdx,
+                exerciseDetails: healthCategoryIdxList.map((healthCategoryIdx, index) => ({
+                    healthCategoryIdx: parseInt(healthCategoryIdx),
+                    exerciseName: exerciseNames[index],
+                })),
+                sets: exerciseSets,
+            });
+        }
+    }
+
+    return result;
+}
 
 // 운동별 parts get
 async function getExercisePart(connection, detailIdx) {

@@ -147,14 +147,28 @@ tags:
                   items:
                     type: object
                     properties:
-                      healthCategoryIdx:
+                      routineDetailIdx:
                         type: integer
-                        example: 3
-                      content:
+                        example: 2
+                      exerciseDetails:
                         type: array
                         items:
                           type: object
                           properties:
+                            healthCategoryIdx:
+                              type: integer
+                              example: 3
+                            exerciseName:
+                              type: string
+                              example: 'Chest Press Machine'
+                      sets:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            set:
+                              type: integer
+                              example: 0
                             rep:
                               type: integer
                               example: 5

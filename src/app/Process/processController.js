@@ -36,7 +36,7 @@ exports.getBeforeProcessDetail = async function (req, res) {
 
 /**
  * 3 API Name : 운동별 과정 중 조회 API
- * [GET] /app/process/:routineIdx
+ * [GET] /app/process/detail/:routineIdx
  */
 exports.getProcessDetail = async function (req, res) {
     /**
