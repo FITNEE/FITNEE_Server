@@ -92,6 +92,34 @@ exports.updateUserData = async function (req, res) {
 
 /**
  * API No. 6
+ * API Name : 닉네임 변경할때 중복 닉네임 있는지 검사(db에 중복된 닉네임 있는지 t/f - 불리언으로 반환)
+ * [GET] /app/mypage/nickname
+ */
+
+exports.checkUserNameValid = async function (req, res) {
+
+    /**
+     * Query String: userNickName
+     */
+    const userNickName = req.query.userNickName;
+    if (!userNickName) return res.send(errResponse(baseResponse.MYPAGE_USERNICKNAME_EMPTY));
+
+    if (!userNickName) {
+        // 닉네임 전체 조회
+        const nicknameListResult = await mypageProvider.retrieveNicknameList();
+        return res.send(response(baseResponse.SUCCESS, nicknameListResult));
+    } else {
+        // 닉네임 검색 조회2
+        const nicknameListByUserId = await mypageProvider.retrieveNicknameList(userNickName);
+        if (nicknameListByUserId.length === 0) {
+            return res.send(response(baseResponse.SIGNIN_USERID_UNKNOWN));
+        }
+        return res.send(response(baseResponse.SUCCESS, nicknameListByUserId));
+    }
+};
+
+/**
+ * API No. 7
  * API Name : 토큰으로 유저 검증후 userPw 수정 todo: 기존 비밀번호와 같으면 수정x
  * [PUT] /app/mypage/updatepwd
  */
@@ -119,33 +147,3 @@ exports.updatePassword = async function (req, res) {
         return res.send(response(baseResponse.SUCCESS));
     }
 }
-    
-
-
-/**
- * API No. 7
- * API Name : 닉네임 변경할때 중복 닉네임 있는지 검사(db에 중복된 닉네임 있는지 t/f - 불리언으로 반환)
- * [GET] /app/mypage/nickname
- */
-
-exports.checkUserNameValid = async function (req, res) {
-
-    /**
-     * Query String: userNickName
-     */
-    const userNickName = req.query.userNickName;
-    if (!userNickName) return res.send(errResponse(baseResponse.MYPAGE_USERNICKNAME_EMPTY));
-
-    if (!userNickName) {
-        // 닉네임 전체 조회
-        const nicknameListResult = await mypageProvider.retrieveNicknameList();
-        return res.send(response(baseResponse.SUCCESS, nicknameListResult));
-    } else {
-        // 닉네임 검색 조회2
-        const nicknameListByUserId = await mypageProvider.retrieveNicknameList(userNickName);
-        if (nicknameListByUserId.length === 0) {
-            return res.send(response(baseResponse.SIGNIN_USERID_UNKNOWN));
-        }
-        return res.send(response(baseResponse.SUCCESS, nicknameListByUserId));
-    }
-};

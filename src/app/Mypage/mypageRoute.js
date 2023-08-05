@@ -23,10 +23,10 @@ router.get('/userinfo',jwtMiddleware, mypage.getUserData);
 // 5. 유저 정보 업데이트
 router.put('/updateuser', jwtMiddleware, mypage.updateUserData);
 
-// 6. 비밀번호 수정
-router.put('/updatepwd', jwtMiddleware, mypage.updatePassword);
-
-// 7. user테이블에 동일 닉네임 존재하는지 확인
+// 6. user테이블에 동일 닉네임 존재하는지 확인
 router.get('/nickname', mypage.checkUserNameValid);
+
+// 7. 비밀번호 수정
+router.put('/updatepwd', jwtMiddleware, mypage.updatePassword);
     
 module.exports = router;
