@@ -4,35 +4,42 @@ const lodash = require('lodash');
 async function selectBeforeProcessDetail(connection, routine_list) {
     if (!routine_list || routine_list.length === 0) {
         return [];
-      }
+    }
 
-      const selectBeforeProcessDetailQuery = `
+    const selectBeforeProcessDetailQuery = `
         SELECT
-          routineDetailIdx,
-          -- Count non-null data from rep0 to rep9 in routineDetail
-          SUM(CASE WHEN rep0 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep1 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep2 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep3 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep4 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep5 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep6 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep7 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep8 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep9 IS NOT NULL THEN 1 ELSE 0 END) AS all_set,
-          -- Select rep0 data from routineDetail
-          MAX(CASE WHEN rep0 IS NOT NULL THEN rep0 END) AS data_rep0,
-          -- Select weight0 data from routineDetail
-          MAX(CASE WHEN rep0 IS NOT NULL THEN weight0 END) AS data_weight0
-        FROM routineDetail 
+            -- Count non-null data from rep0 to rep9 in routineDetail
+            SUM(
+                CASE WHEN rep0 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep1 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep2 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep3 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep4 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep5 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep6 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep7 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep8 IS NOT NULL THEN 1 ELSE 0 END +
+                CASE WHEN rep9 IS NOT NULL THEN 1 ELSE 0 END
+            ) AS all_set,
+            -- Select rep0 data from routineDetail
+            MAX(CASE WHEN rep0 IS NOT NULL THEN rep0 END) AS data_rep0,
+            -- Select weight0 data from routineDetail
+            MAX(CASE WHEN rep0 IS NOT NULL THEN weight0 END) AS data_weight0,
+            -- Select healthCategoryEnglishName from healthCategory
+            GROUP_CONCAT(DISTINCT healthCategory.englishName) AS healthCategoryEnglishName
+        FROM routineDetail
+        LEFT JOIN healthCategory ON routineDetail.healthCategoryIdx = healthCategory.healthCategoryIdx
         WHERE routineDetailIdx IN (?)
         GROUP BY routineDetailIdx
-      `;
+    `;
 
-      const [beforeProcessDetail] = await connection.query(selectBeforeProcessDetailQuery, [routine_list]);
+    const [beforeProcessDetail] = await connection.query(selectBeforeProcessDetailQuery, [routine_list]);
 
-      return beforeProcessDetail;
+    return beforeProcessDetail;
 }
+
+
+
 
 // 운동 중 / 세트, 무게, 횟수 (Detail) 조회
 async function selectProcessDetail(connection, routineIdx) {
