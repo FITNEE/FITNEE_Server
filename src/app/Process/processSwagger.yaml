@@ -45,30 +45,52 @@ tags:
       - Process
     summary: 운동 시작 전 루틴 조회 API
     description: 세트, 무게, 횟수 확인하는 운동 루틴 세부사항 API
+    parameters:
+      - name: routineIdx
+        in: path
+        required: true
+        description: 루틴 Idx를 입력하세요.
+        schema:
+          type: integer
     responses:
       '1000':
-        description: 성공 - 총 세트 수와 첫 번째 무게와 횟수를 반환합니다.
+        description: 성공
         content:
           application/json:
             schema:
               type: object
               properties:
-                'isSuccess':
+                isSuccess:
                   type: boolean
                   example: true
-                'code':
+                code:
                   type: integer
                   example: 1000
-                'message':
+                message:
                   type: string
                   example: '성공'
-                'result':
+                result:
                   type: array
-                  $ref: '#/components/schemas/RoutineCalendar'
+                  items:
+                    type: object
+                    properties:
+                      routineDetailIdx:
+                        type: integer
+                        example: 2
+                      all_set:
+                        type: string
+                        example: "3"
+                      data_rep0:
+                        type: integer
+                        example: 5
+                      data_weight0:
+                        type: integer
+                        example: 70
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+
 
 /app/process/detail/{routineIdx}:
   get:
@@ -84,26 +106,127 @@ tags:
             schema:
               type: object
               properties:
-                'isSuccess':
+                isSuccess:
                   type: boolean
                   example: true
-                'code':
+                code:
                   type: integer
                   example: 1000
-                'message':
+                message:
                   type: string
                   example: '성공'
-                'result':
+                result:
                   type: array
-                  $ref: '#/components/schemas/RoutineCalendar'
+                  items:
+                    type: object
+                    properties:
+                      healthCategoryIdx:
+                        type: integer
+                        example: 3
+                      content:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            rep:
+                              type: integer
+                              example: 5
+                            weight:
+                              type: integer
+                              example: 70
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
 
-/components:
+
+/app/process/replace/{detailIdx}:
+  get:
+    tags:
+      - Process
+    summary: 운동 루틴 대체 추천 조회 API
+    description: 같은 부위 중 랜덤으로 최대 3가지 추천
+    response:
+      '1000':
+        description: 성공 - 같은 부위 중 랜덤으로 3가지를 배열로 반환
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'isSuccess':
+                  type: boolean
+                  example: 
+
+/app/process/replace/exercise:
+  patch:
+    tags:
+      - Process
+    summary: 대체 운동 수정 API
+    description: myRoutine에 수정된 걸로 반영
+    response:
+      '1000':
+        description: 수정 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'isSuccess':
+                  type: boolean
+                  exapmle:
+
+/app/process/{routineDetailIdx}:
+  patch:
+    tags:
+      - Process
+    summary: 운동 스킵 API
+    description: 현재 운동은 모두(세트 등) 스킵
+    response:
+      '1000':
+        description: 수정 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'isSuccess':
+                  type: boolean
+                  exapmle:
+
+components:
   schemas:
+    RoutineCalendar:
+      type: object
+      properties:
+        'monRoutineIdx': 
+          type: integer
+          example: 32
+        'tueRoutineIdx': 
+          type: integer
+          example: 0
+        'wedRoutineIdx': 
+          type: integer
+          example: 442
+        'thuRoutineIdx': 
+          type: integer
+          example: 0
+        'friRoutineIdx': 
+          type: integer
+          example: 12
+        'satRoutineIdx': 
+          type: integer
+          example: 0
+        'sunRoutineIdx': 
+          type: integer
+          example: 0
+
     Routine:
+      type: array
+      items:
+        $ref: '#/components/schemas/RoutineDetail'
+
+    RoutineDetail:
       type: object
       properties:
         'healthCategoryIdx':
@@ -112,13 +235,10 @@ tags:
         'content':
           type: array
           items:
-            $ref: '#/components/schemas/RoutineContent'  # Reference to RoutineContent schema
-
-    RoutineContent:
-      oneOf:
-        - $ref: '#/components/schemas/RoutineContentA'
-        - $ref: '#/components/schemas/RoutineContentB'
-
+            oneOf:
+              - $ref: '#/components/schemas/RoutineContentA'
+              - $ref: '#/components/schemas/RoutineContentB'
+      
     RoutineContentA:
       type: object
       properties:
@@ -136,27 +256,43 @@ tags:
           type: integer
           example: 50
 
-    RoutineCalendar:
+    RecRoutineCalendar:
       type: object
       properties:
-        'monRoutineIdx':
+        'id':
           type: integer
-          example: 32
-        'tueRoutineIdx':
+          example: 1
+        'item':
+          type: array
+          items:
+            $ref : '#/components/schemas/RecRoutines'
+
+    RecRoutines:
+      type: object
+      properties:
+        'routineIdx':
           type: integer
-          example: 0
-        'wedRoutineIdx':
+          example: 121
+        'day':
+          type: string  
+          example: "Monday"
+        'parts':
+          type: string
+          example: "전신"
+        'exercises':
+          type: array
+          items:
+            $ref : '#/components/schemas/RecRoutineDetails'
+
+    RecRoutineDetails:
+      type: object
+      properties:
+        'healthCategoryIdx':
           type: integer
-          example: 442
-        'thuRoutineIdx':
+          example: 6
+        'name':
+          type: string
+          example: "바벨 로우"
+        'set':
           type: integer
-          example: 0
-        'friRoutineIdx':
-          type: integer
-          example: 12
-        'satRoutineIdx':
-          type: integer
-          example: 0
-        'sunRoutineIdx':
-          type: integer
-          example: 0
+          example: 3
