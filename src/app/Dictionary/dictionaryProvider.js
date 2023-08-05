@@ -11,6 +11,16 @@ exports.retrieveKeyword = async function (userIdFromJWT) {
     return keywordCheckResult;
   };
 
+// 검색키워드 db에 저장
+exports.putSearch = async function (search, userIdFromJWT) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const keywordPutResult = await dictionaryDao.putKeyword(connection, search, userIdFromJWT);
+  connection.release();
+
+  return keywordPutResult;
+};
+
+
 //
 exports.retrieveInformation = async function (parts) {
   const connection = await pool.getConnection(async (conn) => conn);

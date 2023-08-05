@@ -11,19 +11,22 @@ const mypage = require('./dictionaryController');
 // 1. 
 router.get('/', jwtMiddleware, mypage.getKeywordByIdx);
 
-// 2.
-router.get('/exerciseinfo', mypage.getInformationByparts);
+// 2. 
+router.post('/usersearch', jwtMiddleware, mypage.postSearchList);
 
 // 3.
-router.get('/exercisemethod', mypage.getMethodByName);
+router.get('/exerciseinfo', mypage.getInformationByparts);
 
 // 4.
-router.get('/exercisechat', mypage.getChattingByName);
+router.get('/exercisemethod', mypage.getMethodByName);
 
 // 5.
-router.post('/chatting', mypage.postChatting);
+router.get('/exercisechat', mypage.getChattingByName);
 
 // 6.
+router.post('/chatting', mypage.postChatting);
+
+// 7.
 router.patch('/deleteChatt', jwtMiddleware, mypage.deleteChatt)
 
 module.exports = router;
