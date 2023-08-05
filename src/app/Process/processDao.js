@@ -19,7 +19,7 @@ async function selectBeforeProcessDetail(connection, routine_list) {
             CASE WHEN rep6 IS NOT NULL THEN 1 ELSE 0 END +
             CASE WHEN rep7 IS NOT NULL THEN 1 ELSE 0 END +
             CASE WHEN rep8 IS NOT NULL THEN 1 ELSE 0 END +
-            CASE WHEN rep9 IS NOT NULL THEN 1 ELSE 0 END) AS total_not_null_count,
+            CASE WHEN rep9 IS NOT NULL THEN 1 ELSE 0 END) AS all_set,
           -- Select rep0 data from routineDetail
           MAX(CASE WHEN rep0 IS NOT NULL THEN rep0 END) AS data_rep0,
           -- Select weight0 data from routineDetail

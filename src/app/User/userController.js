@@ -135,7 +135,7 @@ exports.getUserById = async function (req, res) {
 exports.login = async function(req, res) {
     const userId = req.body.userId;
     const userPw = req.body.userPw;
-
+    
     // 유효성 검사 : userId와 userPw가 제공되었는지 체크
     if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
     if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
