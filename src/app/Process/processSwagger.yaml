@@ -37,13 +37,16 @@ tags:
                   items:
                     type: object
                     properties:
-                      healthCategoryIdx:
-                        type: integer
-                        example: 3
-                      exerciseName:
-                        type: string
-                        example: '체스트 프레스 머신'
-                      content:
+                      exerciseInfo:
+                        type: object
+                        properties:
+                          healthCategoryIdx:
+                            type: integer
+                            example: 3
+                          exerciseName:
+                            type: string
+                            example: '체스트 프레스 머신'
+                      sets:
                         type: array
                         items:
                           type: object

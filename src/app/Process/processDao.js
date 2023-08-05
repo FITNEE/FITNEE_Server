@@ -53,9 +53,11 @@ async function selectRoutine(connection, routineIdx) {
             }
 
             if (!allNull && detailItem.length > 0) {
-                detailContent['healthCategoryIdx'] = routineDetail.healthCategoryIdx;
-                detailContent['exerciseName'] = exerciseList[routineDetail.healthCategoryIdx - 1].name;
-                detailContent['content'] = detailItem;
+                detailContent['exerciseInfo'] = {
+                    'healthCategoryIdx': routineDetail.healthCategoryIdx,
+                    'exerciseName': exerciseList[routineDetail.healthCategoryIdx - 1].name
+                };
+                detailContent['sets'] = detailItem;
                 routineContent.push(detailContent);
             }
         }
@@ -63,6 +65,7 @@ async function selectRoutine(connection, routineIdx) {
 
     return routineContent;
 }
+
 
 
 // 운동 전 / 세트, 무게, 횟수 (Detail) 조회
