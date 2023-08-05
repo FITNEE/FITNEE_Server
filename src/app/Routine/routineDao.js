@@ -136,6 +136,12 @@ async function selectRoutineCalendar(connection, userId) {
 
 // 루틴 조회
 async function selectRoutine(connection, routineIdx) {
+    const selectExerciseListQuery = `
+                          SELECT name
+                          FROM healthCategory
+                          `;
+    const [exerciseList] = await connection.query(selectExerciseListQuery);
+
     const selectRoutineQuery = `
                   SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
                   FROM routine
@@ -173,6 +179,7 @@ async function selectRoutine(connection, routineIdx) {
                     });
 
             detailContent['healthCategoryIdx'] = routineDetail.healthCategoryIdx;
+            detailContent['exerciseName'] = exerciseList[routineDetail.healthCategoryIdx-1].name;
             detailContent['content'] = detailItem;
             routineContent.push(detailContent);
         }
