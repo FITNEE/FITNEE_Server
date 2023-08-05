@@ -1,5 +1,70 @@
 const lodash = require('lodash');
 
+// 루틴 조회
+async function selectRoutine(connection, routineIdx) {
+    const selectExerciseListQuery = `
+        SELECT name
+        FROM healthCategory
+    `;
+    const [exerciseList] = await connection.query(selectExerciseListQuery);
+
+    const selectRoutineQuery = `
+        SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+        FROM routine
+        WHERE routineIdx = ?
+    `;
+    const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
+    if (!routine) return routine;
+
+    var routineContent = [];
+    for (var i = 0; i < 10; i++) {
+        const selectRoutineDetailQuery = `
+            SELECT healthCategoryIdx, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
+            FROM routineDetail
+            WHERE routineDetailIdx = ?
+        `;
+        const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routine['detailIdx' + String(i)]);
+
+        var routineDetailPickBy = lodash.pickBy(routineDetail);
+        var detailContent = {};
+
+        if (routineDetail) {
+            var len = Object.keys(routineDetailPickBy).length - 1;
+            var detailItem = [];
+            var allNull = true;
+
+            for (var j = 0; j < len; j++) {
+                var rep = routineDetail['rep' + String(j)];
+                var weight = routineDetail['weight' + String(j)];
+
+                if (rep !== null || weight !== null) {
+                    allNull = false;
+                }
+
+                if (rep === null && weight === null) {
+                    break;
+                }
+
+                var weightValue = weight !== null ? weight : "null";
+                detailItem.push({
+                    'rep': rep,
+                    'weight': weightValue
+                });
+            }
+
+            if (!allNull && detailItem.length > 0) {
+                detailContent['healthCategoryIdx'] = routineDetail.healthCategoryIdx;
+                detailContent['exerciseName'] = exerciseList[routineDetail.healthCategoryIdx - 1].name;
+                detailContent['content'] = detailItem;
+                routineContent.push(detailContent);
+            }
+        }
+    }
+
+    return routineContent;
+}
+
+
 // 운동 전 / 세트, 무게, 횟수 (Detail) 조회
 async function selectBeforeProcessDetail(connection, routine_list) {
     if (!routine_list || routine_list.length === 0) {
@@ -240,6 +305,7 @@ async function updateSkipValue(connection, routineDetailIdx) {
 // }
 
 module.exports = {
+    selectRoutine,
     selectBeforeProcessDetail,
     selectProcessDetail,
     getExercisePart,

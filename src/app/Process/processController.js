@@ -8,6 +8,15 @@ const {response, errResponse} = require("../../../config/response");
  * 1 API Name : 운동 루틴 조회 API
  * [GET] /app/process/:routineIdx
  */
+exports.getRoutine = async function (req, res) {
+    /**
+     * Path Variable : routineIdx
+     */
+    const routineIdx = req.params.routineIdx;
+    const routine = await processProvider.retrieveRoutine(routineIdx);
+
+    return res.send(response(baseResponse.SUCCESS, routine));
+};
 
 
 /**

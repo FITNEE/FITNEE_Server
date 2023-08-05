@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const jwtMiddleware = require('../../middleware/jwtMiddleware');
-const routine = require('../Routine/routineController');
 const process = require('./processController')
 
 /**
@@ -11,7 +10,7 @@ const process = require('./processController')
 
 
 // 1. 운동 루틴 조회 API(완)
-router.get('/:routineIdx', jwtMiddleware, routine.getRoutine);
+router.get('/:routineIdx', jwtMiddleware, process.getRoutine);
 
 // 2. 운동별 과정 전 조회 API(완)
 router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)

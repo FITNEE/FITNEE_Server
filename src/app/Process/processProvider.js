@@ -5,6 +5,15 @@ const processDao = require("./processDao");
 
 // Provider: Read 비즈니스 로직 처리
 
+// 루틴 조회
+exports.retrieveRoutine = async function (routineIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const routine = await processDao.selectRoutine(connection, routineIdx);
+    connection.release();
+
+    return routine;
+};
+
 // 오늘 루틴 리스트 뽑아오기
 exports.retrieveRoutineRow = async function (routineIdx) {
     const connection = await pool.getConnection(async (conn) => conn);

@@ -33,7 +33,27 @@ tags:
                   type: string
                   example: '성공'
                 'result':
-                  $ref: '#/components/schemas/Routine'
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      healthCategoryIdx:
+                        type: integer
+                        example: 3
+                      exerciseName:
+                        type: string
+                        example: '체스트 프레스 머신'
+                      content:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            rep:
+                              type: integer
+                              example: 5
+                            weight:
+                              type: string
+                              example: '70'
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
@@ -200,106 +220,3 @@ tags:
                 'isSuccess':
                   type: boolean
                   exapmle:
-
-components:
-  schemas:
-    RoutineCalendar:
-      type: object
-      properties:
-        'monRoutineIdx': 
-          type: integer
-          example: 32
-        'tueRoutineIdx': 
-          type: integer
-          example: 0
-        'wedRoutineIdx': 
-          type: integer
-          example: 442
-        'thuRoutineIdx': 
-          type: integer
-          example: 0
-        'friRoutineIdx': 
-          type: integer
-          example: 12
-        'satRoutineIdx': 
-          type: integer
-          example: 0
-        'sunRoutineIdx': 
-          type: integer
-          example: 0
-
-    Routine:
-      type: array
-      items:
-        $ref: '#/components/schemas/RoutineDetail'
-
-    RoutineDetail:
-      type: object
-      properties:
-        'healthCategoryIdx':
-          type: integer
-          example: 2
-        'content':
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/RoutineContentA'
-              - $ref: '#/components/schemas/RoutineContentB'
-      
-    RoutineContentA:
-      type: object
-      properties:
-        'rep':
-          type: integer
-          example: 10
-        'weight':
-          type: integer
-          example: 70
-
-    RoutineContentB:
-      type: object
-      properties:
-        'rep':
-          type: integer
-          example: 50
-
-    RecRoutineCalendar:
-      type: object
-      properties:
-        'id':
-          type: integer
-          example: 1
-        'item':
-          type: array
-          items:
-            $ref : '#/components/schemas/RecRoutines'
-
-    RecRoutines:
-      type: object
-      properties:
-        'routineIdx':
-          type: integer
-          example: 121
-        'day':
-          type: string  
-          example: "Monday"
-        'parts':
-          type: string
-          example: "전신"
-        'exercises':
-          type: array
-          items:
-            $ref : '#/components/schemas/RecRoutineDetails'
-
-    RecRoutineDetails:
-      type: object
-      properties:
-        'healthCategoryIdx':
-          type: integer
-          example: 6
-        'name':
-          type: string
-          example: "바벨 로우"
-        'set':
-          type: integer
-          example: 3
