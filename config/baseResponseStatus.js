@@ -56,6 +56,8 @@ module.exports = {
     MYPAGE_USERPW_EMPTY: { "isSuccess": false, "code": 703, "message":"수정할 userPw를 입력해 주세요." },   
     MYPAGE_USERPW_EQUAL: { "isSuccess": false, "code": 704, "message":"수정할 userPw와 기존 userPw가 동일합니다." },
     MYPAGE_USERNICKNAME_EQUAL: { "isSuccess": false, "code": 705, "message":"수정할 userNickname과 동일한 userNickname이 존재합니다." },
+    
+    
     //Request error
 
     //signup(회원가입)

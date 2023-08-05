@@ -114,7 +114,6 @@ exports.updatePassword = async function (req, res) {
     // 기존 pw와 수정할 pw가 같을때 -> 수정x
     if (hashedPassword === originPw[0].userPw) return res.send(errResponse(baseResponse.MYPAGE_USERPW_EQUAL));
     else {
-        console.log("3");
         // 기존 pw와 다른 pw를 입력했을때 -> 수정
         const updateUserPw = await mypageService.updatePassword(userIdFromJWT, hashedPassword);
         return res.send(response(baseResponse.SUCCESS));
@@ -125,7 +124,7 @@ exports.updatePassword = async function (req, res) {
 
 /**
  * API No. 7
- * API Name : 닉네임 변경할때 중복 닉네임 있는지 검사
+ * API Name : 닉네임 변경할때 중복 닉네임 있는지 검사(db에 중복된 닉네임 있는지 t/f - 불리언으로 반환)
  * [GET] /app/mypage/nickname
  */
 
@@ -135,13 +134,14 @@ exports.checkUserNameValid = async function (req, res) {
      * Query String: userNickName
      */
     const userNickName = req.query.userNickName;
+    if (!userNickName) return res.send(errResponse(baseResponse.MYPAGE_USERNICKNAME_EMPTY));
 
     if (!userNickName) {
         // 닉네임 전체 조회
         const nicknameListResult = await mypageProvider.retrieveNicknameList();
         return res.send(response(baseResponse.SUCCESS, nicknameListResult));
     } else {
-        // 닉네임 검색 조회
+        // 닉네임 검색 조회2
         const nicknameListByUserId = await mypageProvider.retrieveNicknameList(userNickName);
         if (nicknameListByUserId.length === 0) {
             return res.send(response(baseResponse.SIGNIN_USERID_UNKNOWN));

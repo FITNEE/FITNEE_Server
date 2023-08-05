@@ -53,7 +53,7 @@ tags:
 
 /app/mypage/updateuser:
   put:
-    summary: API NO.5 - userinfo 수정 api
+    summary: API NO.5 - userinfo(userNickname, birthYear) 수정 api
     description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 수정하는 api
     tags:
       - Mypage
@@ -103,45 +103,29 @@ tags:
       '704':
       description: 수정할 userPw와 기존 userPw가 동일합니다.
       
-        
+
+
 /app/mypage/nickname:
   get:
     summary: API NO.7 - 닉네임 변경할때 중복 닉네임 있는지 검사하는 api
     parameters:
-      - name: userNickname
+      - name: userNickName
         in: query
         required: true
         description: 수정할 userNickname을 입력하세요.
         schema:
           type: string
-    description: userNickname 입력방식에 따라 닉네임 변경할 때 중복 닉네임 있는지 검사함.
+    description: userNickname 입력에 따라 닉네임 변경할 때 중복 닉네임 있는지 검사함.(true-닉네임 있음. fasle-닉네임 없음->입력한 닉네임으로 수정 가능)
     tags:
       - Mypage
     responses:
       '1000':
         description: 성공
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                isSuccess:
-                  type: boolean
-                code:
-                  type: integer
-                message:
-                  type: string
-                result:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      userNickname:
-                        type: string
-                      userIdx:
-                        type: integer
-      '705':
+      '706':
+        description: 수정할 userNickname을 입력해 주세요.  
+      '3003':
         description: 수정할 userNickname과 동일한 userNickname이 존재합니다.
+
 
 
 # components:
