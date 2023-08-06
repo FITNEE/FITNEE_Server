@@ -13,12 +13,15 @@ async function insertRoutine(connection, userId, info, gpt) {
     const rmSentence = (info.RM)
                         ? `I think I can lift up to ${info.RM}kg when I do squats to the maximum.`
                         : `I don't even know how many squats I can do at a time.`;
+    const weeksSentence = (info.dayOfWeeks.length==1)
+                        ? `I'm going to exercise on ${info.dayOfWeeks} only.`
+                        : `I'm going to exercise for a total of ${info.dayOfWeeks.length} days on ${info.dayOfWeeks[0]} and ${info.dayOfWeeks.slice(1,).join(', ')}.`;
     const infoSentence = `
                     I am a ${(responseUserInfo.gender==1) ? "male" : "female"} born in ${responseUserInfo.birthYear},
                     I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.
                     ${rmSentence}
-                    I will do ${info.targets} exercises at ${info.place}.
-                    I'm going to exercise on ${info.dayOfWeeks}.
+                    I will do ${info.targets.join(', ')} exercises at ${info.place}.
+                    ${weeksSentence}.
                     `;
 
     const content = infoSentence + gpt.chatContent;

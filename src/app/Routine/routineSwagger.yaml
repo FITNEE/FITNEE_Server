@@ -282,6 +282,9 @@ components:
         'exerciseName':
           type: string
           example: 인클라인 덤벨프레스
+        'exerciseName':
+          type: string
+          example: 어깨
         'content':
           type: array
           items:
