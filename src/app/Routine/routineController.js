@@ -94,7 +94,7 @@ exports.getRoutine = async function (req, res) {
  */
 exports.putRoutine = async function (req, res) {
     /**
-     * Decoded: userId
+     * Decoded : userId
      * Path Variable : routineIdx
      * Body : routine
      */
@@ -113,7 +113,7 @@ exports.putRoutine = async function (req, res) {
  */
 exports.deleteRoutine = async function (req, res) {
     /**
-     * Decoded: userId
+     * Decoded : userId
      * Path Variable : routineIdx
      */
     const userId = req.body.userId;
@@ -122,4 +122,22 @@ exports.deleteRoutine = async function (req, res) {
     const resposneDeleteRoutine = await routineService.deleteRoutine(userId, routineIdx);
 
     return res.send(resposneDeleteRoutine);
+};
+
+
+/**
+ * API Name : 운동 과정 시작 API
+ * [POST] /app/process/start
+ */
+exports.startProccess = async function (req, res) {
+    /**
+     * Decoded : userId
+     * Body : dayOfWeek
+     */
+    const userId = req.decoded.userId;
+    const dayOfWeek = req.body.dayOfWeek;
+
+    const responseStartProcess = await routineService.startProcess(userId, dayOfWeek);
+
+    return res.send(responseStartProcess);
 };
