@@ -34,7 +34,7 @@ module.exports = function() {
             }
             console.log(stdout);
             // res.sendStatus(200);
-            res.redirect('/cat-log');
+            return res.redirect('/cat-log');
         });
     });
 
