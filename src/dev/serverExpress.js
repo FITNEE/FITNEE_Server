@@ -27,13 +27,14 @@ module.exports = function() {
     });
 
     app.get('/restart', (req, res) => {
-        exec('cd /home/ubuntu/git_clone/healthgpt_backend && echo -e ${Date()} >> log.js', (err, stdout, stderr) => {
+        exec(`cd /home/ubuntu/git_clone/healthgpt_backend && echo -e ${Date()} >> log.js`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return res.sendStatus(500);
             }
             console.log(stdout);
             res.sendStatus(200);
+            res.redirect("https://dev.gpthealth.shop/cat-log");
         });
     });
 
