@@ -4,7 +4,7 @@ tags:
 
 /app/dictionary:
   get:
-    summary: API NO.1 - userIdx 받아서 최근 검색키워드 5개, 인기 검색 키워드 5개 조회
+    summary: API NO.1 - userIdx 받아서 최근 검색키워드, 인기 검색 키워드 조회 API
     parameters:
       - name: userIdx
         in: query
@@ -37,9 +37,33 @@ tags:
         description: userIdx를 입력해 주세요
 
 
+
+/app/dictionary/usersearch:
+  post:
+    summary: API NO.2 - 유저 검색기록 db에 저장 API
+    description: isSuccess true면 db에 잘 저장된것. 아래 resut의 insertId는 keywordIdx.
+    tags:
+      - Dictionary
+    operationId: postSearchList
+    parameters:
+      - name: search
+        in: query
+        required: true
+        description: 저장할 검색 내용
+        schema:
+          type: string
+    responses:
+      '1000':
+        description: 성공
+      '2012':
+        description: 토큰값(userId)를 확인해 주세요.
+      '606':
+        description: 검색내용을 입력해 주세요.
+
+
 /app/dictionary/exerciseinfo:
   get:
-    summary: API NO.2 - 운동 parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
+    summary: API NO.3 - 운동 parts 받아서 운동 정보 조회 API
     parameters:
       - name: parts
         in: query
@@ -47,7 +71,7 @@ tags:
         description: 운동 parts를 입력하세요.
         schema:
           type: string
-    description: 운동 parts를 받아서 운동정보를 반환합니다.
+    description: 운동 parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
     tags:
       - Dictionary
     responses:
@@ -81,7 +105,7 @@ tags:
 
 /app/dictionary/exercisemethod:
   get:
-    summary: API NO.3 - 운동 name으로 운동방법, 운동주의사항 조회
+    summary: API NO.4 - 운동 name으로 운동방법, 운동주의사항 조회 API
     parameters:
       - name: name
         in: query
@@ -112,7 +136,7 @@ tags:
 
 /app/dictionary/exercisechat:
   get:
-    summary: API NO.4 - 운동 name으로 채팅내역 조회
+    summary: API NO.5 - 운동 name으로 채팅내역 조회 API
     parameters:
       - name: name
         in: query
@@ -157,7 +181,7 @@ tags:
 
 /app/dictionary/chatting:
   post:
-    summuary: API NO.5 - 운동 name, userNickname, text post
+    summary: API NO.6 - 운동 name, userNickname, text post API
     description: 운동 name, userNickname, text post해서 db에 넣기
     tags:
       - Dictionary
@@ -195,7 +219,7 @@ tags:
 
 /app/dictionary/deleteChatt/{healthChattingIdx}:
   delete:
-    summary: API NO.6 - 채팅 삭제(healthChatting status 컬럼 0 -> 1)
+    summary: API NO.7 - 채팅 삭제 API (healthChatting status 컬럼 0 -> 1)
     description: login할때 쿠키에 저장된 accesstoken가지고 있어야함.(api 내에서 검증함) app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함.
     tags:
       - Dictionary

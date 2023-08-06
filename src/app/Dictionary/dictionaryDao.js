@@ -26,6 +26,17 @@ async function selectKeyword(connection, userIdFromJWT) {
     return { recentKeywords: recentKeywords[0], popularKeywords: popularKeywords[0] };
 }
 
+// search 받아서 검색 keyword DB에 저장
+async function putKeyword(connection, search, userIdFromJWT) {
+    const putKeywordByuserIdQuery = `
+        INSERT INTO keyword (text, userIdx, userId)
+        VALUES (?, (SELECT userIdx FROM User WHERE userId = ?), ?);
+    `;
+    const [informationRows] = await connection.query(putKeywordByuserIdQuery, [search, userIdFromJWT, userIdFromJWT]);
+    return informationRows;
+}
+
+
 
 // parts 받아서 운동정보 respond
 async function selectInformation(connection, parts) {
@@ -123,6 +134,7 @@ async function updateChattInfo(connection, userId, healthChattingIdx) {
 
 module.exports = {
     selectKeyword,
+    putKeyword,
     selectInformation,
     selectExerciseMethod,
     selectExerciseChatting,
