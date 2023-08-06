@@ -278,6 +278,9 @@ components:
         'healthCategoryIdx':
           type: integer
           example: 2
+        'exerciseName':
+          type: string
+          example: 인클라인 덤벨프레스
         'content':
           type: array
           items:
