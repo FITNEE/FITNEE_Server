@@ -33,7 +33,7 @@ module.exports = function() {
                 return res.sendStatus(500);
             }
             console.log(stdout);
-            res.sendStatus(200);
+            // res.sendStatus(200);
             res.redirect("https://dev.gpthealth.shop/cat-log");
         });
     });
