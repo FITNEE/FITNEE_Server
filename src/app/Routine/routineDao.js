@@ -25,6 +25,8 @@ async function insertRoutine(connection, userId, info, gpt) {
     const completion = gpt.chatCompletion;
     completion.messages[2].content = content;
 
+    console.log(infoSentence);
+
     const responseCompletion = await openai.createChatCompletion(completion);
     console.log("---------- gpt completion ----------");
     const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content.replaceAll('\'', '"').replaceAll('`', '"'));
@@ -303,9 +305,15 @@ async function deleteRoutine(connection, userId, routineIdx) {
     return ;
 };
 
-async function startProcess(connection, userID, dayOfWeek) {
+async function startProcess(connection, userId, dayOfWeek) {
     const dayOfWeekStr =  dayOfWeek.slice(0,3).toLowerCase() + 'RoutineIdx';
-
+    const getRoutineIdxQuery = `
+                      SELECT *
+                      FROM routineCalendar
+                      WHERE userId = ?
+                      `;
+    const [[responseGetRoutineIdx]] = await connection.query(getRoutineIdxQuery, userId);
+    console.log(responseGetRoutineIdx[dayOfWeekStr]);
 
     return ;
 };
