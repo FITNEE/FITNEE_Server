@@ -208,61 +208,54 @@ async function updateRoutineCalendar(connection, userId, routineCalendar) {
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
+    const updateRoutine =  {};
 
-    console.log(userId);
-    console.log(routineIdx);
-    console.log(routineContent);
+    for (var i=0; i<routineContent.length; i++) {
+        var updateRoutineDetail = {
+            healthCategoryIdx : routineContent[i].healthCategoryIdx,
+        };
 
-    // const selectLastInsertIdQuery = `SELECT LAST_INSERT_ID()`;
-    // var putRoutineContent = {};
+        curContent = routineContent[i].content;
+        for (var j=0; j<curContent.length; j++) {
+            updateRoutineDetail["rep"+String(j)] = curContent[j].rep;
+            if (curContent[j].weight)
+                updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
+        };
 
-    // for (var i=0; i<routineContent.length; i++) {
-    //     var detailContent = {
-    //         healthCategoryIdx : routineContent[i].healthCategoryIdx,
-    //     };
+        const updateRoutineDetailQuery = `
+                              INSERT INTO routineDetail
+                              SET ?;
+                              SELECT LAST_INSERT_ID();
+                              `;
+        const [responseUpdateRD] = await connection.query(updateRoutineDetailQuery, updateRoutineDetail);
+        updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
+    };
 
-    //     for (var j=0; j<routineContent[i].content.length; j++) {
-    //         detailContent['rep'+String(j)] = routineContent[i].content[j].rep;
-    //         if (routineContent[i].content[j].weight)
-    //             detailContent['weight'+String(j)] = routineContent[i].content[j].weight;
-    //     }
+    const updateRoutineQuery = `
+                          INSERT INTO routine
+                          SET ?;
+                          SELECT LAST_INSERT_ID();
+                          `;
+    const [responseUpdateR] = await connection.query(updateRoutineQuery, updateRoutine);
+    const updateRIdx = responseUpdateR[1][0]['LAST_INSERT_ID()'];
 
-    //     const insertRoutineDetailQuery = `
-    //                       INSERT INTO routineDetail
-    //                       SET ?
-    //                       `;
-    //     await connection.query(insertRoutineDetailQuery, detailContent);
+    const updateRoutineCalendarQuery = `
+                      SELECT @routineIdx := ?;
+                      SELECT @changeIdx := ?;
 
-    //     const [[responseInsertRoutineDetail]] = await connection.query(selectLastInsertIdQuery, detailContent);
-    //     putRoutineContent['detailIdx'+String(i)] = responseInsertRoutineDetail[`LAST_INSERT_ID()`];
-    // }
-
-    // const insertRoutine = `
-    //                   INSERT INTO routine
-    //                   SET ?
-    //                   `;
-    // await connection.query(insertRoutine, putRoutineContent);
-
-    // const [[resposneInsertRoutine]] = await connection.query(selectLastInsertIdQuery);
-
-    // const updateRoutineQuery = `
-    //                   SELECT @routineIdx := ?;
-    //                   SELECT @changeIdx := ?;
-
-    //                   UPDATE routineCalendar
-    //                   SET 
-    //                     monRoutineIdx = IF(@routineIdx = monRoutineIdx, @changeIdx, monRoutineIdx),
-    //                     tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, @changeIdx, tueRoutineIdx),
-    //                     wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, @changeIdx, wedRoutineIdx),
-    //                     thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, @changeIdx, thuRoutineIdx),
-    //                     friRoutineIdx = IF(@routineIdx = friRoutineIdx, @changeIdx, friRoutineIdx),
-    //                     satRoutineIdx = IF(@routineIdx = satRoutineIdx, @changeIdx, satRoutineIdx),
-    //                     sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
-    //                   WHERE userId = ?;
-    //                 `;
-    // deleteRoutine(connection, userId, routineIdx);
-    // await connection.query(updateRoutineQuery, [routineIdx, resposneInsertRoutine[`LAST_INSERT_ID()`], userId]);
-
+                      UPDATE routineCalendar
+                      SET 
+                        monRoutineIdx = IF(@routineIdx = monRoutineIdx, @changeIdx, monRoutineIdx),
+                        tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, @changeIdx, tueRoutineIdx),
+                        wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, @changeIdx, wedRoutineIdx),
+                        thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, @changeIdx, thuRoutineIdx),
+                        friRoutineIdx = IF(@routineIdx = friRoutineIdx, @changeIdx, friRoutineIdx),
+                        satRoutineIdx = IF(@routineIdx = satRoutineIdx, @changeIdx, satRoutineIdx),
+                        sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
+                      WHERE userId = ?;
+                    `;
+    await connection.query(updateRoutineCalendarQuery, [routineIdx, updateRIdx, userId]);
+    
     return ;
 };
 
