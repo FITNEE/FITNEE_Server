@@ -71,7 +71,7 @@ const gptMiddleware = async function (req, res, next)  {
                         }
                     ]
                 }
-            }
+            }(This object must include all requested days of the week.)
         ](This array must have three elements that are the number of branches of the routine example.)
         In the case of planks, if 1 rep performs 1 second, that is, 10 seconds, using note(rep of unit), rep should be 10.
         In the case of Running and Cycling, if 1 rep performs 100m, that is, 500m, using note(rep of unit), rep should be 5.
