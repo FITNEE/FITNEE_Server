@@ -1,6 +1,5 @@
 const lodash = require('lodash');
 
-// 루틴 조회
 async function selectRoutine(connection, routineIdx) {
     const selectExerciseListQuery = `
         SELECT name
@@ -17,54 +16,51 @@ async function selectRoutine(connection, routineIdx) {
     if (!routine) return routine;
 
     var routineContent = [];
+    var totalPredictTime = 0;
+    var totalPredictCalories = 0;
+
     for (var i = 0; i < 10; i++) {
         const selectRoutineDetailQuery = `
-            SELECT healthCategoryIdx, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
+            SELECT healthCategoryIdx, rep0 AS rep, weight0 AS weight
             FROM routineDetail
             WHERE routineDetailIdx = ?
         `;
         const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routine['detailIdx' + String(i)]);
 
-        var routineDetailPickBy = lodash.pickBy(routineDetail);
-        var detailContent = {};
-
         if (routineDetail) {
-            var len = Object.keys(routineDetailPickBy).length - 1;
-            var detailItem = [];
-            var allNull = true;
+            const nonNullRepValues = [routineDetail.rep0, routineDetail.rep1, routineDetail.rep2, routineDetail.rep3, routineDetail.rep4, routineDetail.rep5, routineDetail.rep6, routineDetail.rep7, routineDetail.rep8, routineDetail.rep9].filter(value => value !== null);
 
-            for (var j = 0; j < len; j++) {
-                var rep = routineDetail['rep' + String(j)];
-                var weight = routineDetail['weight' + String(j)];
+            const predictTime = nonNullRepValues.length * routineDetail.weight * exerciseList[routineDetail.healthCategoryIdx - 1].time;
+            console.log("nonNullRepValues:", nonNullRepValues)
+            console.log("exerciseList:", exerciseList.time)
+            const predictCalories = nonNullRepValues.length * routineDetail.weight * exerciseList[routineDetail.healthCategoryIdx - 1].calories;
 
-                if (rep !== null || weight !== null) {
-                    allNull = false;
-                }
+            totalPredictTime += predictTime;
+            totalPredictCalories += predictCalories;
 
-                if (rep === null && weight === null) {
-                    break;
-                }
-
-                var weightValue = weight !== null ? weight : "null";
-                detailItem.push({
-                    'rep': rep,
-                    'weight': weightValue
-                });
-            }
-
-            if (!allNull && detailItem.length > 0) {
-                detailContent['exerciseInfo'] = {
+            var detailContent = {
+                'exerciseInfo': {
                     'healthCategoryIdx': routineDetail.healthCategoryIdx,
                     'exerciseName': exerciseList[routineDetail.healthCategoryIdx - 1].name
-                };
-                detailContent['sets'] = detailItem;
-                routineContent.push(detailContent);
-            }
+                },
+                'totalSets': nonNullRepValues.length,
+                'rep': routineDetail.rep,
+                'weight': routineDetail.weight !== null ? routineDetail.weight : "null",
+                'predictTime': Math.floor(predictTime / 60),  // Convert seconds to minutes
+                'predictCalories': predictCalories
+            };
+
+            routineContent.push(detailContent);
         }
     }
 
-    return routineContent;
+    return {
+        routineContent: routineContent,
+        totalDuration: Math.floor(totalPredictTime / 60),  // Convert seconds to minutes for total duration
+        totalCalories: totalPredictCalories
+    };
 }
+
 
 
 
@@ -234,7 +230,7 @@ async function getReplacementExercisesLimited(connection, detailIdx, exercisePar
 
     // 현재 바꾸려는 운동 제외해서 대체 운동 추천
     const getReplacementExercisesQuery = `
-        SELECT healthCategoryIdx
+        SELECT name
         FROM healthCategory
         WHERE parts = ?
         AND healthCategoryIdx <> ?
@@ -243,7 +239,7 @@ async function getReplacementExercisesLimited(connection, detailIdx, exercisePar
     `;
 
     const [replacementExerciseRows] = await connection.query(getReplacementExercisesQuery, [exercisePart, detailIdx, maxRecommendations]);
-    const replacementRecommendations = replacementExerciseRows.map((row) => row.healthCategoryIdx);
+    const replacementRecommendations = replacementExerciseRows.map((row) => row.name);
 
     return replacementRecommendations;
 };
