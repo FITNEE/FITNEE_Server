@@ -222,6 +222,8 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
                 updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
         };
 
+        console.log(`update routine detail - ` + JSON.stringify(updateRoutineDetail));
+
         const updateRoutineDetailQuery = `
                               INSERT INTO routineDetail
                               SET ?;
@@ -231,6 +233,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
     };
 
+    console.log(`update routine - ` + JSON.stringify(updateRoutine));
     const updateRoutineQuery = `
                           INSERT INTO routine
                           SET ?;
@@ -255,7 +258,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
                       WHERE userId = ?;
                     `;
     await connection.query(updateRoutineCalendarQuery, [routineIdx, updateRIdx, userId]);
-    
+
     return ;
 };
 
