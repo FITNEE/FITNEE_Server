@@ -21,7 +21,7 @@ async function insertRoutine(connection, userId, info, gpt) {
                     I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.
                     ${rmSentence}
                     I will do ${info.targets.join(', ')} exercises at ${info.place}.
-                    ${weeksSentence}.
+                    ${weeksSentence}
                     `;
 
     const content = infoSentence + gpt.chatContent;
@@ -212,7 +212,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
     console.log(userId);
     console.log(routineIdx);
     console.log(routineContent);
-    
+
     // const selectLastInsertIdQuery = `SELECT LAST_INSERT_ID()`;
     // var putRoutineContent = {};
 
