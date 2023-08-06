@@ -33,9 +33,9 @@ router.put('/:routineIdx', routine.putRoutine);
 router.delete('/:routineIdx', routine.deleteRoutine);
 
 // 운동 과정 시작 임시 API
-router.post('/temp/:routineIdx', routine.tempStart);
+// router.post('/temp/:routineIdx', routine.tempStart);
 
 // 운동 중 임시 API
-router.post('/temp/:routineIdx')
+// router.post('/temp/:routineIdx');
 
 module.exports = router;
