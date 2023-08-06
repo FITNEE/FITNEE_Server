@@ -209,6 +209,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         var detailContent = {};
 
         detailContent['healthCategoryIdx'] = routineContent[i].healthCategoryIdx;
+
         for (var j=0; j<routineContent[i].content.length; j++) {
             detailContent['rep'+String(j)] = routineContent[i].content[j].rep;
             if (routineContent[i].content[j].weight)
@@ -232,6 +233,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
     await connection.query(insertRoutine, putRoutineContent);
 
     const [[resposneInsertRoutine]] = await connection.query(selectLastInsertIdQuery);
+
     const updateRoutineQuery = `
                       SELECT @routineIdx := ?;
                       SELECT @changeIdx := ?;
