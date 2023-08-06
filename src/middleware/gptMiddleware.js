@@ -135,8 +135,8 @@ const gptMiddleware = async function (req, res, next)  {
             },
             {
                 'Title': "기초 체력 운동",
-                'Monday': {
-                    'target': '등',
+                'Thursday': {
+                    'target': '어깨',
                     'content': [
                         {
                             "exerciseId": 6,
@@ -154,8 +154,8 @@ const gptMiddleware = async function (req, res, next)  {
                         }
                     ]
                 }
-                'Friday': {
-                    'target': '하체',
+                'Sunday': {
+                    'target': '코어',
                     'content': [
                         {
                             "exerciseId": 21,
