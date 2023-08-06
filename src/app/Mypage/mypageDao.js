@@ -25,8 +25,7 @@ async function selectUserInfo(connection, userIdFromJWT) {
 async function updateUserInfo(connection, userNickname, birthYear, userIdFromJWT) {
     const updateUserInfoQuery = `
                 UPDATE User
-                SET userNickname = ?,
-                    birthYear = ?
+                SET userNickname = ?
                 WHERE userId = ?;
                 `;
     const [updateInfo] = await connection.query(updateUserInfoQuery, [userNickname, birthYear, userIdFromJWT]);

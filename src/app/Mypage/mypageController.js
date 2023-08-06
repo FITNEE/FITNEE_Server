@@ -18,6 +18,7 @@ exports.getExercisedData = async function (req, res) {
     /**
      * Query String: month
      */
+    console.log("1");
     const userIdFromJWT = req.decoded.userId;
     const month = req.query.month;
 
@@ -82,11 +83,11 @@ exports.getUserData = async function (req, res) {
  */
 exports.updateUserData = async function (req, res) {
     const userIdFromJWT = req.decoded.userId;
-    const { userNickname, birthYear } = req.body;
+    const { userNickname } = req.body;
 
     if (!userNickname) return res.send(errResponse(baseResponse.MYPAGE_USERNICKNAME_EMPTY));
-    if (!birthYear) return res.send(errResponse(baseResponse.MYPAGE_BIRTHYEAR_EMPTY));
-    const updateUserInfo = await mypageProvider.updateUser(userIdFromJWT, userNickname, birthYear);
+    //if (!birthYear) return res.send(errResponse(baseResponse.MYPAGE_BIRTHYEAR_EMPTY));
+    const updateUserInfo = await mypageProvider.updateUser(userIdFromJWT, userNickname);
     return res.send(response(baseResponse.SUCCESS));
 }
 
