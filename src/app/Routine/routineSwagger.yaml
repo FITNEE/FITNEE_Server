@@ -282,7 +282,7 @@ components:
         'exerciseName':
           type: string
           example: 인클라인 덤벨프레스
-        'exerciseName':
+        'exerciseParts':
           type: string
           example: 어깨
         'content':

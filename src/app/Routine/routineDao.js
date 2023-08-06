@@ -212,6 +212,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
     console.log(userId);
     console.log(routineIdx);
     console.log(routineContent);
+    
     // const selectLastInsertIdQuery = `SELECT LAST_INSERT_ID()`;
     // var putRoutineContent = {};
 
