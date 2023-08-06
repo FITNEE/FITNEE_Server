@@ -45,14 +45,30 @@ exports.postSearchList = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, postSearchByUserId));
 };
 
+// /**
+//  *  * API No. 3
+//  * API Name : 사 검색하면 사 들어간 운동 모두 조회하기
+//  * [POST] /app/dictionary/usersearch
+//  */
+// exports.postSearchList = async function (req, res) {
+//     /**
+//      * Path Variable: userId, search
+//      */
+//     const search = req.query.search;
+
+//     if (!search) return res.send(errResponse(baseResponse.DICTIONARY_SEARCH_EMPTY));
+
+//     const postSearchByUserId = await dictionaryProvider.putSearch(search, userIdFromJWT);
+//     return res.send(response(baseResponse.SUCCESS, postSearchByUserId));
+// };
 
 /**
- *  * API No. 3
+ *  * API No. 4
  * API Name : parts 받아서 그 parts에 포함된 모든 운동 정보(name, muscle, equipment, time, calorie) 조회
  * [GET] /app/dictionary/exerciseinfo
  */
 exports.getInformationByparts = async function (req, res) {
-
+    console.log("1");
     /**
      * Path Variable: parts(healthCategory Table)
      */
@@ -66,7 +82,7 @@ exports.getInformationByparts = async function (req, res) {
 
 
 /**
- *  * API No. 4
+ *  * API No. 5
  * API Name : name 받아서 그 운동의 운동방법과 주의사항 반환
  * [GET] /app/dictionary/exercisemethod
  */
@@ -84,7 +100,7 @@ exports.getMethodByName = async function (req, res) {
 };
 
 /**
- *  * API No. 5
+ *  * API No. 6
  * API Name : name 받아서 그 운동의 채팅 반환
  * [GET] /app/dictionary/exercisechat
  */
@@ -103,7 +119,7 @@ exports.getChattingByName = async function (req, res) {
 
 
 /**
- * API No. 6
+ * API No. 7
  * API Name : 채팅, 유저닉네임 post
  * [POST] /app/dictionary/chatting
  * body : name(healthCategory Table), userNickname(User Table), text(healthChatting Table)
@@ -130,7 +146,7 @@ exports.postChatting = async function(req, res) {
 
 
 /**
- * API No. 7
+ * API No. 8
  * API Name : 채팅 삭제(healthChatting status 컬럼 0 -> 1)
  * [DELETE] /app/dictionary/deleteChatt
  * path variable : userId

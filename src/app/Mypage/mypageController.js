@@ -18,6 +18,7 @@ exports.getExercisedData = async function (req, res) {
     /**
      * Query String: month
      */
+    console.log("1");
     const userIdFromJWT = req.decoded.userId;
     const month = req.query.month;
 
