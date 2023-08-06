@@ -208,9 +208,9 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
     var putRoutineContent = {};
 
     for (var i=0; i<routineContent.length; i++) {
-        var detailContent = {};
-
-        detailContent['healthCategoryIdx'] = routineContent[i].healthCategoryIdx;
+        var detailContent = {
+            healthCategoryIdx : routineContent[i].healthCategoryIdx,
+        };
 
         for (var j=0; j<routineContent[i].content.length; j++) {
             detailContent['rep'+String(j)] = routineContent[i].content[j].rep;

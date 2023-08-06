@@ -33,7 +33,7 @@ exports.postRoutineCalendar = async function (req, res) {
      * Body : info
      */
     const userId = req.decoded.userId;
-    const inroutineCalendarfo = req.body;
+    const routineCalendar = req.body;
     
     const responsePostRoutine = await routineService.insertRoutineCalendar(userId, routineCalendar);
 

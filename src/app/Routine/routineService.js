@@ -6,7 +6,6 @@ const {response, errResponse} = require("../../../config/response");
 
 exports.insertRoutine = async function (userId, info, gpt) {
     try {
-        console.log(info);
         const connection = await pool.getConnection(async (conn) => conn);
         const insertRoutine = await routineDao.insertRoutine(connection, userId, info, gpt);
         connection.release();
