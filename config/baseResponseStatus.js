@@ -99,6 +99,7 @@ module.exports = {
     ROUTINE_UNDEFINED : { "isSuccess": false, "code": 3101, "message": "루틴이 존재하지 않습니다." },
 
     QUREY_PARAMETER_WRONG : { "isSuccess": false, "code": 3999, "message": "쿼리 파라미터가 잘못되었습니다." },
+    HEALTHCATEGORYIDX_UNDEFINED : { "isSuccess": false, "code": 3201, "message": "운동이 존재하지 않습니다."},
 
     //Connection, Transaction 등의 서버 오류
     DB_ERROR : { "isSuccess": false, "code": 4000, "message": "데이터 베이스 에러"},

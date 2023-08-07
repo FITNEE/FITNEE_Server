@@ -3,14 +3,15 @@ const processProvider = require("./processProvider");
 const processService = require("./processService")
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
+const { getRoutine } = require("../Routine/routineController");
 
 /**
  * 1 API Name : 운동 루틴 조회 API
- * [GET] /app/process/:routineIdx
+ * [GET] /app/process
  */
 exports.getRoutine = async function (req, res) {
     /**
-     * Path Variable : dayOfWeek
+     * Query Parameter : dayOfWeek
      * 
      */
 
@@ -54,7 +55,7 @@ exports.getRoutine = async function (req, res) {
 
 /**
  *  4-1 API Name : 운동 루틴 대체 추천 API\
- * [GET] /app/process/:healthCategoryIdx
+ * [GET] /app/process/replace/:healthCategoryIdx
  */
 exports.getReplacementRecommendations = async function (req, res) {
     /**
@@ -78,25 +79,27 @@ exports.getReplacementRecommendations = async function (req, res) {
 
 /**
  *  4-2 API 이름 : 대체된 운동 정보 업데이트 API
- * [PATCH] /app/process/replace/exercise
+ * [Post] /app/process/replace
  */
-exports.replaceExerciseInRoutine = async function (req, res) {
-    try {
-        // detailIdx가 아니라 순서, selectedHealthCategoryIdx는 프론트에서 모르니깐 대체 get에서 Idx도 함께 보내주기
-        const { routineDetailIdx, selectedHealthCategoryIdx } = req.body;
+exports.postReplaceExerciseInRoutine = async function (req, res) {
+    /**
+     * Decoded : userId
+     * Body : healthCategoryIdx
+     */
 
-        // 유효성 검증
-        if (!Number.isInteger(parseInt(routineDetailIdx)) || parseInt(routineDetailIdx) <= 0) {
-            return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
-        }
+    // detailIdx가 아니라 순서, selectedHealthCategoryIdx는 프론트에서 모르니깐 대체 get에서 Idx도 함께 보내주기
+    
+    const healthCategoryIdx = req.body
+    const userId = req.decoded.userId
 
-        await processProvider.updateHealthCategoryInRoutineDetail(selectedHealthCategoryIdx, routineDetailIdx)
-
-        return res.send(response(baseResponse.SUCCESS));
-    } catch (err) {
-        console.error(`Error in replaceExerciseInRoutine Controller: ${err}`);
-        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    // 유효성 검증
+    if (!Number.isInteger(parseInt(healthCategoryIdx)) || parseInt(healthCategoryIdx) <= 0) {
+        return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
     }
+
+    await processProvider.updateHealthCategoryInRoutineDetail(selectedHealthCategoryIdx, routineDetailIdx, userId)
+
+    return res.send(response(baseResponse.SUCCESS));
 };
 
 // /**
@@ -120,21 +123,52 @@ exports.replaceExerciseInRoutine = async function (req, res) {
 
 /**
  * 6 API Name : 운동 건너뛰기 API
- * [PATCH] /app/process/:routineDetailIdx
+ * [PATCH] /app/process/:routineIdx
  */
 exports.skipExercise = async function (req, res) {
-    try {
-        const { routineDetailIdx } = req.params
+    /**
+     * Decoded : userId
+     * Path : routineIdx
+     * Body : healthCategoryIdx
+     */
+    const healthCategoryIdxParam = req.body.healthCategoryIdx
+    const routineIdx = req.params.routineIdx
+    const userId = req.decoded.userId
+    const dayOfWeek = req.body.dayOfWeek
 
-        // 운동 건너뛰기 (skip 값을 1로 업데이트)
-        await processService.updateSkipValue(routineDetailIdx);
+    console.log("dayOfWeek:", dayOfWeek)
 
-        return res.send(response(baseResponse.SUCCESS));
-    } catch (err) {
-        console.error(`Error in skipExercise Controller: ${err}`);
-        return res.send(errResponse(baseResponse.SERVER_ERROR));
-    }
+    // userId가 가진 routineIdx인지 검증
+    const constUserId = await processProvider.getUserIdCheck(userId, routineIdx, dayOfWeek)
+    if (!constUserId) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED))
+
+    // 운동 건너뛰기 (skip 값을 1로 업데이트)
+    const skipExercise = await processService.updateSkipValue(routineIdx, healthCategoryIdxParam);
+
+    return res.send(response(baseResponse.SUCCESS, skipExercise));
 };
+
+/**
+ * 7 API Name : myCalendar 추가 API
+ * [POST] /app/process/end/:routineIdx
+ */
+exports.postMycalendar = async function (req, res) {
+    // 시간은 분 단위로 받기
+    const routineIdx = req.params.routineIdx
+    const userId = req.decoded.userId
+    const totalExerciseTime = req.body.totalExerciseTime
+
+    const userIdx = await processProvider.getUserIdx(userId)
+    const totalWeight = await processProvider.getTotalWeight(routineIdx)
+    const parsedTotalWeight = parseInt(totalWeight[0].totalWeight);
+
+
+    console.log("totalWeight:", totalWeight)
+
+    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime)
+
+    return res.send(response(baseResponse.SUCCESS, postMyCalendar))
+}
 
 // /** // 물어보기
 //  * 7 API Name : 운동 루틴 캘린더 기록 API

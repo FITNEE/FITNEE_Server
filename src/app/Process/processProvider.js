@@ -5,6 +5,32 @@ const processDao = require("./processDao");
 
 // Provider: Read 비즈니스 로직 처리
 
+exports.getUserIdCheck = async function (userId, rouinteIdx, dayOfWeek) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const getUserIdCheck = await processDao.selectUserIdCheck(connection, userId, rouinteIdx, dayOfWeek)
+    connection.release()
+    return getUserIdCheck
+}
+
+exports.getUserIdx = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const userIdx = await processDao.selectUserIdx(connection, userId)
+    connection.release()
+    return userIdx
+}
+
+exports.getTotalWeight = async function (routineIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const TotalWeight = await processDao.selectTotalWeight(connection, routineIdx)
+
+    connection.release()
+
+    return TotalWeight
+}
+
 exports.getDetailIdx = async function (healthCategory) {
     const connection = await pool.getConnection(async (conn) => conn);
     
@@ -48,9 +74,10 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
                 healthCategoryIdx: exerciseInfo.healthCategoryIdx,
                 exerciseName: exerciseInfo.exerciseName,
             },
+            replace: detail.replace,
             totalSets: nonNullSets.length,
-            rep0: detail.sets[0].rep,
-            weight0: detail.sets[0].weight,
+            rep: detail.sets[0].rep,
+            weight: detail.sets[0].weight,
             predictTime: detail.predictTime,
             predictCalories: detail.predictCalories,
             rest: detail.rest,

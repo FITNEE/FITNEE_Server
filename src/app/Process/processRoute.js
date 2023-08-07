@@ -21,19 +21,19 @@ router.get('/', jwtMiddleware, process.getRoutine);
 // router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
 
 // 4-1 운동 루틴 대체 추천 API(완)
-router.get('/:healthCategoryIdx', jwtMiddleware, process.getReplacementRecommendations)
+router.get('/replace/healthCategoryIdx', process.getReplacementRecommendations)
 
-// 4-2. 운동 루틴 대체 수정(완)
-router.patch('/replace/exercise', jwtMiddleware, process.replaceExerciseInRoutine);
+// // 4-2. 운동 루틴 대체 수정(완)
+// router.patch('replace', jwtMiddleware, process.patchReplaceExerciseInRoutine);
 
 // // 5. 운동 루틴 '전체' 중단 API(보류)
 // router.patch('/:routineIdx', jwtMiddleware, )
 
 // 6. 운동 건너뛰기 API(완)
-router.patch('/:routineDetailIdx', jwtMiddleware, process.skipExercise)
+router.patch('/:routineIdx', jwtMiddleware, process.skipExercise)
 
-// // 7. 시간 데이터 받아오기(부족)
-// router.post('/:routineDetailIdx', jwtMiddleware, process.saveTime)
+// 7. 시간 데이터 받아오기
+router.post('/end/:routineIdx', jwtMiddleware, process.postMycalendar)
 
 // // 7. 운동 루틴 캘린더 기록 API
 // router.patch('/:routineIdx/end', jwtMiddleware, )

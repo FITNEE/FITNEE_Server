@@ -56,10 +56,10 @@ tags:
                           totalSets:
                             type: integer
                             example: 2
-                          rep0:
+                          rep:
                             type: integer
                             example: 5
-                          weight0:
+                          weight:
                             type: integer
                             example: 70
                           predictTime:
@@ -143,38 +143,121 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
-/app/process/replace/exercise:
-  patch:
-    tags:
-      - Process
-    summary: 대체 운동 수정 API
-    description: myRoutine에 수정된 걸로 반영
-    response:
-      '1000':
-        description: 수정 성공
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                'isSuccess':
-                  type: boolean
-                  exapmle:
+# /app/process/replace/exercise:
+#   patch:
+#     tags:
+#       - Process
+#     summary: 대체 운동 수정 API
+#     description: myRoutine에 수정된 걸로 반영
+#     response:
+#       '1000':
+#         description: 수정 성공
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 'isSuccess':
+#                   type: boolean
+#                   exapmle:
 
-/app/process/{routineDetailIdx}:
+
+/app/process/{routineIdx}:
   patch:
     tags:
       - Process
-    summary: 운동 스킵 API
-    description: 현재 운동은 모두(세트 등) 스킵
-    response:
+    summary: 운동 건너뛰기 API
+    parameters:
+      - in: path
+        name: routineIdx
+        required: true
+        description: 루틴 인덱스
+        schema:
+          type: integer
+      - in: body
+        name: body
+        required: true
+        description: 요청 바디
+        schema:
+          type: object
+          properties:
+            healthCategoryIdx:
+              type: integer
+              description: 건너뛸 운동 카테고리 인덱스
+            dayOfWeek:
+              type: string
+              description: 요일 (mon, tue, wed, thu, fri, sat, sun)
+    responses:
       '1000':
-        description: 수정 성공
+        description: 운동 건너뛰기 성공
         content:
           application/json:
             schema:
               type: object
               properties:
-                'isSuccess':
+                isSuccess:
                   type: boolean
-                  exapmle:
+                  description: 성공 여부
+                code:
+                  type: string
+                  description: 응답 코드
+                message:
+                  type: string
+                  description: 응답 메시지
+                result:
+                  type: string
+                  description: 건너뛴 운동 이름
+
+
+
+/process/end/{routineIdx}:
+  post:
+    summary: "myCalendar 기록 추가 API"
+    tags:
+      - "Process"
+    parameters:
+      - name: routineIdx
+        in: path
+        required: true
+        type: integer
+        description: "Routine index"
+      - in: body
+        name: totalExerciseTime
+        required: true
+        schema:
+          type: object
+          properties:
+            totalExerciseTime:
+              type: integer
+              description: "총 운동 시간을 분 단위로 써주세요."
+    responses:
+      '1000':
+        description: "성공! myCalendar에 기록되었습니다."
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: "success"
+            data:
+              type: object
+              properties:
+                myCalendarId:
+                  type: integer
+                  example: 123
+                userId:
+                  type: integer
+                  example: 456
+                routineIdx:
+                  type: integer
+                  example: 789
+                totalWeight:
+                  type: integer
+                  example: 150
+                totalExerciseTime:
+                  type: integer
+                  example: 60
+      '2000':
+        description: JWT 토큰을 입력해주세요
+      '3000':
+        description: JWT 토큰 검증 실패

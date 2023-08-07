@@ -1,6 +1,86 @@
 const { connect } = require('http2');
 const lodash = require('lodash');
 
+async function selectUserIdCheck(connection, userId, routineIdx, dayOfWeek) {
+    const selectUserIdCheckQuery = `
+        SELECT
+            CASE
+                WHEN (monRoutineIdx = ? AND LEFT(?, 3) = 'mon') THEN TRUE
+                WHEN (tueRoutineIdx = ? AND LEFT(?, 3) = 'tue') THEN TRUE
+                WHEN (wedRoutineIdx = ? AND LEFT(?, 3) = 'wed') THEN TRUE
+                WHEN (thuRoutineIdx = ? AND LEFT(?, 3) = 'thu') THEN TRUE
+                WHEN (friRoutineIdx = ? AND LEFT(?, 3) = 'fri') THEN TRUE
+                WHEN (satRoutineIdx = ? AND LEFT(?, 3) = 'sat') THEN TRUE
+                WHEN (sunRoutineIdx = ? AND LEFT(?, 3) = 'sun') THEN TRUE
+                ELSE FALSE
+            END AS result
+        FROM routineCalendar
+        WHERE userId = ?;
+    `;
+
+    const [rows] = await connection.query(selectUserIdCheckQuery, [
+        routineIdx, dayOfWeek,
+        routineIdx, dayOfWeek,
+        routineIdx, dayOfWeek,
+        routineIdx, dayOfWeek,
+        routineIdx, dayOfWeek,
+        routineIdx, dayOfWeek,
+        routineIdx, dayOfWeek,
+        userId
+    ]);
+
+    return rows[0].result;
+}
+
+async function selectUserIdx(connection, userId) {
+    const selectUserIdxQuery = `
+        SELECT userIdx
+        FROM User
+        WHERE userId = ?;
+    `;
+    const [userIdxRows] = await connection.query(selectUserIdxQuery, userId);
+    const userIdx = userIdxRows.length > 0 ? userIdxRows[0].userIdx : null;
+
+    return userIdx;
+}
+
+async function selectTotalWeight(connection, routineIdx) {
+    const selectRoutineQuery = `
+        SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+        FROM routine
+        WHERE routineIdx = ?
+    `;
+    const [routineRows] = await connection.query(selectRoutineQuery, routineIdx)
+
+
+    const caseClauses = [];
+    for (let i = 0; i < 10; i++) {
+        caseClauses.push(`CASE WHEN weight${i} > 0 THEN weight${i} ELSE 0 END`);
+    }
+
+    const routineDetailIdxList = routineRows.map(row => row.detailIdx0)
+        .concat(routineRows.map(row => row.detailIdx1))
+        .concat(routineRows.map(row => row.detailIdx2))
+        .concat(routineRows.map(row => row.detailIdx3))
+        .concat(routineRows.map(row => row.detailIdx4))
+        .concat(routineRows.map(row => row.detailIdx5))
+        .concat(routineRows.map(row => row.detailIdx6))
+        .concat(routineRows.map(row => row.detailIdx7))
+        .concat(routineRows.map(row => row.detailIdx8))
+        .concat(routineRows.map(row => row.detailIdx9))
+        .filter(detailIdx => detailIdx !== 0)
+        .join(", ");
+
+    const selectDetailRows = `SELECT SUM(${caseClauses.join(" + ")}) AS totalWeight
+    FROM routineDetail
+    WHERE routineDetailIdx IN (${routineDetailIdxList})
+        AND (${caseClauses.join(" + ")}) > 0;`
+
+    const [TotalWeight] = await connection.query(selectDetailRows)
+
+    return TotalWeight
+}
+
 async function selectRoutineIdx(connection, dayOfWeek, userId) {
     
     const selectRoutineIdxQuery = `
@@ -73,96 +153,87 @@ async function selectRoutine(connection, routineIdx) {
     };
 }
 
-// 운동 세부사항 가져오기(1세트 - 운동횟수, 무게)
-async function selectProcessDetail(connection, routineIdx) {
+// // 운동 세부사항 가져오기(1세트 - 운동횟수, 무게)
+// async function selectProcessDetail(connection, routineIdx) {
 
-    // routine row 긁어오기
-    const selectRoutineQuery = `
-        SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
-        FROM routine
-        WHERE routineIdx = ?;
-    `;
-    const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
-    if (!routine) return [];
+//     // routine row 긁어오기
+//     const selectRoutineQuery = `
+//         SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+//         FROM routine
+//         WHERE routineIdx = ?;
+//     `;
+//     const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
+//     if (!routine) return [];
     
-    const routine_list = [];
+//     const routine_list = [];
 
-    // detailIdx가 0보다 큰 숫자들만 긁어오기
-    for (let i = 0; i < 10; i++) {
-        const detailIdxValue = routine[`detailIdx${i}`];
-        if (detailIdxValue !== null && detailIdxValue > 0) {
-            routine_list.push(detailIdxValue);
-        }
-    }
-
-
-    // routine table의 detailIdx에 해당하는 값의 routineDetail table의 row 불러오기
-    const selectDetailQuery = `
-        SELECT rd.routineDetailIdx, rd.healthCategoryIdx,
-               rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
-               weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9
-        FROM routineDetail AS rd
-        WHERE rd.routineDetailIdx IN (?);
-    `;
-    const [details] = await connection.query(selectDetailQuery, [routine_list]);
-
-    const result = [];
-
-    // routineDetailIdx row의 rep과 weight 다 불러오기
-    for (const detail of details) {
-        const sets = [];
-
-        // 운동별 예측 시간 누적값
-        let exerciseTime = 0
+//     // detailIdx가 0보다 큰 숫자들만 긁어오기
+//     for (let i = 0; i < 10; i++) {
+//         const detailIdxValue = routine[`detailIdx${i}`];
+//         if (detailIdxValue !== null && detailIdxValue > 0) {
+//             routine_list.push(detailIdxValue);
+//         }
+//     }
 
 
-        const exerciseInfo = await getExerciseInfo(connection, detail.healthCategoryIdx);
+//     // routine table의 detailIdx에 해당하는 값의 routineDetail table의 row 불러오기
+//     const selectDetailQuery = `
+//         SELECT rd.routineDetailIdx, rd.healthCategoryIdx,
+//                rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
+//                weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9, \`replace\`
+//         FROM routineDetail AS rd
+//         WHERE rd.routineDetailIdx IN (?);
+//     `;
+//     const [details] = await connection.query(selectDetailQuery, [routine_list]);
 
 
-        for (let i = 0; i < 10; i++) {
-            if (detail[`rep${i}`] !== null) {
-                sets.push({
-                    set: i,
-                    rep: detail[`rep${i}`],
-                    weight: detail[`weight${i}`] !== null ? detail[`weight${i}`] : 'null',
-                });
+//     const result = [];
 
-                // 각 세트의 예측 시간 누적값 계산
-                exerciseTime += detail[`rep${i}`] * exerciseInfo.time
-            }
-        }
+//     // routineDetailIdx row의 rep과 weight 다 불러오기
+//     for (const detail of details) {
+//         const sets = [];
+
+//         // 운동별 예측 시간 누적값
+//         let exerciseTime = 0
+
+
+//         const exerciseInfo = await getExerciseInfo(connection, detail.healthCategoryIdx);
+
+
+//         for (let i = 0; i < 10; i++) {
+//             if (detail[`rep${i}`] !== null) {
+//                 sets.push({
+//                     set: i,
+//                     rep: detail[`rep${i}`],
+//                     weight: detail[`weight${i}`] !== null ? detail[`weight${i}`] : 'null',
+//                 });
+
+//                 // 각 세트의 예측 시간 누적값 계산
+//                 exerciseTime += detail[`rep${i}`] * exerciseInfo.time
+//             }
+//         }
         
-        const totalSets = sets.length
-        const exerciseCalories = exerciseInfo.calories || 0
-        const predictCalories = totalSets * exerciseCalories
+//         const totalSets = sets.length
+//         const exerciseCalories = exerciseInfo.calories || 0
+//         const predictCalories = totalSets * exerciseCalories
 
-        result.push({
-            routineDetailIdx: detail.routineDetailIdx,
-            exerciseDetails: 
-                {
-                    healthCategoryIdx: exerciseInfo.healthCategoryIdx,
-                    exerciseName: exerciseInfo.exerciseName,
-                },
-            sets: sets,
-            predictTime: exerciseTime,
-            rest: exerciseInfo.rest,
-            predictCalories: predictCalories,
-        });
-    }
+//         result.push({
+//             routineDetailIdx: detail.routineDetailIdx,
+//             exerciseDetails: 
+//                 {
+//                     healthCategoryIdx: exerciseInfo.healthCategoryIdx,
+//                     exerciseName: exerciseInfo.exerciseName,
+//                 },
+//             sets: sets,
+//             predictTime: exerciseTime,
+//             rest: exerciseInfo.rest,
+//             predictCalories: predictCalories,
+//             replace: detail.replace
+//         });
+//     }
 
-    return result;
-}
-
-// 운동 정보 불러오기(healthCateogry table)
-async function getExerciseInfo(connection, healthCategoryIdx) {
-    const selectExerciseQuery = `
-        SELECT healthCategoryIdx, name AS exerciseName, rest, time, muscle, parts,  equipment, calories, caution1, caution2, caution3
-        FROM healthCategory
-        WHERE healthCategoryIdx = ?;
-    `;
-    const [[exerciseInfo]] = await connection.query(selectExerciseQuery, healthCategoryIdx);
-    return exerciseInfo;
-}
+//     return result;
+// }
 
 // async function selectRoutineIdx(connection, dayOfWeek, userId) {
 //     // routineIdx 긁어오기
@@ -392,43 +463,74 @@ async function getReplacementExercisesLimited(connection, healthCategory, maxRec
 }
 
 
+async function updateSkipValue(connection, routineIdx, healthCategoryIdxParam) {
+    const checkRoutineQuery = `
+        SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+        FROM routine
+        WHERE routineIdx = ?;
+    `;
+    const [routine_list] = await connection.query(checkRoutineQuery, routineIdx);
 
+    const newRoutineArray = [];
 
+    for (let i = 0; i < 10; i++) {
+        const detailIdxValue = routine_list[0][`detailIdx${i}`];
 
-// 대체 추천 이전의 healthCategoryIdx 추출
-async function updateRoutineDetail(connection, selectedHealthCategoryIdx, routineDetailIdx) {
-    const updateRoutineDetailQuery = `
-        UPDATE routineDetail
-        SET healthCategoryIdx = ?
+        if (detailIdxValue !== 0) {
+            newRoutineArray.push(detailIdxValue);
+        }
+    }
+    const selectHealthCategoryName = `
+        SELECT name
+        FROM healthCategory
+        WHERE healthCategoryIdx = ?;
+    `;
+
+    const name = await connection.query(selectHealthCategoryName, healthCategoryIdxParam)
+
+    const selectHealthCategoryIdxQuery = `
+        SELECT healthCategoryIdx
+        FROM routineDetail
         WHERE routineDetailIdx = ?;
     `;
-    await connection.query(updateRoutineDetailQuery, [selectedHealthCategoryIdx, routineDetailIdx]);
-};
 
-
-// routine table()및 routineDetail table(healthCategoryIdx) 수정
-async function updateRoutineStatus(connection, routineDetailIdx) {
-    const updateRoutineStatusQuery = `
-        UPDATE routine
-        SET status = 1
-        WHERE routineIdx = (
-            SELECT routineIdx
-            FROM routineDetail
-            WHERE routineDetailIdx = ?
-        );
-    `;
-    await connection.query(updateRoutineStatusQuery, [routineDetailIdx]);
-};
-
-
-// skip
-async function updateSkipValue(connection, routineDetailIdx) {
     const updateSkipValueQuery = `
-            UPDATE routineDetail
-            SET skip = '1'
-            WHERE routineDetailIdx = ?;
-        `;
-    await connection.query(updateSkipValueQuery, [routineDetailIdx]);
+        UPDATE routineDetail
+        SET skip = '1'
+        WHERE routineDetailIdx = ? AND healthCategoryIdx = ?;
+    `;
+
+    for (const routineDetailIdx of newRoutineArray) {
+        const [result] = await connection.query(selectHealthCategoryIdxQuery, routineDetailIdx);
+        if (result.length > 0) {
+            const healthCategoryIdx = result[0].healthCategoryIdx;
+
+            // Only update if healthCategoryIdx matches the parameter value
+            if (healthCategoryIdx === healthCategoryIdxParam) {
+                await connection.query(updateSkipValueQuery, [routineDetailIdx, healthCategoryIdx]);
+            }
+        }
+    }
+
+    return name[0]
+}
+
+
+
+
+// Insert calendar data
+async function insertMyCalendar(connection, userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime) {
+    const insertMyCalendarQuery = `
+    INSERT INTO myCalendar (userIdx, userId, routineIdx, totalWeight, totalExerciseTime, healthDate)
+    VALUES (?, ?, ?, ?, ?, ?);
+    `;
+    const cuurentDate = new Date()
+
+    const insertParams = [userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime, cuurentDate];
+
+    const [insertRows] = await connection.query(insertMyCalendarQuery, insertParams);
+
+    return insertRows;
 }
 
 // // time
@@ -464,18 +566,18 @@ async function updateSkipValue(connection, routineDetailIdx) {
 // }
 
 module.exports = {
+    selectUserIdCheck,
+    selectUserIdx,
+    selectTotalWeight,
     selectRoutineIdx,
     selectDetailIdx,
     selectRoutine,
-    selectProcessDetail,
     // selectRoutineIdx,
     // selectRoutine,
     // selectBeforeProcessDetail,
     // selectProcessDetail,
     getExercisePart,
     getReplacementExercisesLimited,
-    updateRoutineDetail,
-    updateRoutineStatus,
     updateSkipValue,
-    // saveTime,
+    insertMyCalendar,
 };

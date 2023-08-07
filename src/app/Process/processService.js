@@ -23,15 +23,27 @@ exports.updateRoutineAndRoutineDetail = async function (routineIdx, detailIdx, s
 };
 
 // 스킵
-exports.updateSkipValue = async function (routineDetailIdx) {
+exports.updateSkipValue = async function (routineIdx, healthCategoryIdxParam) {
     const connection = await pool.getConnection(async (conn) => conn)
 
 
-    const skipValue = await processDao.updateSkipValue(connection, routineDetailIdx);
+    const skipValue = await processDao.updateSkipValue(connection, routineIdx, healthCategoryIdxParam);
     connection.release()
     return skipValue
 };
 
+
+// 캘린더 추가
+exports.postMyCalendar = async function (userId, userIdx, routineIdx, parsedTotalWeight, totalExerciseTime) {
+    const connection = await pool.getConnection(async (conn) => conn) 
+
+    const calendarData = await processDao.insertMyCalendar(connection, userId, userIdx, routineIdx, parsedTotalWeight, totalExerciseTime)
+    connection.release()
+    return calendarData
+}
+
+// // 캘린더 저장
+// exports.postMyCalendar = async function (userId, routineIdx, totalExerciseTime)
 // // 시간 저장
 // exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
 //     try {
