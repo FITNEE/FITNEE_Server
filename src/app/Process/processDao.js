@@ -367,7 +367,6 @@ async function getExercisePart(connection, healthCateogryIdx) {
     `;
     const [exercisePartRows] = await connection.query(getExercisePartQuery, healthCateogryIdx);
 
-    console.log("exercisePart:", exercisePartRows)
 
     return exercisePartRows[0].parts;
 };

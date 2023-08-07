@@ -54,7 +54,7 @@ exports.getRoutine = async function (req, res) {
 
 /**
  *  4-1 API Name : 운동 루틴 대체 추천 API\
- * [GET] /app/process/replace/:detailIdx
+ * [GET] /app/process/:healthCategoryIdx
  */
 exports.getReplacementRecommendations = async function (req, res) {
     /**
