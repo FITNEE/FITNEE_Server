@@ -123,21 +123,3 @@ exports.deleteRoutine = async function (req, res) {
 
     return res.send(resposneDeleteRoutine);
 };
-
-
-/**
- * API Name : 운동 과정 시작 API
- * [POST] /app/process/start
- */
-exports.startProccess = async function (req, res) {
-    /**
-     * Decoded : userId
-     * Body : dayOfWeek
-     */
-    const userId = req.decoded.userId;
-    const dayOfWeek = req.body.dayOfWeek;
-
-    const responseStartProcess = await routineService.startProcess(userId, dayOfWeek);
-
-    return res.send(responseStartProcess);
-};
