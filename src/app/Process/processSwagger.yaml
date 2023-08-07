@@ -10,9 +10,9 @@ tags:
     description: 하루의 루틴을 조회하는 API
     parameters:
       - name: dayOfWeek
-        in: path
+        in: query
         required: true
-        description: 오늘 요일을 쓰세요.
+        description: dayOfweek를 입력하세요.
         schema:
           type: string
           example: 'tue'
