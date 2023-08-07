@@ -10,81 +10,61 @@ const {response, errResponse} = require("../../../config/response");
  */
 exports.getRoutine = async function (req, res) {
     /**
-     * Path Variable : routineIdx
+     * Path Variable : dayOfWeek
+     * 
      */
-    const routineIdx = req.params.routineIdx;
-    const routine = await processProvider.retrieveRoutine(routineIdx);
+
+    // 날짜 및 아이디
+    const dayOfWeek = req.query.dayOfWeek;
+    const userId = req.decoded.userId
+    const routine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
     return res.send(response(baseResponse.SUCCESS, routine));
 };
 
 
-/**
- * 2 API Name : 운동별 과정 전 조회 API
- * [GET] /app/process/before/:routineIdx
- */
-exports.getBeforeProcessDetail = async function (req, res) {
+// /**
+//  * 2 API Name : 운동별 과정 전 조회 API
+//  * [GET] /app/process/before/:routineIdx
+//  */
+// exports.getBeforeProcessDetail = async function (req, res) {
 
-    /**
-     * Path Variable : routineIdx
-     */
-    const routineIdx = req.params.routineIdx
-    const beforeProcessDetail = await processProvider.retrieveBeforeProcessDetail(routineIdx)
+//     /**
+//      * Path Variable : routineIdx
+//      */
+//     const routineIdx = req.params.routineIdx
+//     const beforeProcessDetail = await processProvider.retrieveBeforeProcessDetail(routineIdx)
 
-    return res.send(response(baseResponse.SUCCESS, beforeProcessDetail))
-}
+//     return res.send(response(baseResponse.SUCCESS, beforeProcessDetail))
+// }
 
-/**
- * 3 API Name : 운동별 과정 중 조회 API
- * [GET] /app/process/detail/:routineIdx
- */
-exports.getProcessDetail = async function (req, res) {
-    /**
-     * Path Variable : routineIdx
-     */
-    const routineIdx = req.params.routineIdx
-    const routineDetail = await processProvider.retrieveProcessDetail(routineIdx)
+// /**
+//  * 3 API Name : 운동별 과정 중 조회 API
+//  * [GET] /app/process/detail/:routineIdx
+//  */
+// exports.getProcessDetail = async function (req, res) {
+//     /**
+//      * Path Variable : routineIdx
+//      */
+//     const routineIdx = req.params.routineIdx
+//     const routineDetail = await processProvider.retrieveProcessDetail(routineIdx)
 
-    return res.send(response(baseResponse.SUCCESS, routineDetail))
-}
+//     return res.send(response(baseResponse.SUCCESS, routineDetail))
+// }
 
 /**
  *  4-1 API Name : 운동 루틴 대체 추천 API\
- * [GET] /app/process/replace/:detailIdx
+ * [GET] /app/process/:healthCategoryIdx
  */
 exports.getReplacementRecommendations = async function (req, res) {
     /**
-     * Decoded : userId
-     * Path Variable : detailIdx
+     * Path Variable : healthCategoryIdx
      */
-    try {
-        const { detailIdx } = req.params
+        const healthCateogryIdx = req.params.healthCategoryIdx
 
-        // 유효성 검증
-        if (!Number.isInteger(parseInt(detailIdx)) || parseInt(detailIdx) <= 0) {
-            console.log("Invaild detailIdx")
-            return res.send(response(baseResponse.INVALID_DETAIL_IDX))
-        }
-
-        // 유저 담당 detailIdx 검증
-        const userId = req.decoded.userId
-        const isDetailIdxBelongsToUser = await processProvider.isDetailIdxBelongsToUser(userId, detailIdx) // await 추가
-
-        if (!isDetailIdxBelongsToUser) {
-            console.log("The detailIdx does not belong to the user")
-            return res.send(response(baseResponse.DETAIL_IDX_NOT_BELONGS_TO_USER))
-        }
-
-        // 동일 parts
-        const exercisePart = await processProvider.getExercisePart(detailIdx) // await 추가
-
-        if (!exercisePart) {
-            console.log("Exercise part unknown")
-            return res.send(response(baseResponse.EXERCISE_NOT_FOUND))
-        }
 
         // 동일 parts 내에서 랜덤 추출
-        const replacementRecommendations = await processProvider.getReplacementExercises(detailIdx, exercisePart)
+        const replacementRecommendations = await processProvider.getReplacementExercises(healthCateogryIdx)
 
         if (replacementRecommendations.length === 0) {
             console.log("No replacement exercises found")
@@ -92,10 +72,7 @@ exports.getReplacementRecommendations = async function (req, res) {
         }
 
         return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))
-    } catch (err) {
-        console.error(`App - getReplacementRecommendations Error: ${err.message}`);
-        return res.send(errResponse(baseResponse.SERVER_ERROR));
-    }
+
 }
 
 
@@ -105,6 +82,7 @@ exports.getReplacementRecommendations = async function (req, res) {
  */
 exports.replaceExerciseInRoutine = async function (req, res) {
     try {
+        // detailIdx가 아니라 순서, selectedHealthCategoryIdx는 프론트에서 모르니깐 대체 get에서 Idx도 함께 보내주기
         const { routineDetailIdx, selectedHealthCategoryIdx } = req.body;
 
         // 유효성 검증

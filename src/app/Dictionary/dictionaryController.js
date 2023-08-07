@@ -45,22 +45,22 @@ exports.postSearchList = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, postSearchByUserId));
 };
 
-// /**
-//  *  * API No. 3
-//  * API Name : 사 검색하면 사 들어간 운동 모두 조회하기
-//  * [POST] /app/dictionary/usersearch
-//  */
-// exports.postSearchList = async function (req, res) {
-//     /**
-//      * Path Variable: userId, search
-//      */
-//     const search = req.query.search;
+/**
+ *  * API No. 3
+ * API Name : 사 검색하면 사 들어간 운동 모두 조회하기
+ * [POST] /app/dictionary/searchexercise
+ */
+exports.postSearchName = async function (req, res) {
+    /**
+     * Path Variable: search
+     */
+    const search = req.query.search;
 
-//     if (!search) return res.send(errResponse(baseResponse.DICTIONARY_SEARCH_EMPTY));
+    if (!search) return res.send(errResponse(baseResponse.DICTIONARY_SEARCH_EMPTY));
 
-//     const postSearchByUserId = await dictionaryProvider.putSearch(search, userIdFromJWT);
-//     return res.send(response(baseResponse.SUCCESS, postSearchByUserId));
-// };
+    const postSearch = await dictionaryProvider.dictSearch(search);
+    return res.send(response(baseResponse.SUCCESS, postSearch));
+};
 
 /**
  *  * API No. 4
