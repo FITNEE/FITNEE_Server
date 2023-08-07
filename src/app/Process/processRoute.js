@@ -12,27 +12,18 @@ const process = require('./processController')
 // get은 query로 받기. post는 body로
 
 // 1. 운동 루틴 조회 API(완)
-router.get('/', jwtMiddleware, process.getRoutine);
+router.get('/', jwtMiddleware, process.getRoutine)
 
-// // 2. 운동별 과정 전 조회 API(완)
-// router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)
-
-// // 3. 운동별 과정 중 조회 API(완)
-// router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
-
-// 4-1 운동 루틴 대체 추천 API(완)
+// 2 운동 루틴 대체 추천 API(완)
 router.get('/replace/healthCategoryIdx', process.getReplacementRecommendations)
 
-// // 4-2. 운동 루틴 대체 수정(완)
-// router.patch('replace', jwtMiddleware, process.patchReplaceExerciseInRoutine);
+// 3. 운동 루틴 대체 수정
+router.patch('replace/healthCategoryIdx', jwtMiddleware, process.patchReplaceExerciseInRoutine)
 
-// // 5. 운동 루틴 '전체' 중단 API(보류)
-// router.patch('/:routineIdx', jwtMiddleware, )
-
-// 6. 운동 건너뛰기 API(완)
+// 4. 운동 스킵 API(완)
 router.patch('/:routineIdx', jwtMiddleware, process.skipExercise)
 
-// 7. 시간 데이터 받아오기
+// 5. 마이 캘린더에 기록 API
 router.post('/end/:routineIdx', jwtMiddleware, process.postMycalendar)
 
 // // 7. 운동 루틴 캘린더 기록 API
@@ -44,8 +35,19 @@ router.post('/end/:routineIdx', jwtMiddleware, process.postMycalendar)
 // // 9. 운동 분석 API
 // router.get('/:routineIdx/end/detail', jwtMiddleware, )
 
+
 // 보류
+
+// // 5. 운동 루틴 '전체' 중단 API(보류)
+// router.patch('/:routineIdx', jwtMiddleware, )
+
 // // 10. 결과 공유 API
 // router.post('/:routineIdx/end/detail', jwtMiddleware, )
+
+// // 2. 운동별 과정 전 조회 API(완)
+// router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)
+
+// // 3. 운동별 과정 중 조회 API(완)
+// router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
 
 module.exports = router;

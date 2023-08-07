@@ -5,6 +5,14 @@ const processDao = require("./processDao");
 
 // Provider: Read 비즈니스 로직 처리
 
+exports.validateUser = async function (userId, routineIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const isValidUserCheck = await processDao.isValidUser(connection, userId, routineIdx)
+    connection.release()
+    return isValidUserCheck
+}
+
+
 exports.getUserIdCheck = async function (userId, rouinteIdx, dayOfWeek) {
     const connection = await pool.getConnection(async (conn) => conn)
 

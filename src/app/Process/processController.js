@@ -79,21 +79,25 @@ exports.getReplacementRecommendations = async function (req, res) {
 
 /**
  *  4-2 API 이름 : 대체된 운동 정보 업데이트 API
- * [Post] /app/process/replace
+ * [Patch] /app/process/replace/healthCategoryIdx
  */
-exports.postReplaceExerciseInRoutine = async function (req, res) {
+exports.patchReplaceExerciseInRoutine = async function (req, res) {
     /**
      * Decoded : userId
-     * Body : healthCategoryIdx
+     * Body : 
      */
-
-    // detailIdx가 아니라 순서, selectedHealthCategoryIdx는 프론트에서 모르니깐 대체 get에서 Idx도 함께 보내주기
     
-    const healthCategoryIdx = req.body
+    const selectedHealthCategoryIdx = req.body.healthCategoryIdx
     const userId = req.decoded.userId
 
+    // 1. 회원과 요청된 데이터 검증
+    const isValidUser = await processProvider.validateUser(userId, routineIdx);
+    if (!isValidUser) {
+        return res.send(response(baseResponse.TOKEN_VERIFICATION_FAILURE))
+    }
+
     // 유효성 검증
-    if (!Number.isInteger(parseInt(healthCategoryIdx)) || parseInt(healthCategoryIdx) <= 0) {
+    if (!Number.isInteger(parseInt(selectedHealthCategoryIdx)) || parseInt(selectedHealthCategoryIdx) <= 0) {
         return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
     }
 
@@ -136,11 +140,12 @@ exports.skipExercise = async function (req, res) {
     const userId = req.decoded.userId
     const dayOfWeek = req.body.dayOfWeek
 
-    console.log("dayOfWeek:", dayOfWeek)
+    // 1. 회원과 요청된 데이터 검증
+    const isValidUser = await processProvider.validateUser(userId, routineIdx);
+    if (!isValidUser) {
+        return res.send(response(baseResponse.TOKEN_VERIFICATION_FAILURE))
+    }
 
-    // userId가 가진 routineIdx인지 검증
-    const constUserId = await processProvider.getUserIdCheck(userId, routineIdx, dayOfWeek)
-    if (!constUserId) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED))
 
     // 운동 건너뛰기 (skip 값을 1로 업데이트)
     const skipExercise = await processService.updateSkipValue(routineIdx, healthCategoryIdxParam);
@@ -163,7 +168,10 @@ exports.postMycalendar = async function (req, res) {
     const parsedTotalWeight = parseInt(totalWeight[0].totalWeight);
 
 
-    console.log("totalWeight:", totalWeight)
+    const isValidUser = await processProvider.validateUser(userId, routineIdx);
+    if (!isValidUser) {
+        return res.send(response(baseResponse.TOKEN_VERIFICATION_FAILURE))
+    }
 
     const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime)
 
