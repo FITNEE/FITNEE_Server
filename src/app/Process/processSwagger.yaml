@@ -15,7 +15,7 @@ tags:
         description: 오늘 요일을 쓰세요.
         schema:
           type: string
-          example: '화요일'
+          example: 'tue'
     responses:
       '1000':
         description: 성공
