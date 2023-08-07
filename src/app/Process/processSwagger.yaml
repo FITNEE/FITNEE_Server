@@ -100,7 +100,14 @@ tags:
       - Process
     summary: 운동 루틴 대체 추천 조회 API
     description: 같은 부위 중 랜덤으로 최대 3가지 추천
-    response:
+    parameters:
+      - in: path
+        name: detailIdx
+        required: true
+        description: 운동 루틴 디테일 인덱스
+        schema:
+          type: integer
+    responses:
       '1000':
         description: 성공 - 같은 부위 중 랜덤으로 3가지를 배열로 반환
         content:
@@ -108,42 +115,29 @@ tags:
             schema:
               type: object
               properties:
-                'isSuccess':
+                isSuccess:
                   type: boolean
-                  example: '성공'
+                  example: true
+                code:
+                  type: integer
+                  example: 1000
+                message:
+                  type: string
+                  example: 성공
                 result:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      routineDetailIdx:
-                        type: integer
-                        example: 2
-                      exerciseDetails:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            healthCategoryIdx:
-                              type: integer
-                              example: 3
-                            exerciseName:
-                              type: string
-                              example: 'Chest Press Machine'
-                      sets:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            set:
-                              type: integer
-                              example: 0
-                            rep:
-                              type: integer
-                              example: 5
-                            weight:
-                              type: integer
-                              example: 70
+                  type: object
+                  properties:
+                    replacementRecommendations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: 체스트 프레스 머신
+                          healthCategoryIdx:
+                            type: integer
+                            example: 3
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':

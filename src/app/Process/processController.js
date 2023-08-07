@@ -58,37 +58,13 @@ exports.getRoutine = async function (req, res) {
  */
 exports.getReplacementRecommendations = async function (req, res) {
     /**
-     * Decoded : userId
-     * Path Variable : detailIdx
+     * Path Variable : healthCategoryIdx
      */
-    try {
-        const { detailIdx } = req.params
+        const healthCateogryIdx = req.params.healthCategoryIdx
 
-        // 유효성 검증
-        if (!Number.isInteger(parseInt(detailIdx)) || parseInt(detailIdx) <= 0) {
-            console.log("Invaild detailIdx")
-            return res.send(response(baseResponse.INVALID_DETAIL_IDX))
-        }
-
-        // 유저 담당 detailIdx 검증
-        const userId = req.decoded.userId
-        const isDetailIdxBelongsToUser = await processProvider.isDetailIdxBelongsToUser(userId, detailIdx) // await 추가
-
-        if (!isDetailIdxBelongsToUser) {
-            console.log("The detailIdx does not belong to the user")
-            return res.send(response(baseResponse.DETAIL_IDX_NOT_BELONGS_TO_USER))
-        }
-
-        // 동일 parts
-        const exercisePart = await processProvider.getExercisePart(detailIdx) // await 추가
-
-        if (!exercisePart) {
-            console.log("Exercise part unknown")
-            return res.send(response(baseResponse.EXERCISE_NOT_FOUND))
-        }
 
         // 동일 parts 내에서 랜덤 추출
-        const replacementRecommendations = await processProvider.getReplacementExercises(detailIdx, exercisePart)
+        const replacementRecommendations = await processProvider.getReplacementExercises(healthCateogryIdx)
 
         if (replacementRecommendations.length === 0) {
             console.log("No replacement exercises found")
@@ -96,10 +72,7 @@ exports.getReplacementRecommendations = async function (req, res) {
         }
 
         return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))
-    } catch (err) {
-        console.error(`App - getReplacementRecommendations Error: ${err.message}`);
-        return res.send(errResponse(baseResponse.SERVER_ERROR));
-    }
+
 }
 
 

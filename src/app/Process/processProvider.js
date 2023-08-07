@@ -5,6 +5,17 @@ const processDao = require("./processDao");
 
 // Provider: Read 비즈니스 로직 처리
 
+exports.getDetailIdx = async function (healthCategory) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    const detailIdx = await processDao.selectDetailIdx(connection, healthCategory)
+
+
+    connection.release()
+
+    return detailIdx
+}
+
 exports.getRoutineDetails = async function (dayOfWeek, userId) {
     const connection = await pool.getConnection(async (conn) => conn);
 
@@ -56,6 +67,8 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
     const totalPredictCalories = combinedRoutineDetails.reduce((total, detail) => total + detail.predictCalories, 0);
 
     return {
+        dayOfWeek: dayOfWeek,
+        routineIdx: routineIdx,
         routineDetails: combinedRoutineDetails,
         totalDuration: Math.floor(totalPredictTime / 60),
         totalCalories: totalPredictCalories,
@@ -134,21 +147,12 @@ exports.isDetailIdxBelongsToUser = async function (userId, detailIdx) {
     return result;
 };
 
-// parts 추출
-exports.getExercisePart = async function (detailIdx) {
-    const connection = await pool.getConnection(async (conn) => conn)
-    const exercisePart = processDao.getExercisePart(connection, detailIdx);
-    connection.release()
-
-    return exercisePart;
-};
-
 // 대체 운동 get
-exports.getReplacementExercises = async function (detailIdx, exercisePart) {
+exports.getReplacementExercises = async function (healthCategory) {
     const connection = await pool.getConnection(async (conn) => conn)
 
     const maxRecommendations = 3;
-    const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, detailIdx, exercisePart, maxRecommendations);
+    const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, healthCategory, maxRecommendations);
     connection.release()
 
     return replacementRecommendations;

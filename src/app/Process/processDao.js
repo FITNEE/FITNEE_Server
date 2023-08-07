@@ -1,3 +1,4 @@
+const { connect } = require('http2');
 const lodash = require('lodash');
 
 async function selectRoutineIdx(connection, dayOfWeek, userId) {
@@ -10,6 +11,17 @@ async function selectRoutineIdx(connection, dayOfWeek, userId) {
     const [routineIdRows] = await connection.query(selectRoutineIdxQuery, userId);
     
     return routineIdRows[0][`${dayOfWeek}RoutineIdx`];
+}
+
+async function selectDetailIdx(connection, healthCategory) {
+    const selectDetailIdxQuery = `
+        SELECT routineDetailIdx
+        FROM routineDetail
+        WHERE healthCategoryIdx = ?
+    ;`
+    const detailIdx = await connection.query(selectDetailIdxQuery, healthCategory)
+
+    return detailIdx[0]
 }
 
 async function selectRoutine(connection, routineIdx) {
@@ -346,74 +358,43 @@ async function getExerciseInfo(connection, healthCategoryIdx) {
 // }
 
 // 운동별 parts get
-async function getExercisePart(connection, detailIdx) {
+async function getExercisePart(connection, healthCateogryIdx) {
 
     const getExercisePartQuery = `
         SELECT parts
         FROM healthCategory
-        WHERE healthCategoryIdx = (
-            SELECT healthCategoryIdx
-            FROM routineDetail
-            WHERE routineDetailIdx = ?
-        )
+        WHERE healthCategoryIdx = ?
     `;
-    const [exercisePartRows] = await connection.query(getExercisePartQuery, [detailIdx]);
+    const [exercisePartRows] = await connection.query(getExercisePartQuery, healthCateogryIdx);
 
-    if (exercisePartRows.length === 0) {
-        return null;
-    }
+    console.log("exercisePart:", exercisePartRows)
 
     return exercisePartRows[0].parts;
 };
 
-// routineCalendar에서 오늘 운동을 위한 routineIdx 추출
-async function getTodayRoutineIdx (userId, dayOfWeek) {
-    const getRoutineIdxQuery = `
-        SELECT ${dayOfWeek}RoutineIdx AS routineIdx
-        FROM routineCalendar
-        WHERE userId = ?
-    `;
-    const [rows] = await connection.query(getRoutineIdxQuery, [userId]);
-    return rows[0].routineIdx;
-}
-
-// Check if the detailIdx belongs to the user
-async function checkDetailIdx (connection, userId, detailIdx) {
-
-    const checkDetailIdxQuery = `
-        SELECT EXISTS (
-            SELECT 1
-            FROM routine
-            WHERE routineIdx IN (
-                SELECT routineIdx
-                FROM routineCalendar
-                WHERE userId = ?
-            ) AND (detailIdx0 = ? OR detailIdx1 = ? OR detailIdx2 = ? OR detailIdx3 = ? OR detailIdx4 = ? OR detailIdx5 = ? OR detailIdx6 = ? OR detailIdx7 = ? OR detailIdx8 = ? OR detailIdx9 = ?)
-        ) AS exist;
-    `;
-
-    const [rows] = await connection.query(checkDetailIdxQuery, [userId, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx, detailIdx]);
-    return rows[0].exist === 1;
-}
 
 // 랜덤추천
-async function getReplacementExercisesLimited(connection, detailIdx, exercisePart, maxRecommendations) {
+async function getReplacementExercisesLimited(connection, healthCategory, maxRecommendations) {
+    const exercisePart = await getExercisePart(connection, healthCategory)
 
-    // 현재 바꾸려는 운동 제외해서 대체 운동 추천
+
+    // 대체 운동 추천 (중복 없이)
     const getReplacementExercisesQuery = `
-        SELECT name
+        SELECT name, healthCategoryIdx
         FROM healthCategory
-        WHERE parts = ?
-        AND healthCategoryIdx <> ?
+        WHERE parts = ? AND healthCategoryIdx <> ?
         ORDER BY RAND()
         LIMIT ?;
     `;
 
-    const [replacementExerciseRows] = await connection.query(getReplacementExercisesQuery, [exercisePart, detailIdx, maxRecommendations]);
-    const replacementRecommendations = replacementExerciseRows.map((row) => row.name);
+    const [replacementExerciseRows] = await connection.query(getReplacementExercisesQuery, [exercisePart, healthCategory, maxRecommendations]);
 
-    return replacementRecommendations;
-};
+    return replacementExerciseRows;
+}
+
+
+
+
 
 // 대체 추천 이전의 healthCategoryIdx 추출
 async function updateRoutineDetail(connection, selectedHealthCategoryIdx, routineDetailIdx) {
@@ -485,6 +466,7 @@ async function updateSkipValue(connection, routineDetailIdx) {
 
 module.exports = {
     selectRoutineIdx,
+    selectDetailIdx,
     selectRoutine,
     selectProcessDetail,
     // selectRoutineIdx,
@@ -492,8 +474,6 @@ module.exports = {
     // selectBeforeProcessDetail,
     // selectProcessDetail,
     getExercisePart,
-    getTodayRoutineIdx,
-    checkDetailIdx,
     getReplacementExercisesLimited,
     updateRoutineDetail,
     updateRoutineStatus,
