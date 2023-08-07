@@ -9,14 +9,16 @@ const process = require('./processController')
  */
 
 
+// get은 query로 받기. post는 body로
+
 // 1. 운동 루틴 조회 API(완)
-router.get('/:routineIdx', jwtMiddleware, process.getRoutine);
+router.get('/', jwtMiddleware, process.getRoutine);
 
-// 2. 운동별 과정 전 조회 API(완)
-router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)
+// // 2. 운동별 과정 전 조회 API(완)
+// router.get('/before/:routineIdx', jwtMiddleware, process.getBeforeProcessDetail)
 
-// 3. 운동별 과정 중 조회 API(완)
-router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
+// // 3. 운동별 과정 중 조회 API(완)
+// router.get('/detail/:routineIdx', jwtMiddleware, process.getProcessDetail)
 
 // 4-1 운동 루틴 대체 추천 API(완)
 router.get('/replace/:detailIdx', jwtMiddleware, process.getReplacementRecommendations)
