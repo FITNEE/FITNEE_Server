@@ -39,7 +39,7 @@ async function putKeyword(connection, search, userIdFromJWT) {
 // search 받아서 healthCategory테이블의 연관 name 반환
 async function searchKeyword(connection, search) {
     const searchKeywordQuery = `
-        SELECT name
+        SELECT name, parts, muscle, equipment
         FROM healthCategory
         WHERE name LIKE CONCAT('%', ?, '%');
     `;
