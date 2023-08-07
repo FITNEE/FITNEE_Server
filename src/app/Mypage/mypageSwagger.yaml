@@ -53,8 +53,8 @@ tags:
 
 /app/mypage/updateuser:
   put:
-    summary: API NO.5 - userinfo(userNickname, birthYear) 수정 api
-    description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 수정하는 api
+    summary: API NO.5 - userNickname 수정 api
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userNickname 수정하는 api
     tags:
       - Mypage
     requestBody:
@@ -68,17 +68,11 @@ tags:
                 type: string
                 example: 초코맛 프로틴
                 description: 수정할 유저 닉네임
-              birthYear:
-                type: integer
-                example: 1995
-                description: 수정할 생년
     responses:
       '1000':
         description: 성공
       '701':
         description: 수정할 유저 닉네임을 입력해 주세요.
-      '702':
-        description: 수정할 생년을 입력해 주세요.
 
 
 /app/mypage/nickname:

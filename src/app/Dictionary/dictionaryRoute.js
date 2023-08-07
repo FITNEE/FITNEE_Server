@@ -15,18 +15,21 @@ router.get('/', jwtMiddleware, mypage.getKeywordByIdx);
 router.post('/usersearch', jwtMiddleware, mypage.postSearchList);
 
 // 3.
-router.get('/exerciseinfo', mypage.getInformationByparts);
+router.post('/searchexercise', mypage.postSearchName);
 
 // 4.
-router.get('/exercisemethod', mypage.getMethodByName);
+router.get('/exerciseinfo', mypage.getInformationByparts);
 
 // 5.
-router.get('/exercisechat', mypage.getChattingByName);
+router.get('/exercisemethod', mypage.getMethodByName);
 
 // 6.
-router.post('/chatting', mypage.postChatting);
+router.get('/exercisechat', mypage.getChattingByName);
 
 // 7.
+router.post('/chatting', mypage.postChatting);
+
+// 8.
 router.patch('/deleteChatt', jwtMiddleware, mypage.deleteChatt)
 
 module.exports = router;

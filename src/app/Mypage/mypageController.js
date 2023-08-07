@@ -78,7 +78,7 @@ exports.getUserData = async function (req, res) {
 
 /**
  * API No. 5
- * API Name : 토큰으로 유저 검증후 유저정보 수정 - userNickname, birthYear수정
+ * API Name : 토큰으로 유저 검증후 유저정보 수정 - userNickname수정
  * [PUT] /app/mypage/updateuser
  */
 exports.updateUserData = async function (req, res) {
@@ -86,7 +86,6 @@ exports.updateUserData = async function (req, res) {
     const { userNickname } = req.body;
 
     if (!userNickname) return res.send(errResponse(baseResponse.MYPAGE_USERNICKNAME_EMPTY));
-    //if (!birthYear) return res.send(errResponse(baseResponse.MYPAGE_BIRTHYEAR_EMPTY));
     const updateUserInfo = await mypageProvider.updateUser(userIdFromJWT, userNickname);
     return res.send(response(baseResponse.SUCCESS));
 }
