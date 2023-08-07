@@ -13,17 +13,22 @@ async function insertRoutine(connection, userId, info, gpt) {
     const rmSentence = (info.RM)
                         ? `I think I can lift up to ${info.RM}kg when I do squats to the maximum.`
                         : `I don't even know how many squats I can do at a time.`;
+    const weeksSentence = (info.dayOfWeeks.length==1)
+                        ? `I'm going to exercise on ${info.dayOfWeeks} only.`
+                        : `I'm going to exercise for a total of ${info.dayOfWeeks.length} days on ${info.dayOfWeeks[0]} and ${info.dayOfWeeks.slice(1,).join(', ')}.`;
     const infoSentence = `
                     I am a ${(responseUserInfo.gender==1) ? "male" : "female"} born in ${responseUserInfo.birthYear},
                     I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.
                     ${rmSentence}
-                    I will do ${info.targets} exercises at ${info.place}.
-                    I'm going to exercise on ${info.dayOfWeeks}.
+                    I will do ${info.targets.join(', ')} exercises at ${info.place}.
+                    ${weeksSentence}
                     `;
 
     const content = infoSentence + gpt.chatContent;
     const completion = gpt.chatCompletion;
     completion.messages[2].content = content;
+
+    console.log(infoSentence);
 
     const responseCompletion = await openai.createChatCompletion(completion);
     console.log("---------- gpt completion ----------");
@@ -137,7 +142,7 @@ async function selectRoutineCalendar(connection, userId) {
 // 루틴 조회
 async function selectRoutine(connection, routineIdx) {
     const selectExerciseListQuery = `
-                          SELECT name
+                          SELECT name, parts
                           FROM healthCategory
                           `;
     const [exerciseList] = await connection.query(selectExerciseListQuery);
@@ -180,6 +185,7 @@ async function selectRoutine(connection, routineIdx) {
 
             detailContent['healthCategoryIdx'] = routineDetail.healthCategoryIdx;
             detailContent['exerciseName'] = exerciseList[routineDetail.healthCategoryIdx-1].name;
+            detailContent['exerciseParts'] = exerciseList[routineDetail.healthCategoryIdx-1].parts;
             detailContent['content'] = detailItem;
             routineContent.push(detailContent);
         }
@@ -202,37 +208,41 @@ async function updateRoutineCalendar(connection, userId, routineCalendar) {
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
-    const selectLastInsertIdQuery = `SELECT LAST_INSERT_ID()`;
-    var putRoutineContent = {};
+    const updateRoutine =  {};
 
     for (var i=0; i<routineContent.length; i++) {
-        var detailContent = {};
+        var updateRoutineDetail = {
+            healthCategoryIdx : routineContent[i].healthCategoryIdx,
+        };
 
-        detailContent['healthCategoryIdx'] = routineContent[i].healthCategoryIdx;
-        for (var j=0; j<routineContent[i].content.length; j++) {
-            detailContent['rep'+String(j)] = routineContent[i].content[j].rep;
-            if (routineContent[i].content[j].weight)
-                detailContent['weight'+String(j)] = routineContent[i].content[j].weight;
-        }
+        curContent = routineContent[i].content;
+        for (var j=0; j<curContent.length; j++) {
+            updateRoutineDetail["rep"+String(j)] = curContent[j].rep;
+            if (curContent[j].weight)
+                updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
+        };
 
-        const insertRoutineDetailQuery = `
-                          INSERT INTO routineDetail
-                          SET ?
-                          `;
-        await connection.query(insertRoutineDetailQuery, detailContent);
+        console.log(`update routine detail - ` + JSON.stringify(updateRoutineDetail));
 
-        const [[responseInsertRoutineDetail]] = await connection.query(selectLastInsertIdQuery, detailContent);
-        putRoutineContent['detailIdx'+String(i)] = responseInsertRoutineDetail[`LAST_INSERT_ID()`];
-    }
+        const updateRoutineDetailQuery = `
+                              INSERT INTO routineDetail
+                              SET ?;
+                              SELECT LAST_INSERT_ID();
+                              `;
+        const [responseUpdateRD] = await connection.query(updateRoutineDetailQuery, updateRoutineDetail);
+        updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
+    };
 
-    const insertRoutine = `
-                      INSERT INTO routine
-                      SET ?
-                      `;
-    await connection.query(insertRoutine, putRoutineContent);
-
-    const [[resposneInsertRoutine]] = await connection.query(selectLastInsertIdQuery);
+    console.log(`update routine - ` + JSON.stringify(updateRoutine));
     const updateRoutineQuery = `
+                          INSERT INTO routine
+                          SET ?;
+                          SELECT LAST_INSERT_ID();
+                          `;
+    const [responseUpdateR] = await connection.query(updateRoutineQuery, updateRoutine);
+    const updateRIdx = responseUpdateR[1][0]['LAST_INSERT_ID()'];
+
+    const updateRoutineCalendarQuery = `
                       SELECT @routineIdx := ?;
                       SELECT @changeIdx := ?;
 
@@ -247,8 +257,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
                         sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
                       WHERE userId = ?;
                     `;
-    deleteRoutine(connection, userId, routineIdx);
-    await connection.query(updateRoutineQuery, [routineIdx, resposneInsertRoutine[`LAST_INSERT_ID()`], userId]);
+    await connection.query(updateRoutineCalendarQuery, [routineIdx, updateRIdx, userId]);
 
     return ;
 };
@@ -299,8 +308,22 @@ async function deleteRoutine(connection, userId, routineIdx) {
     ]);
 
     return ;
-}
-  
+};
+
+async function startProcess(connection, userId, dayOfWeek) {
+    const dayOfWeekStr =  dayOfWeek.slice(0,3).toLowerCase() + 'RoutineIdx';
+    const getRoutineIdxQuery = `
+                      SELECT *
+                      FROM routineCalendar
+                      WHERE userId = ?
+                      `;
+    const [[responseGetRoutineIdx]] = await connection.query(getRoutineIdxQuery, userId);
+    console.log(responseGetRoutineIdx[dayOfWeekStr]);
+
+    return ;
+};
+
+
 module.exports = {
     insertRoutine,
     insertRoutineCalendar,
@@ -309,4 +332,5 @@ module.exports = {
     selectRoutine,
     updateRoutine,
     deleteRoutine,
+    startProcess,
 };

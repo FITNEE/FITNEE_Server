@@ -166,24 +166,25 @@ tags:
       content:
         application/json:
           schema:
-            type: object
+            type: array
             required:
               - healthCategoryIdx
               - content
-            properties:
-              'healthCategoryIdx':
-                type: integer
-                example: 2
-              'content':
-                type: array
-                items:
-                  properties:
-                    'rep':
-                      type: integer
-                      example: 10
-                    'weight':
-                      type: integer
-                      example: 100
+            items:
+              properties:
+                'healthCategoryIdx':
+                  type: integer
+                  example: 2
+                'content':
+                  type: array
+                  items:
+                    properties:
+                      'rep':
+                        type: integer
+                        example: 10
+                      'weight':
+                        type: integer
+                        example: 100
     responses:
       '1000':
         description: 성공
@@ -278,6 +279,12 @@ components:
         'healthCategoryIdx':
           type: integer
           example: 2
+        'exerciseName':
+          type: string
+          example: 인클라인 덤벨프레스
+        'exerciseParts':
+          type: string
+          example: 어깨
         'content':
           type: array
           items:

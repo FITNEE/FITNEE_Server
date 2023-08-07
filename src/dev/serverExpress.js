@@ -26,6 +26,18 @@ module.exports = function() {
         });
     });
 
+    app.get('/restart', (req, res) => {
+        exec(`cd /home/ubuntu/git_clone/healthgpt_backend && echo -e "${Date()}" >> src/dev/log.js`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+            console.log(stdout);
+            // res.sendStatus(200);
+            res.redirect('/cat-log');
+        });
+    });
+
     app.get('/cat-log', (req, res) => {
         exec('tail -50 /home/ubuntu/.forever/5QEB.log', (err, stdout, stderr) => {
             if (err) {

@@ -23,9 +23,9 @@ exports.searchUserInfo = async function (userIdFromJWT) {
 
 
 // 유저정보 수정
-exports.updateUser = async function (userIdFromJWT, userNickname, birthYear) {
+exports.updateUser = async function (userIdFromJWT, userNickname) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const userInfoUpdate = await mypageDao.updateUserInfo(connection, userNickname, birthYear, userIdFromJWT);
+  const userInfoUpdate = await mypageDao.updateUserInfo(connection, userNickname, userIdFromJWT);
   connection.release();
 
   return userInfoUpdate;
