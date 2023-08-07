@@ -119,7 +119,30 @@ tags:
       '704':
       description: 수정할 userPw와 기존 userPw가 동일합니다.
       
+/app/mypage/updatepwd:
+  post:
+    summary: API NO.8 - userPw 확인 api(기존 비밀번호와 같은지 여부)
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userPw 확인하는 api
+    tags:
+      - Mypage
+    operationId: comparePassword
 
+    requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userPw:
+                  type: string
+
+              required:
+                - userPw
+    responses:
+      '706':
+        description: 입력한 userPw와 기존 userPw가 동일합니다.(true)
+      '707':
+      description: 입력한 userPw와 기존 userPw가 동일하지 않습니다.(false)
 
 
 # components:

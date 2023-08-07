@@ -18,7 +18,6 @@ exports.getExercisedData = async function (req, res) {
     /**
      * Query String: month
      */
-    console.log("1");
     const userIdFromJWT = req.decoded.userId;
     const month = req.query.month;
 
@@ -120,7 +119,7 @@ exports.checkUserNameValid = async function (req, res) {
 
 /**
  * API No. 7
- * API Name : 토큰으로 유저 검증후 userPw 수정 todo: 기존 비밀번호와 같으면 수정x
+ * API Name : 토큰으로 유저 검증후 userPw 수정
  * [PUT] /app/mypage/updatepwd
  */
 exports.updatePassword = async function (req, res) {
@@ -145,5 +144,34 @@ exports.updatePassword = async function (req, res) {
         // 기존 pw와 다른 pw를 입력했을때 -> 수정
         const updateUserPw = await mypageService.updatePassword(userIdFromJWT, hashedPassword);
         return res.send(response(baseResponse.SUCCESS));
+    }
+}
+
+/**
+ * API No. 8
+ * API Name : 토큰으로 유저 검증후 userPw 확인
+ * [POST] /app/mypage/comparepwd
+ */
+exports.comparePassword = async function (req, res) {
+    const userIdFromJWT = req.decoded.userId;
+    const { userPw } = req.body;
+    if (!userPw) return res.send(errResponse(baseResponse.MYPAGE_USERPW_EMPTY));
+
+    // 비밀번호 암호화
+    const hashedPassword = crypto
+    .createHash("sha512")
+    .update(userPw)
+    .digest("hex");
+
+    // 기존pw와 body.userPw비교(같으면 수정X)
+    const originPw = await mypageProvider.searchPw(userIdFromJWT)
+    console.log("originPw:",originPw[0].userPw);
+    console.log("hasshePW:",hashedPassword);
+    
+    // 기존 pw와 수정할 pw가 같을때
+    if (hashedPassword === originPw[0].userPw) return res.send(response(baseResponse.MYPAGE_USERPW_EQUAL2));
+    else {
+        // 기존 pw와 다른 pw를 입력했을때
+        return res.send(errResponse(baseResponse.MYPAGE_USERPW_UNEQUAL));
     }
 }
