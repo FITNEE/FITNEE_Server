@@ -61,9 +61,30 @@ tags:
         description: 검색내용을 입력해 주세요.
 
 
+/app/dictionary/searchexercise:
+  post:
+    summary: API NO.3 - 검색 단어와 연관된 운동 반환 API
+    description: search에 사 단어 넣으면 search 단어 들어간 모든 운동 return
+    tags:
+      - Dictionary
+    operationId: postSearchName
+    parameters:
+      - name: search
+        in: query
+        required: true
+        description: 검색 내용
+        schema:
+          type: string
+    responses:
+      '1000':
+        description: 성공
+      '606':
+        description: 검색내용을 입력해 주세요.
+
+
 /app/dictionary/exerciseinfo:
   get:
-    summary: API NO.3 - 운동 parts 받아서 운동 정보 조회 API
+    summary: API NO.4 - 운동 parts 받아서 운동 정보 조회 API
     parameters:
       - name: parts
         in: query
@@ -105,7 +126,7 @@ tags:
 
 /app/dictionary/exercisemethod:
   get:
-    summary: API NO.4 - 운동 name으로 운동방법, 운동주의사항 조회 API
+    summary: API NO.5 - 운동 name으로 운동방법, 운동주의사항 조회 API
     parameters:
       - name: name
         in: query
@@ -136,7 +157,7 @@ tags:
 
 /app/dictionary/exercisechat:
   get:
-    summary: API NO.5 - 운동 name으로 채팅내역 조회 API
+    summary: API NO.6 - 운동 name으로 채팅내역 조회 API
     parameters:
       - name: name
         in: query
@@ -181,7 +202,7 @@ tags:
 
 /app/dictionary/chatting:
   post:
-    summary: API NO.6 - 운동 name, userNickname, text post API
+    summary: API NO.7 - 운동 name, userNickname, text post API
     description: 운동 name, userNickname, text post해서 db에 넣기
     tags:
       - Dictionary
@@ -219,7 +240,7 @@ tags:
 
 /app/dictionary/deleteChatt/{healthChattingIdx}:
   delete:
-    summary: API NO.7 - 채팅 삭제 API (healthChatting status 컬럼 0 -> 1)
+    summary: API NO.8 - 채팅 삭제 API (healthChatting status 컬럼 0 -> 1)
     description: login할때 쿠키에 저장된 accesstoken가지고 있어야함.(api 내에서 검증함) app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함.
     tags:
       - Dictionary

@@ -53,8 +53,8 @@ tags:
 
 /app/mypage/updateuser:
   put:
-    summary: API NO.5 - userinfo(userNickname, birthYear) 수정 api
-    description: 쿠키에 가지고 있는 토큰(유저)으로 userinfo 수정하는 api
+    summary: API NO.5 - userNickname 수정 api
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userNickname 수정하는 api
     tags:
       - Mypage
     requestBody:
@@ -68,17 +68,11 @@ tags:
                 type: string
                 example: 초코맛 프로틴
                 description: 수정할 유저 닉네임
-              birthYear:
-                type: integer
-                example: 1995
-                description: 수정할 생년
     responses:
       '1000':
         description: 성공
       '701':
         description: 수정할 유저 닉네임을 입력해 주세요.
-      '702':
-        description: 수정할 생년을 입력해 주세요.
 
 
 /app/mypage/nickname:
@@ -123,9 +117,28 @@ tags:
       '703':
         description: 수정할 유저 패스워드를 입력해 주세요.
       '704':
-      description: 수정할 userPw와 기존 userPw가 동일합니다.
+        description: 수정할 userPw와 기존 userPw가 동일합니다.
       
-
+/app/mypage/comparepwd:
+  post:
+    summary: API NO.8 - userPw 확인 api(기존 비밀번호와 같은지 여부)
+    description: 쿠키에 가지고 있는 토큰(유저)으로 userPw 확인하는 api
+    tags:
+      - Mypage
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userPw:
+                  type: string
+    responses:
+      '706':
+        description: 입력한 userPw와 기존 userPw가 동일합니다.(true)
+      '707':
+        description: 입력한 userPw와 기존 userPw가 동일하지 않습니다.(false)
 
 
 # components:

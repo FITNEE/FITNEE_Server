@@ -310,19 +310,6 @@ async function deleteRoutine(connection, userId, routineIdx) {
     return ;
 };
 
-async function startProcess(connection, userId, dayOfWeek) {
-    const dayOfWeekStr =  dayOfWeek.slice(0,3).toLowerCase() + 'RoutineIdx';
-    const getRoutineIdxQuery = `
-                      SELECT *
-                      FROM routineCalendar
-                      WHERE userId = ?
-                      `;
-    const [[responseGetRoutineIdx]] = await connection.query(getRoutineIdxQuery, userId);
-    console.log(responseGetRoutineIdx[dayOfWeekStr]);
-
-    return ;
-};
-
 
 module.exports = {
     insertRoutine,
@@ -332,5 +319,4 @@ module.exports = {
     selectRoutine,
     updateRoutine,
     deleteRoutine,
-    startProcess,
 };

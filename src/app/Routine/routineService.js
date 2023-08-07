@@ -68,16 +68,3 @@ exports.deleteRoutine = async function (userId, routineIdx) {
         return errResponse(baseResponse.TRANSACTION_ERROR);
     }
 };
-
-exports.startProcess = async function (userId, dayOfWeek) {
-    try {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const startProcess = await routineDao.startProcess(connection, userId, dayOfWeek);
-        connection.release();
-
-        return response(baseResponse.SUCCESS, startProcess);
-    } catch (err) {
-        logger.error(`App - startProcess Service error\n: ${err.message}`);
-        return errResponse(baseResponse.TRANSACTION_ERROR);
-    }
-};

@@ -1,7 +1,7 @@
 // 특정유저가 n월에 운동한 날짜
 async function selectMyCalendar(connection, userIdFromJWT, month) {
     const selectMyCalendarQuery = `
-                SELECT day(healthDate) as day
+                SELECT healthDate as day
                 FROM myCalendar
                 WHERE userId = ? AND MONTH(healthDate) = ? AND status=0
                 ORDER BY healthDate ASC;

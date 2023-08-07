@@ -36,6 +36,16 @@ async function putKeyword(connection, search, userIdFromJWT) {
     return informationRows;
 }
 
+// search 받아서 healthCategory테이블의 연관 name 반환
+async function searchKeyword(connection, search) {
+    const searchKeywordQuery = `
+        SELECT name, parts, muscle, equipment
+        FROM healthCategory
+        WHERE name LIKE CONCAT('%', ?, '%');
+    `;
+    const [searchResultRows] = await connection.query(searchKeywordQuery, [search]);
+    return searchResultRows;
+}
 
 
 // parts 받아서 운동정보 respond
@@ -135,6 +145,7 @@ async function updateChattInfo(connection, userId, healthChattingIdx) {
 module.exports = {
     selectKeyword,
     putKeyword,
+    searchKeyword,
     selectInformation,
     selectExerciseMethod,
     selectExerciseChatting,

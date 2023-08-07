@@ -32,10 +32,4 @@ router.put('/:routineIdx', routine.putRoutine);
 // 루틴 삭제 API
 router.delete('/:routineIdx', routine.deleteRoutine);
 
-// 운동 과정 시작 API
-router.post('/start', routine.startProccess);
-
-// 운동 중 임시 API
-// router.post('/temp/:routineIdx');
-
 module.exports = router;

@@ -28,5 +28,8 @@ router.get('/nickname', mypage.checkUserNameValid);
 
 // 7. 비밀번호 수정
 router.put('/updatepwd', jwtMiddleware, mypage.updatePassword);
-    
+
+// 8. 비밀번호 비교
+router.post('/comparepwd', jwtMiddleware, mypage.comparePassword);
+
 module.exports = router;
