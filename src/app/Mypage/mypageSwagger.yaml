@@ -119,7 +119,7 @@ tags:
       '704':
       description: 수정할 userPw와 기존 userPw가 동일합니다.
       
-/app/mypage/updatepwd:
+/app/mypage/comparepwd:
   post:
     summary: API NO.8 - userPw 확인 api(기존 비밀번호와 같은지 여부)
     description: 쿠키에 가지고 있는 토큰(유저)으로 userPw 확인하는 api
