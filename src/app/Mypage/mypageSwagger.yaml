@@ -117,7 +117,7 @@ tags:
       '703':
         description: 수정할 유저 패스워드를 입력해 주세요.
       '704':
-      description: 수정할 userPw와 기존 userPw가 동일합니다.
+        description: 수정할 userPw와 기존 userPw가 동일합니다.
       
 /app/mypage/comparepwd:
   post:
@@ -125,9 +125,8 @@ tags:
     description: 쿠키에 가지고 있는 토큰(유저)으로 userPw 확인하는 api
     tags:
       - Mypage
-    operationId: comparePassword
-
     requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -135,14 +134,11 @@ tags:
               properties:
                 userPw:
                   type: string
-
-              required:
-                - userPw
     responses:
       '706':
         description: 입력한 userPw와 기존 userPw가 동일합니다.(true)
       '707':
-      description: 입력한 userPw와 기존 userPw가 동일하지 않습니다.(false)
+        description: 입력한 userPw와 기존 userPw가 동일하지 않습니다.(false)
 
 
 # components:
