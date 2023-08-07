@@ -167,6 +167,17 @@ async function selectRoutine(connection, routineIdx) {
     };
 }
 
+// 운동 정보 불러오기(healthCateogry table)
+async function getExerciseInfo(connection, healthCategoryIdx) {
+    const selectExerciseQuery = `
+        SELECT healthCategoryIdx, name AS exerciseName, rest, time, muscle, parts,  equipment, calories, caution1, caution2, caution3
+        FROM healthCategory
+        WHERE healthCategoryIdx = ?;
+    `;
+    const [[exerciseInfo]] = await connection.query(selectExerciseQuery, healthCategoryIdx);
+    return exerciseInfo;
+}
+
 // 운동 세부사항 가져오기(1세트 - 운동횟수, 무게)
 async function selectProcessDetail(connection, routineIdx) {
 
@@ -590,7 +601,7 @@ module.exports = {
     // selectRoutineIdx,
     // selectRoutine,
     // selectBeforeProcessDetail,
-    // selectProcessDetail,
+    selectProcessDetail,
     getExercisePart,
     getReplacementExercisesLimited,
     updateSkipValue,
