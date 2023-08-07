@@ -56,7 +56,6 @@ async function selectRoutine(connection, routineIdx) {
     }
 
 
-    console.log("routineContent:", routineContent)
     return {
         routineContent: routineContent,
     };
@@ -84,7 +83,6 @@ async function selectProcessDetail(connection, routineIdx) {
         }
     }
 
-    console.log("routine_list:", routine_list)
 
     // routine table의 detailIdx에 해당하는 값의 routineDetail table의 row 불러오기
     const selectDetailQuery = `

@@ -8,17 +8,14 @@ const processDao = require("./processDao");
 exports.getRoutineDetails = async function (dayOfWeek, userId) {
     const connection = await pool.getConnection(async (conn) => conn);
 
-    console.log("dayofweek:", dayOfWeek)
 
     const routineIdx = await processDao.selectRoutineIdx(connection, dayOfWeek, userId);
 
-    console.log("routineIdx:", routineIdx) 
 
     const routineSummary = await processDao.selectRoutine(connection, routineIdx);
 
     const routineDetails = await processDao.selectProcessDetail(connection, routineIdx);
 
-    console.log("routineDetails:", routineDetails)
     connection.release();
 
     const combinedRoutineDetails = routineDetails.map(detail => {
@@ -54,7 +51,6 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
         };
     }).filter(detail => detail !== null);
 
-    console.log("combinedRoutineDetails:", combinedRoutineDetails)
 
     const totalPredictTime = combinedRoutineDetails.reduce((total, detail) => total + detail.predictTime, 0);
     const totalPredictCalories = combinedRoutineDetails.reduce((total, detail) => total + detail.predictCalories, 0);
