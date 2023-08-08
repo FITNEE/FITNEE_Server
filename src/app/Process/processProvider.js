@@ -183,11 +183,14 @@ exports.isDetailIdxBelongsToUser = async function (userId, detailIdx) {
 };
 
 // 대체 운동 get
-exports.getReplacementExercises = async function (healthCategory) {
+exports.getReplacementExercises = async function (healthCategoryIdx) {
     const connection = await pool.getConnection(async (conn) => conn)
 
+    // 랜덤 3개(최대) 데이터 뽑아오기
     const maxRecommendations = 3;
-    const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, healthCategory, maxRecommendations);
+    const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, healthCategoryIdx, maxRecommendations);
+
+
     connection.release()
 
     return replacementRecommendations;
@@ -195,20 +198,18 @@ exports.getReplacementExercises = async function (healthCategory) {
 };
 
 // 대체한 운동의 healthCategoryIdx로 routineDetail 수정
-exports.updateHealthCategoryInRoutineDetail = async function (selectedHealthCategoryIdx, routineDetailIdx) {
-    try {
-        const connection = await pool.getConnection(async (conn) => conn);
+exports.updateHealthCategoryInRoutineDetail = async function (selectedHealthCategoryIdx, afterHealthCategoryIdx, routineDetailIdx) {
 
-        // routineDetail 수정
-        await processDao.updateRoutineDetail(connection, selectedHealthCategoryIdx, routineDetailIdx);
+    const connection = await pool.getConnection(async (conn) => conn);
 
-        // 대체한 운동의 status를 1로 업데이트
-        await processDao.updateRoutineStatus(connection, routineDetailIdx);
+    // routineDetail 수정
+    await processDao.updateRoutineDetail(connection, selectedHealthCategoryIdx, afterHealthCategoryIdx, routineDetailIdx);
 
-        connection.release();
-    } catch (err) {
-        throw err;
-    }
+    // 대체한 운동의 status를 1로 업데이트
+    await processDao.updateRoutineStatus(connection, routineDetailIdx);
+
+    connection.release();
+
 };
 
 // exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {

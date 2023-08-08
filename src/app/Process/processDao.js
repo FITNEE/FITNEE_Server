@@ -260,6 +260,64 @@ async function selectProcessDetail(connection, routineIdx) {
     return result;
 }
 
+async function selectReplaceDetail(connection, healthCategoryIdx) {
+    const selectDetailQuery = `
+        SELECT rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
+               weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9, skip
+        FROM routineDetail
+        WHERE healthCategoryIdx = ?;
+    `;
+
+    const [details] = await connection.query(selectDetailQuery, healthCategoryIdx);
+
+    console.log("details:", [details])
+
+    const exerciseInfo = await getExerciseInfo(connection, healthCategoryIdx);
+
+    console.log("exerciseInfo:", exerciseInfo)
+
+    const result = [];
+
+    for (const detail of details) {
+        const sets = [];
+        let exerciseTime = 0;
+
+        for (let i = 0; i < 10; i++) {
+            if (detail[`rep${i}`] !== null && detail[`rep${i}`] !== 0) {
+                sets.push({
+                    set: i,
+                    rep: detail[`rep${i}`],
+                    weight: detail[`weight${i}`] !== null ? detail[`weight${i}`] : 'null',
+                });
+                exerciseTime += detail[`rep${i}`] * exerciseInfo.time;
+            }
+        }
+
+
+        const totalSets = sets.length;
+        const exerciseCalories = exerciseInfo.calories || 0;
+        const predictCalories = totalSets * exerciseCalories;
+
+        result.push({
+            routineDetailIdx: detail.routineDetailIdx,
+            exerciseDetails: {
+                healthCategoryIdx: exerciseInfo.healthCategoryIdx,
+                exerciseName: exerciseInfo.exerciseName,
+            },
+            sets: sets,
+            predictTime: exerciseTime,
+            rest: exerciseInfo.rest,
+            predictCalories: predictCalories,
+            replace: detail.replace,
+        });
+    }
+
+    return result;
+}
+
+
+
+
 // async function selectRoutineIdx(connection, dayOfWeek, userId) {
 //     // routineIdx 긁어오기
 //     const selectRoutineIdx = `
@@ -469,8 +527,8 @@ async function getExercisePart(connection, healthCateogryIdx) {
 
 
 // 랜덤추천
-async function getReplacementExercisesLimited(connection, healthCategory, maxRecommendations) {
-    const exercisePart = await getExercisePart(connection, healthCategory)
+async function getReplacementExercisesLimited(connection, healthCategoryIdx, maxRecommendations) {
+    const exercisePart = await getExercisePart(connection, healthCategoryIdx)
 
 
     // 대체 운동 추천 (중복 없이)
@@ -482,7 +540,7 @@ async function getReplacementExercisesLimited(connection, healthCategory, maxRec
         LIMIT ?;
     `;
 
-    const [replacementExerciseRows] = await connection.query(getReplacementExercisesQuery, [exercisePart, healthCategory, maxRecommendations]);
+    const [replacementExerciseRows] = await connection.query(getReplacementExercisesQuery, [exercisePart, healthCategoryIdx, maxRecommendations]);
 
     return replacementExerciseRows;
 }
@@ -591,6 +649,7 @@ async function insertMyCalendar(connection, userIdx, userId, routineIdx, parsedT
 // }
 
 module.exports = {
+    selectReplaceDetail,
     isValidUser,
     selectUserIdCheck,
     selectUserIdx,

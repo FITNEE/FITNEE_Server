@@ -79,15 +79,17 @@ exports.getReplacementRecommendations = async function (req, res) {
 
 /**
  *  4-2 API 이름 : 대체된 운동 정보 업데이트 API
- * [Patch] /app/process/replace/healthCategoryIdx
+ * [Patch] /app/process/replace/:healthCategoryIdx
  */
 exports.patchReplaceExerciseInRoutine = async function (req, res) {
     /**
      * Decoded : userId
-     * Body : 
+     * Path Variable : healthCategoryIdx
+     * Body : afterHealthCategoryIdx
      */
     
-    const selectedHealthCategoryIdx = req.body.healthCategoryIdx
+    const beforeHealthCategoryIdx = req.params.healthCategoryIdx
+    const afterHealthCategoryIdx = req.body
     const userId = req.decoded.userId
 
     // 1. 회원과 요청된 데이터 검증
@@ -97,11 +99,11 @@ exports.patchReplaceExerciseInRoutine = async function (req, res) {
     }
 
     // 유효성 검증
-    if (!Number.isInteger(parseInt(selectedHealthCategoryIdx)) || parseInt(selectedHealthCategoryIdx) <= 0) {
+    if (!Number.isInteger(parseInt(beforeHealthCategoryIdx)) || parseInt(beforeHealthCategoryIdx) <= 0) {
         return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
     }
 
-    await processProvider.updateHealthCategoryInRoutineDetail(selectedHealthCategoryIdx, routineDetailIdx, userId)
+    await processProvider.updateHealthCategoryInRoutineDetail(beforeHealthCategoryIdx, afterHealthCategoryIdx, userId)
 
     return res.send(response(baseResponse.SUCCESS));
 };
