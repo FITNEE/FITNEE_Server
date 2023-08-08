@@ -134,7 +134,7 @@ async function selectRoutine(connection, routineIdx) {
 
     // 운동 리스트 가져오기(healthCategory table)
     const exerciseListQuery = `
-        SELECT healthCategoryIdx, name, parts, muscle, equipment, caution1
+        SELECT healthCategoryIdx, name, parts, muscle, equipment, caution1, distance
         FROM healthCategory;
     `;
     const [exerciseList] = await connection.query(exerciseListQuery);
@@ -161,6 +161,7 @@ async function selectRoutine(connection, routineIdx) {
                         muscle: exerciseInfo.muscle,
                         equipment: exerciseInfo.equipment,
                         caution: exerciseInfo.caution1,
+                        distance: exerciseInfo.distance
                     },
                 });
             }

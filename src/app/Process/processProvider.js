@@ -65,7 +65,7 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
 
     connection.release();
 
-    const combinedRoutineDetails = routineDetails.map(detail => {
+    const combinedRoutineDetails = routineDetails.map((detail, index) => {
         const exerciseInfoContent = routineSummary.routineContent.find(content => content.exerciseInfo.healthCategoryIdx === detail.exerciseDetails.healthCategoryIdx);
         
 
@@ -80,13 +80,15 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
         const nonNullSets = detail.sets.filter(set => set.rep !== null && set.rep !== 0);
     
         return {
+            order: index + 1,
             exerciseInfo: {
                 healthCategoryIdx: exerciseInfo.healthCategoryIdx,
                 exerciseName: exerciseInfo.exerciseName,
                 parts: exerciseInfo.parts,
                 muscle: exerciseInfo.muscle,
                 equipment: exerciseInfo.equipment,
-                caution: exerciseInfo.caution
+                caution: exerciseInfo.caution,
+                distance: exerciseInfo.distance
             },
             skip: detail.skip,
             totalSets: nonNullSets.length,

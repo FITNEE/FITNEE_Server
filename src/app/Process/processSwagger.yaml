@@ -312,6 +312,9 @@ components:
           items:
             type: object
             properties:
+              order:
+                type: integer
+                description: 운동순서
               exerciseInfo:
                 $ref: '#/components/schemas/ExerciseInfo'
               skip:
