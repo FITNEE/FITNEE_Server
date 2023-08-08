@@ -27,7 +27,7 @@ router.get('/exercisemethod', mypage.getMethodByName);
 router.get('/exercisechat', mypage.getChattingByName);
 
 // 7.
-router.post('/chatting', mypage.postChatting);
+router.post('/chatting', jwtMiddleware, mypage.postChatting);
 
 // 8.
 router.patch('/deleteChatt', jwtMiddleware, mypage.deleteChatt)

@@ -142,7 +142,7 @@ async function insertChatting(connection, insertChattingParams) {
     INSERT INTO healthChatting (healthCategoryName, userIdx, text)
         VALUES (
             (SELECT name FROM healthCategory WHERE name = ?),
-            (SELECT userIdx FROM User WHERE userNickname = ?),
+            (SELECT userIdx FROM User WHERE userId = ?),
             ?
         );
     `;
