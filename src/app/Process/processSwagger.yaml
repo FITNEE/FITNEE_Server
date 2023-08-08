@@ -17,28 +17,28 @@ tags:
           type: string
           example: 'tue'
     responses:
-  '1000':
-    description: 성공
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            isSuccess:
-              type: boolean
-              example: true
-            code:
-              type: integer
-              example: 1000
-            message:
-              type: string
-              example: '성공'
-            result:
-              $ref: '#/components/schemas/Routine'
-  '2000':
-    description: JWT 토큰을 입력해주세요
-  '3000':
-    description: JWT 토큰 검증 실패
+      '200':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isSuccess:
+                  type: boolean
+                  example: true
+                code:
+                  type: integer
+                  example: 1000
+                message:
+                  type: string
+                  example: '성공'
+                result:
+                  $ref: '#/components/schemas/Routine'
+      '2000':
+        description: JWT 토큰을 입력해주세요
+      '3000':
+        description: JWT 토큰 검증 실패
 
 
 /app/process/replace/{routineIdx}:
@@ -316,7 +316,7 @@ components:
               exerciseInfo:
                 $ref: '#/components/schemas/ExerciseInfo'
               skip:
-                type: boolean
+                type: string
                 description: 해당 운동 스킵 여부
               totalSets:
                 type: integer
@@ -325,16 +325,16 @@ components:
                 type: integer
                 description: 횟수
               weight:
-                type: float
+                type: number
                 description: 무게
               predictTime:
-                type: integer
+                type: number
                 description: 예상 운동 시간 (초)
               predictCalories:
-                type: integer
+                type: number
                 description: 예상 소모 칼로리
               exerciseWeight:
-                type: float
+                type: number
                 description: 총 운동 무게
               rest:
                 type: integer
@@ -353,7 +353,7 @@ components:
                     weight:
                       type: integer
                       description: 세트당 무게
-      ExerciseInfo:
+       ExerciseInfo:
         type: object
         properties:
           healthCategoryIdx:
