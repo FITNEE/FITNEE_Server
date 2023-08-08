@@ -17,24 +17,26 @@ tags:
           type: string
           example: 'tue'
     responses:
-      '200':
+      '1000':
         description: 성공
         content:
           application/json:
             schema:
               type: object
               properties:
-                isSuccess:
+                'isSuccess':
                   type: boolean
                   example: true
-                code:
+                'code':
                   type: integer
                   example: 1000
-                message:
+                'message':
                   type: string
                   example: '성공'
-                result:
-                  $ref: '#/components/schemas/Routine'
+                'result':
+                  type: object
+                  properties:
+                    $ref: '#/components/schemas/Routine'
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
