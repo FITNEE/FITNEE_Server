@@ -102,20 +102,11 @@ tags:
     description: 같은 부위 중 랜덤으로 최대 3가지 추천
     parameters:
       - name: routineIdx
+        in: path
         required: true
         description: 운동 루틴 인덱스(오늘 운동 리스트들)
         schema:
           type: integer
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              healthCategoryIdx:
-                type: integer
-                example: 3
     responses:
       '1000':
         description: 성공 - 같은 부위 중 랜덤으로 3가지를 배열로 반환
@@ -152,7 +143,6 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
-/app/process/replace/{routineIdx}:
   patch:
     tags:
       - Process
@@ -165,21 +155,19 @@ tags:
         description: 운동 루틴 인덱스
         schema:
           type: integer
-      - in: body
-        name: requestBody
-        required: true
-        description: 요청 바디
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                beforeHealthCategoryIdx:
-                  type: integer
-                  example: 1
-                afterHealthCategoryIdx:
-                  type: integer
-                  example: 2
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              beforeHealthCategoryIdx:
+                type: integer
+                example: 1
+              afterHealthCategoryIdx:
+                type: integer
+                example: 2
     responses:
       '1000':
         description: 성공 - 대체된 운동 정보가 업데이트되었습니다.
@@ -201,6 +189,7 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+
 
 
 
