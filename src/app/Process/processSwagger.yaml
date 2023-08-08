@@ -1,22 +1,23 @@
 tags:
-  name: Process
-  description: 운동 과정 관련 API - 박준규
+  - name: Process
+    description: 운동 과정 관련 API - 박준규
 
-/app/process:
-  get:
-    tags:
-      - Process
-    summary: 운동 루틴 조회 API
-    description: 하루의 루틴을 조회하는 API, 요일을 영어로 앞의 세 글자를 입력해주세요.
-    parameters:
-      - name: dayOfWeek
-        in: query
-        required: true
-        description: dayOfweek를 입력하세요.
-        schema:
-          type: string
-          example: 'tue'
-    responses:
+paths:
+  /app/process:
+    get:
+      tags:
+        - Process
+      summary: 운동 루틴 조회 API
+      description: 하루의 루틴을 조회하는 API, 요일을 영어로 앞의 세 글자를 입력해주세요.
+      parameters:
+        - name: dayOfWeek
+          in: query
+          required: true
+          description: dayOfWeek를 입력하세요.
+          schema:
+            type: string
+            example: 'tue'
+      responses:
         '1000':
           description: 성공
           content:
@@ -91,230 +92,167 @@ tags:
         '3000':
           description: JWT 토큰 검증 실패
 
-
-/app/process/replace/{routineIdx}:
-  get:
-    tags:
-      - Process
-    summary: 운동 루틴 대체 추천 조회 API
-    description: 같은 부위 중 랜덤으로 최대 3가지 추천
-    parameters:
-      - name: routineIdx
-        in: path
-        required: true
-        description: 운동 루틴 인덱스(오늘 운동 리스트들)
-        schema:
-          type: integer
-          example: 3
-      - name: healthCategoryIdx
-        in: query
-        required: true
-        description: 운동 명칭 인덱스
-        schema:
-          type: integer
-          example: 14
-    responses:
-      '1000':
-        description: 성공 - 같은 부위 중 랜덤으로 3가지를 배열로 반환
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                isSuccess:
-                  type: boolean
-                  example: true
-                code:
-                  type: integer
-                  example: 1000
-                message:
-                  type: string
-                  example: 성공
-                result:
-                  type: object
-                  properties:
-                    replacementRecommendations:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            example: 체스트 프레스 머신
-                          healthCategoryIdx:
-                            type: integer
-                            example: 3
-      '2000':
-        description: JWT 토큰을 입력해주세요
-      '3000':
-        description: JWT 토큰 검증 실패
-
-  patch:
-    tags:
-      - Process
-    summary: 대체된 운동 정보 업데이트 API
-    description: 대체된 운동 정보를 수정합니다. 대체된 운동에 대한 이름과 Idx를 발급합니다.
-    parameters:
-      - in: path
-        name: routineIdx
-        required: true
-        description: 운동 루틴 인덱스
-        schema:
-          type: integer
-    requestBody:
-      required: true
-      content:
-        application/json:
+  /app/process/replace/{routineIdx}:
+    get:
+      tags:
+        - Process
+      summary: 운동 루틴 대체 추천 조회 API
+      description: 같은 부위 중 랜덤으로 최대 3가지 추천
+      parameters:
+        - name: routineIdx
+          in: path
+          required: true
+          description: 운동 루틴 인덱스(오늘 운동 리스트들)
           schema:
-            type: object
-            properties:
-              beforeHealthCategoryIdx:
-                type: integer
-                example: 1
-              afterHealthCategoryIdx:
-                type: integer
-                example: 2
-    responses:
-      '1000':
-        description: 성공 - 대체된 운동 정보가 업데이트되었습니다.
+            type: integer
+            example: 3
+        - name: healthCategoryIdx
+          in: query
+          required: true
+          description: 운동 명칭 인덱스
+          schema:
+            type: integer
+            example: 14
+      responses:
+        '1000':
+          description: 성공 - 같은 부위 중 랜덤으로 3가지를 배열로 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 1000
+                  message:
+                    type: string
+                    example: 성공
+                  result:
+                    type: object
+                    properties:
+                      replacementRecommendations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: 체스트 프레스 머신
+                            healthCategoryIdx:
+                              type: integer
+                              example: 3
+        '2000':
+          description: JWT 토큰을 입력해주세요
+        '3000':
+          description: JWT 토큰 검증 실패
+
+    patch:
+      tags:
+        - Process
+      summary: 대체된 운동 정보 업데이트 API
+      description: 대체된 운동 정보를 수정합니다. 대체된 운동에 대한 이름과 Idx를 발급합니다.
+      parameters:
+        - in: path
+          name: routineIdx
+          required: true
+          description: 운동 루틴 인덱스
+          schema:
+            type: integer
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                isSuccess:
-                  type: boolean
-                  example: true
-                code:
+                beforeHealthCategoryIdx:
                   type: integer
-                  example: 1000
-                message:
-                  type: string
-                  example: 성공
-      '2000':
-        description: JWT 토큰을 입력해주세요
-      '3000':
-        description: JWT 토큰 검증 실패
-
-
-
-
-/app/process/{routineIdx}:
-  patch:
-    tags:
-      - Process
-    summary: 운동 건너뛰기 API
-    description: 건너뛰기를 통해 마지막 운동 결과 조회에서 표시가 됩니다.
-    parameters:
-      - in: path
-        name: routineIdx
-        required: true
-        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
-        schema:
-          type: integer
-      - in: body
-        name: body
-        required: true
-        description: 수정할 운동(healthCategoryIdx)과 요일(dayOfWeek)을 입력해주세요.
-        schema:
-          type: object
-          properties:
-            healthCategoryIdx:
-              type: integer
-              description: 건너뛸 운동(healthCategoryIdx)
-            dayOfWeek:
-              type: string
-              description: 요일 (mon, tue, wed, thu, fri, sat, sun)
-    responses:
-      '1000':
-        description: 운동 건너뛰기 성공
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                isSuccess:
-                  type: boolean
-                  description: 성공 여부
-                code:
-                  type: string
-                  description: 응답 코드
-                message:
-                  type: string
-                  description: 응답 메시지
-                result:
-                  type: string
-                  description: 건너뛴 운동 이름
-
-
-
-/process/end/{routineIdx}:
-  post:
-    summary: "myCalendar 기록 추가 API"
-    description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
-    tags:
-      - "Process"
-    parameters:
-      - name: routineIdx
-        in: path
-        required: true
-        type: integer
-        description: "Routine index"
-      - in: body
-        name: totalExerciseTime
-        required: true
-        schema:
-          type: object
-          properties:
-            totalExerciseTime:
-              type: integer
-              description: "총 운동 시간을 초 단위로 써주세요."
-    responses:
-      '1000':
-        description: "성공! myCalendar에 기록되었습니다."
-        schema:
-          type: object
-          properties:
-            status:
-              type: string
-              example: "success"
-            data:
-              type: object
-              properties:
-                myCalendarId:
+                  example: 1
+                afterHealthCategoryIdx:
                   type: integer
-                  example: 123
-                userId:
-                  type: integer
-                  example: 456
-                routineIdx:
-                  type: integer
-                  example: 789
-                totalWeight:
-                  type: integer
-                  example: 150
-                totalExerciseTime:
-                  type: integer
-                  example: 60
-      '2000':
-        description: JWT 토큰을 입력해주세요
-      '3000':
-        description: JWT 토큰 검증 실패
+                  example: 2
+      responses:
+        '1000':
+          description: 성공 - 대체된 운동 정보가 업데이트되었습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 1000
+                  message:
+                    type: string
+                    example: 성공
+        '2000':
+          description: JWT 토큰을 입력해주세요
+        '3000':
+          description: JWT 토큰 검증 실패
 
+  /app/process/{routineIdx}:
+    patch:
+      tags:
+        - Process
+      summary: 운동 건너뛰기 API
+      description: 건너뛰기를 통해 마지막 운동 결과 조회에서 표시가 됩니다.
+      parameters:
+        - in: path
+          name: routineIdx
+          required: true
+          description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
+          schema:
+            type: integer
+        - in: query
+          name: healthCategoryIdx
+          required: true
+          description: 건너뛸 운동 명칭 인덱스
+          schema:
+            type: integer
+      responses:
+        '1000':
+          description: 운동 건너뛰기 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    description: 성공 여부
+                  code:
+                    type: string
+                    description: 응답 코드
+                  message:
+                    type: string
+                    description: 응답 메시지
+                  result:
+                    type: string
+                    description: 건너뛴 운동 이름
+        '2000':
+          description: JWT 토큰을 입력해주세요
+        '3000':
+          description: JWT 토큰 검증 실패
 
-/app/process/end:
-  get:
-    tags:
-      - Process
-    summary: 결과 조회 API
-    description: skip 포함해서 최종 운동 데이터 조회 및 일주일 전 데이터 증감, 한 달 동안 운동횟수 조회 API
-    parameters:
-      - in: query
-        name: dayOfWeek
-        schema:
-          type: string
-        description: 조회할 요일 (mon, tue ...)
-    responses:
+  /app/process/end:
+    get:
+      tags:
+        - Process
+      summary: 결과 조회 API
+      description: skip 포함해서 최종 운동 데이터 조회 및 일주일 전 데이터 증감, 한 달 동안 운동횟수 조회 API
+      parameters:
+        - in: query
+          name: dayOfWeek
+          schema:
+            type: string
+          description: 조회할 요일 (mon, tue ...)
+      responses:
         '1000':
           description: 성공적으로 결과 데이터를 조회한 경우
           content:
@@ -352,78 +290,7 @@ tags:
                           - set: 1
                             rep: 5
                             weight: 20
-                      - order: 2
-                        exerciseInfo:
-                          healthCategoryIdx: 15
-                          exerciseName: 레그 프레스
-                          parts: 하체
-                          muscle: 대퇴사두근
-                          equipment: 머신
-                          caution: 레그 프레스 주의사항
-                          distance: 0
-                        skip: "0"
-                        totalSets: 2
-                        rep: 5
-                        weight: 14
-                        predictTime: 67
-                        predictCalories: 30
-                        exerciseWeight: 26
-                        rest: 30
-                        sets:
-                          - set: 0
-                            rep: 5
-                            weight: 14
-                          - set: 1
-                            rep: 5
-                            weight: 12
-                      - order: 3
-                        exerciseInfo:
-                          healthCategoryIdx: 16
-                          exerciseName: 벤치 플라이
-                          parts: 가슴
-                          muscle: 대흉근,삼각근
-                          equipment: 덤벨
-                          caution: 벤치 플라이 주의사항
-                          distance: 0
-                        skip: "0"
-                        totalSets: 2
-                        rep: 5
-                        weight: 15
-                        predictTime: 36
-                        predictCalories: 32
-                        exerciseWeight: 30
-                        rest: 30
-                        sets:
-                          - set: 0
-                            rep: 5
-                            weight: 15
-                          - set: 1
-                            rep: 5
-                            weight: 15
-                      - order: 4
-                        exerciseInfo:
-                          healthCategoryIdx: 12
-                          exerciseName: 벤트 오버 레터럴 레이즈
-                          parts: 어깨
-                          muscle: 후면삼각근
-                          equipment: 덤벨
-                          caution: 벤트 오버 레터럴 레이즈 주의사항
-                          distance: 0
-                        skip: "0"
-                        totalSets: 2
-                        rep: 5
-                        weight: 3
-                        predictTime: 36
-                        predictCalories: 24
-                        exerciseWeight: 18
-                        rest: 30
-                        sets:
-                          - set: 0
-                            rep: 5
-                            weight: 3
-                          - set: 1
-                            rep: 5
-                            weight: 15
+                      # (다른 exerciseDetails 데이터)
                     totalTime: 439
                     totalCalories: 124
                     totalWeight: 114
@@ -431,6 +298,61 @@ tags:
                     exerciseTimeChange: 10
                     weightChange: 30
                   countHealth: 6
+        '2000':
+          description: JWT 토큰을 입력해주세요
+        '3000':
+          description: JWT 토큰 검증 실패
+
+  /app/process/end/{routineIdx}:
+    post:
+      tags:
+        - Process
+      summary: "myCalendar 기록 추가 API"
+      description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
+      parameters:
+        - name: routineIdx
+          in: path
+          required: true
+          type: integer
+          description: "Routine index"
+        - in: body
+          name: totalExerciseTime
+          required: true
+          schema:
+            type: object
+            properties:
+              totalExerciseTime:
+                type: integer
+                description: "총 운동 시간을 초 단위로 써주세요."
+      responses:
+        '1000':
+          description: "성공! myCalendar에 기록되었습니다."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      myCalendarId:
+                        type: integer
+                        example: 123
+                      userId:
+                        type: integer
+                        example: 456
+                      routineIdx:
+                        type: integer
+                        example: 789
+                      totalWeight:
+                        type: integer
+                        example: 150
+                      totalExerciseTime:
+                        type: integer
+                        example: 60
         '2000':
           description: JWT 토큰을 입력해주세요
         '3000':
