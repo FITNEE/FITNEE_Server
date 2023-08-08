@@ -17,7 +17,7 @@ router.get('/', jwtMiddleware, process.getRoutine)
 // 2 운동 루틴 대체 추천 API(완)
 router.get('/replace/:routineIdx', jwtMiddleware, process.getReplacementRecommendations)
 
-// 3. 운동 루틴 대체 수정
+// 3. 운동 루틴 대체 수정 API(완)
 router.patch('/replace/:routineIdx', jwtMiddleware, process.patchReplaceExerciseInRoutine)
 
 // 4. 운동 스킵 API(완)

@@ -60,11 +60,11 @@ exports.getRoutine = async function (req, res) {
 exports.getReplacementRecommendations = async function (req, res) {
     /**
      * Path Variable : routineIdx
-     * Body : healthCateogryIdx
+     * Query Parameter : healthCateogryIdx
      */
         
     const routineIdx = req.params.routineIdx
-    const healthCategoryIdx = req.body.healthCategoryIdx
+    const healthCategoryIdx = req.query.healthCategoryIdx
 
 
     // 동일 parts 내에서 랜덤 추출

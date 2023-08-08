@@ -107,6 +107,14 @@ tags:
         description: 운동 루틴 인덱스(오늘 운동 리스트들)
         schema:
           type: integer
+          example: 3
+      - name: healthCategoryIdx
+        in: query
+        required: true
+        description: 운동 명칭 인덱스
+        schema:
+          type: integer
+          example: 14
     responses:
       '1000':
         description: 성공 - 같은 부위 중 랜덤으로 3가지를 배열로 반환
