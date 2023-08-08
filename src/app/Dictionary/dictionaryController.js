@@ -125,16 +125,16 @@ exports.getChattingByName = async function (req, res) {
  * body : name(healthCategory Table), userNickname(User Table), text(healthChatting Table)
  */
 exports.postChatting = async function(req, res) {
-    const { name, userNickname, text } = req.body;
+    const userIdFromJWT = req.decoded.userId;
+    const { name, text } = req.body;
 
     // userNickname, text, name가 제공되었는지 체크
     if (!name) return res.send(errResponse(baseResponse.DICTIONARY_NAME_EMPTY));
-    if (!userNickname) return res.send(errResponse(baseResponse.DICTIONARY_USERNICKNAME_EMPTY));
     if (!text) return res.send(errResponse(baseResponse.DICTIONARY_TEXT_EMPTY));
     
     try {
         // 채팅 생성 호출
-        const createChattingResponse = await dictionaryService.createChatting(name, userNickname, text);
+        const createChattingResponse = await dictionaryService.createChatting(name, userIdFromJWT, text);
         
         // 채팅 생성 성공 응답
         return res.send(response(baseResponse.SUCCESS, createChattingResponse));
@@ -163,3 +163,5 @@ exports.deleteChatt = async function (req, res) {
     const deleteChatt = await dictionaryService.deleteChatt(userIdFromJWT, healthChattingIdx);
     return res.send(deleteChatt);
 };
+
+

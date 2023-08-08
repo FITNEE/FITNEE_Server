@@ -11,9 +11,9 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const {connect} = require("http2");
 
-exports.createChatting = async function (name, userNickname, text) {
+exports.createChatting = async function (name, userIdFromJWT, text) {
     try {
-        const insertChattingParams = [name, userNickname, text];
+        const insertChattingParams = [name, userIdFromJWT, text];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
