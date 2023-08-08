@@ -167,7 +167,7 @@ async function selectRoutine(connection, routineIdx) {
     };
 }
 
-// 운동 정보 불러오기(healthCateogry table)
+// 운동 정보 불러오기(healthCategory table)
 async function getExerciseInfo(connection, healthCategoryIdx) {
     const selectExerciseQuery = `
         SELECT healthCategoryIdx, name AS exerciseName, rest, time, muscle, parts,  equipment, calories, caution1, caution2, caution3
@@ -512,14 +512,14 @@ async function selectReplaceDetail(connection, healthCategoryIdx) {
 // }
 
 // 운동별 parts get
-async function getExercisePart(connection, healthCateogryIdx) {
+async function getExercisePart(connection, healthCategoryIdx) {
 
     const getExercisePartQuery = `
         SELECT parts
         FROM healthCategory
         WHERE healthCategoryIdx = ?
     `;
-    const [exercisePartRows] = await connection.query(getExercisePartQuery, healthCateogryIdx);
+    const [exercisePartRows] = await connection.query(getExercisePartQuery, healthCategoryIdx);
 
 
     return exercisePartRows[0].parts;

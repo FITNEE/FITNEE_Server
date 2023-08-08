@@ -61,11 +61,11 @@ exports.getReplacementRecommendations = async function (req, res) {
     /**
      * Path Variable : healthCategoryIdx
      */
-        const healthCateogryIdx = req.params.healthCategoryIdx
+        const healthCategoryIdx = req.params.healthCategoryIdx
 
 
         // 동일 parts 내에서 랜덤 추출
-        const replacementRecommendations = await processProvider.getReplacementExercises(healthCateogryIdx)
+        const replacementRecommendations = await processProvider.getReplacementExercises(healthCategoryIdx)
 
         if (replacementRecommendations.length === 0) {
             console.log("No replacement exercises found")
