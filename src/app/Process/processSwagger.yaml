@@ -94,7 +94,7 @@ tags:
         description: JWT 토큰 검증 실패
 
 
-/app/process/{healthCategoryIdx}:
+/app/process/replace/{healthCategoryIdx}:
   get:
     tags:
       - Process
