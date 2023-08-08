@@ -26,15 +26,47 @@ async function selectKeyword(connection, userIdFromJWT) {
     return { recentKeywords: recentKeywords[0], popularKeywords: popularKeywords[0] };
 }
 
+// // search 받아서 검색 keyword DB에 저장
+// async function putKeyword(connection, search, userIdFromJWT) {
+//     const putKeywordByuserIdQuery = `
+//         INSERT INTO keyword (text, userIdx, userId)
+//         VALUES (?, (SELECT userIdx FROM User WHERE userId = ?), ?)
+//         ON DUPLICATE KEY UPDATE updatedAt = CURRENT_TIMESTAMP;
+//     `;
+//     const [informationRows] = await connection.query(putKeywordByuserIdQuery, [search, userIdFromJWT, userIdFromJWT]);
+//     return informationRows;
+// }
+
 // search 받아서 검색 keyword DB에 저장
 async function putKeyword(connection, search, userIdFromJWT) {
-    const putKeywordByuserIdQuery = `
-        INSERT INTO keyword (text, userIdx, userId)
-        VALUES (?, (SELECT userIdx FROM User WHERE userId = ?), ?);
+    const checkDuplicateQuery = `
+        SELECT keywordIdx
+        FROM keyword
+        WHERE text = ? AND userId = (SELECT userIdx FROM User WHERE userId = ?);
     `;
-    const [informationRows] = await connection.query(putKeywordByuserIdQuery, [search, userIdFromJWT, userIdFromJWT]);
-    return informationRows;
+
+    const [duplicateRows] = await connection.query(checkDuplicateQuery, [search, userIdFromJWT]);
+
+    if (duplicateRows.length > 0) {
+        const updateKeywordQuery = `
+            UPDATE keyword
+            SET updatedAt = CURRENT_TIMESTAMP
+            WHERE keywordIdx = ?;
+        `;
+
+        await connection.query(updateKeywordQuery, [duplicateRows[0].keywordIdx]);
+    } else {
+        const insertKeywordQuery = `
+            INSERT INTO keyword (text, userIdx, userId)
+            VALUES (?, (SELECT userIdx FROM User WHERE userId = ?), ?)
+            ON DUPLICATE KEY UPDATE updatedAt = CURRENT_TIMESTAMP;
+        `;
+
+        await connection.query(insertKeywordQuery, [search, userIdFromJWT, userIdFromJWT]);
+    }
 }
+
+
 
 // search 받아서 healthCategory테이블의 연관 name 반환
 async function searchKeyword(connection, search) {
