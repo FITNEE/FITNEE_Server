@@ -115,7 +115,7 @@ async function selectExerciseChatting(connection, name) {
         FROM healthChatting AS HC
         JOIN healthCategory AS HCh ON HC.healthCategoryName = HCh.name
         JOIN User AS UC ON HC.userIdx = UC.userIdx
-        WHERE HC.status = 0
+        WHERE HC.healthCategoryName = ? AND HC.status = 0
         ORDER BY HC.updatedAt ASC;
     `;
 
