@@ -16,7 +16,7 @@ exports.getProcess = async function (req, res) {
      */
 
     // 날짜 및 아이디
-    const { dayOfWeek } = req.query.dayOfWeek;
+    const { dayOfWeek } = req.query;
     const userId = req.decoded.userId
     const routine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
