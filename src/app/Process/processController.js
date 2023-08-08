@@ -1,22 +1,22 @@
 const {logger} = require("../../../config/winston");
 const processProvider = require("./processProvider");
 const processService = require("./processService")
+const processController = require("./processController")
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
-const { getRoutine } = require("../Routine/routineController");
 
 /**
  * 1 API Name : 운동 루틴 조회 API
  * [GET] /app/process
  */
-exports.getRoutine = async function (req, res) {
+exports.getProcess = async function (req, res) {
     /**
      * Query Parameter : dayOfWeek
      * 
      */
 
     // 날짜 및 아이디
-    const dayOfWeek = req.query.dayOfWeek;
+    const { dayOfWeek } = req.query.dayOfWeek;
     const userId = req.decoded.userId
     const routine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
@@ -164,11 +164,17 @@ exports.skipExercise = async function (req, res) {
  * [POST] /app/process/end/:routineIdx
  */
 exports.postMycalendar = async function (req, res) {
-    // 시간은 분 단위로 받기
+    /**
+     * Decoded : userId
+     * Path : routineIdx
+     * Body : totalExerciseTime
+     */
+    // 시간은 초 단위로 받기
     const routineIdx = req.params.routineIdx
     const userId = req.decoded.userId
     const totalExerciseTime = req.body.totalExerciseTime
 
+    // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
     const totalWeight = await processProvider.getTotalWeight(routineIdx)
     const parsedTotalWeight = parseInt(totalWeight[0].totalWeight);
@@ -182,6 +188,34 @@ exports.postMycalendar = async function (req, res) {
     const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime)
 
     return res.send(response(baseResponse.SUCCESS, postMyCalendar))
+}
+
+/**
+ * 8 API Name : 결과 조회 API
+ * [GET] /app/process/end
+ */
+exports.getProcessResult = async function (req, res) {
+    /**
+     * Decoded : userId
+     * Query : dayOfWeek
+     */
+    const dayOfWeek = req.query.dayOfWeek
+    const userId = req.decoded.userId
+
+    // 대체 및 스킵된 데이터 다시 불러오기
+    const updateRoutine = await processProvider.getRoutineDetails(dayOfWeek, userId);
+
+    // 무게, 시간 차이 조회
+    const getComparison = await processProvider.getComparison(userId)
+
+    // 운동 횟수 조회
+    const countHealth = await processProvider.getHealthCount(userId)
+
+    return res.send(response(baseResponse.SUCCESS, {
+        updateRoutine: updateRoutine,
+        getComparison: getComparison,
+        countHealth: countHealth,
+    }))
 }
 
 // /** // 물어보기

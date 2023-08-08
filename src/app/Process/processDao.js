@@ -1,3 +1,5 @@
+const sqlstring = require('sqlstring');
+
 async function isValidUser(connection, userId, routineIdx) {
     const isValidUserQuery = `
         SELECT EXISTS (
@@ -132,7 +134,7 @@ async function selectRoutine(connection, routineIdx) {
 
     // 운동 리스트 가져오기(healthCategory table)
     const exerciseListQuery = `
-        SELECT healthCategoryIdx, name, time, calories, rest
+        SELECT healthCategoryIdx, name, parts, muscle, equipment, caution1
         FROM healthCategory;
     `;
     const [exerciseList] = await connection.query(exerciseListQuery);
@@ -155,6 +157,10 @@ async function selectRoutine(connection, routineIdx) {
                     exerciseInfo: {
                         healthCategoryIdx: exerciseInfo.healthCategoryIdx,
                         exerciseName: exerciseInfo.name,
+                        parts: exerciseInfo.parts,
+                        muscle: exerciseInfo.muscle,
+                        equipment: exerciseInfo.equipment,
+                        caution: exerciseInfo.caution1,
                     },
                 });
             }
@@ -205,7 +211,7 @@ async function selectProcessDetail(connection, routineIdx) {
     const selectDetailQuery = `
         SELECT rd.routineDetailIdx, rd.healthCategoryIdx,
                rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
-               weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9, \`replace\`
+               weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9, skip
         FROM routineDetail AS rd
         WHERE rd.routineDetailIdx IN (?);
     `;
@@ -237,6 +243,13 @@ async function selectProcessDetail(connection, routineIdx) {
                 exerciseTime += detail[`rep${i}`] * exerciseInfo.time
             }
         }
+
+        const exerciseWeight = sets.reduce((totalWeight, set) => {
+            if (!isNaN(set.weight) && set.weight !== 'null') {
+                return totalWeight + set.weight;
+            }
+            return totalWeight;
+        }, 0);
         
         const totalSets = sets.length
         const exerciseCalories = exerciseInfo.calories || 0
@@ -251,9 +264,10 @@ async function selectProcessDetail(connection, routineIdx) {
                 },
             sets: sets,
             predictTime: exerciseTime,
+            exerciseWeight: exerciseWeight,
             rest: exerciseInfo.rest,
             predictCalories: predictCalories,
-            replace: detail.replace
+            skip: detail.skip
         });
     }
 
@@ -625,9 +639,6 @@ async function updateSkipValue(connection, routineIdx, healthCategoryIdxParam) {
     return name[0]
 }
 
-
-
-
 // Insert calendar data
 async function insertMyCalendar(connection, userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime) {
     const insertMyCalendarQuery = `
@@ -643,39 +654,60 @@ async function insertMyCalendar(connection, userIdx, userId, routineIdx, parsedT
     return insertRows;
 }
 
-// // time
-// async function saveTime(connection, userId, routineDetailIdx, timeInMinutes) {
 
-//         // 시간 데이터 저장
-//         const insertTimeQuery = `
-//             INSERT INTO timeTable (routineDetailIdx, timeInMinutes)
-//             VALUES (?, ?);
-//         `;
-//         const [timeResult] = await connection.query(insertTimeQuery, [routineDetailIdx, timeInMinutes]);
+// 오늘 운동한 데이터와 일주일 전 데이터의 무게, 시간 증감 조회
+async function getComparison(connection, userId) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    
+    const selectTodayDataQuery = `
+        SELECT totalExerciseTime, totalWeight
+        FROM myCalendar
+        WHERE userId = ? AND healthDate = ?;
+    `;
 
-//         if (timeResult.affectedRows === 1) {
-//             // myCalendar 테이블에 시간 데이터 추가
-//             const insertCalendarQuery = `
-//                 INSERT INTO myCalendar (userIdx, userId, routineIdx, totalExerciseTime, healthDate)
-//                 VALUES (?, ?, ?, ?, NOW());
-//             `;
-//             await connection.query(insertCalendarQuery, [userId, userId, routineDetailIdx, timeInMinutes]);
+    const [TodayData] = await connection.query(selectTodayDataQuery, [userId, `${year}-${month}-${day}`]);
 
-//             // detailIdx가 0이 아닌 경우 루틴 캘린더에 저장하는 로직 추가
-//             if (routineDetailIdx !== 0) {
-//                 const updateRoutineCalendarQuery = `
-//                     UPDATE routineCalendar
-//                     SET totalExerciseTime = totalExerciseTime + ?
-//                     WHERE userId = ? AND routineIdx = ?;
-//                 `;
-//                 await connection.query(updateRoutineCalendarQuery, [timeInMinutes, userId, routineDetailIdx]);
-//             }
-//         }
+    const selectSevenDaysAgoDataQuery = `
+        SELECT totalExerciseTime, totalWeight
+        FROM myCalendar
+        WHERE userId = ? AND healthDate = DATE_SUB(?, INTERVAL 7 DAY);
+        `;
 
-//         return true;
-// }
+    const [SevenDaysAgoData] = await connection.query(selectSevenDaysAgoDataQuery, [userId, `${year}-${month}-${day}`]);
+
+    // 오늘과 7일 전 데이터의 합차를 계산합니다
+    const exerciseTimeChange = TodayData[0].totalExerciseTime - SevenDaysAgoData[0].totalExerciseTime;
+    const weightChange = TodayData[0].totalWeight - SevenDaysAgoData[0].totalWeight;
+
+
+    return { exerciseTimeChange, weightChange };
+}
+
+// 한 달 운동 횟수 조회
+async function getHealthCount(connection, userId) { 
+    const currentMonth = new Date().getMonth() + 1; // 현재 월 가져오기 (1부터 12까지)
+    
+    const getHealthCountQuery = `
+        SELECT COUNT(*) AS count
+        FROM myCalendar
+        WHERE userId = ? AND MONTH(healthDate) = ?
+    `;
+    
+    // sqlstring을 사용하여 쿼리를 포맷팅합니다.
+    const formattedQuery = sqlstring.format(getHealthCountQuery, [userId, currentMonth]);
+
+    // 포맷팅된 쿼리를 실행합니다.
+    const selectHealthCount = await connection.query(formattedQuery);
+
+    return selectHealthCount[0][0].count;
+}
 
 module.exports = {
+    getComparison,
+    getHealthCount,
     updateRoutineDetail,
     selectReplaceDetail,
     isValidUser,

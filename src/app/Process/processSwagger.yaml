@@ -36,58 +36,7 @@ tags:
                 'result':
                   type: object
                   properties:
-                    routineDetails:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          exerciseInfo:
-                            type: object
-                            properties:
-                              healthCategoryIdx:
-                                type: integer
-                                example: 3
-                              exerciseName:
-                                type: string
-                                example: '체스트 프레스 머신'
-                              rest:
-                                type: integer
-                                example: 30
-                          totalSets:
-                            type: integer
-                            example: 2
-                          rep:
-                            type: integer
-                            example: 5
-                          weight:
-                            type: integer
-                            example: 70
-                          predictTime:
-                            type: integer
-                            example: 300
-                          predictCalories:
-                            type: integer
-                            example: 20
-                          sets:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                set:
-                                  type: integer
-                                  example: 0
-                                rep:
-                                  type: integer
-                                  example: 5
-                                weight:
-                                  type: integer
-                                  example: 4
-                    totalDuration:
-                      type: integer
-                      example: 5
-                    totalCalories:
-                      type: integer
-                      example: 28
+                    $ref: '#/components/schemas/Routine'
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
@@ -300,3 +249,140 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+
+
+/app/process/end:
+  get:
+    tags:
+      - Process
+    summary: 결과 조회 API
+    description: skip 포함해서 최종 운동 데이터 조회 및 일주일 전 데이터 증감, 한 달 동안 운동횟수 조회 API
+    parameters:
+      - in: query
+        name: dayOfWeek
+        schema:
+          type: string
+        description: 조회할 요일 (mon, tue ...)
+    responses:
+      '1000':
+        description: 성공적으로 결과 데이터를 조회한 경우
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'isSuccess':
+                  type: boolean
+                  example: true
+                'code':
+                  type: string
+                  example: 1000
+                'message':
+                  type: string
+                  example: '성공'
+                'result':
+                  type: object
+                  properties:
+                    updateRoutine:
+                      $ref: '#/components/schemas/Routine'
+                    getComparison:
+                      $ref: '#/components/schemas/Comparison'
+                    countHealth:
+                      $ref: '#/components/schemas/HealthCount'
+      '2000':
+        description: JWT 토큰을 입력해주세요
+      '3000':
+        description: JWT 토큰 검증 실패                
+
+components:
+schemas:
+  Routine:
+    type: object
+    properties:
+      dayOfWeek:
+        type: string
+        description: 요일
+      routineIdx:
+        type: integer
+        description: 루틴 인덱스
+      routineDetails:
+        type: array
+        items:
+          type: object
+          properties:
+            exerciseInfo:
+              $ref: '#/components/schemas/ExerciseInfo'
+            skip:
+              type: boolean
+              description: 해당 운동 스킵 여부
+            totalSets:
+              type: integer
+              description: 총 세트 수
+            rep:
+              type: integer
+              description: 횟수
+            weight:
+              type: float
+              description: 무게
+            predictTime:
+              type: integer
+              description: 예상 운동 시간 (초)
+            predictCalories:
+              type: integer
+              description: 예상 소모 칼로리
+            exerciseWeight:
+              type: float
+              description: 총 운동 무게
+            rest:
+              type: integer
+              description: 휴식 시간 (초)
+            sets:
+              type: array
+              items:
+                type: object
+                properties:
+                  set:
+                    type: integer
+                    description: 세트 순서
+                  rep:
+                    type: integer
+                    description: 세트당 운동 횟수
+                  weight:
+                    type: integer
+                    description: 세트당 무게
+  ExerciseInfo:
+    type: object
+    properties:
+      healthCategoryIdx:
+        type: integer
+        description: 운동 카테고리 인덱스
+      exerciseName:
+        type: string
+        description: 운동 이름
+      parts:
+        type: string
+        description: 부위
+      muscle:
+        type: string
+        description: 근육
+      equipment:
+        type: string
+        description: 운동기구
+      caution:
+        type: string
+        description: 주의사항
+  Comparison:
+    type: object
+    properties:
+      exerciseTimeChange:
+        type: integer
+        description: 오늘과 7일 전 운동 시간 차이
+      weightChange:
+        type: float
+        description: 오늘과 7일 전 무게 차이
+  HealthCount:
+    type: object
+    properties:
+      count:
+        type: integer
+        description: 운동 횟수

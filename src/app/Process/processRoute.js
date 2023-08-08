@@ -12,7 +12,7 @@ const process = require('./processController')
 // get은 query로 받기. post는 body로
 
 // 1. 운동 루틴 조회 API(완)
-router.get('/', jwtMiddleware, process.getRoutine)
+router.get('/', jwtMiddleware, process.getProcess)
 
 // 2 운동 루틴 대체 추천 API(완)
 router.get('/replace/:routineIdx', jwtMiddleware, process.getReplacementRecommendations)
@@ -25,6 +25,9 @@ router.patch('/:routineIdx', jwtMiddleware, process.skipExercise)
 
 // 5. 마이 캘린더에 기록 API(완)
 router.post('/end/:routineIdx', jwtMiddleware, process.postMycalendar)
+
+// 6. 결과 데이터 조회 API
+router.get('/end', jwtMiddleware, process.getProcessResult)
 
 // // 7. 운동 루틴 캘린더 기록 API
 // router.patch('/:routineIdx/end', jwtMiddleware, )

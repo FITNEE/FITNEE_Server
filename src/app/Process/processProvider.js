@@ -54,11 +54,13 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
     const connection = await pool.getConnection(async (conn) => conn);
 
 
+    // routineIdx 조회
     const routineIdx = await processDao.selectRoutineIdx(connection, dayOfWeek, userId);
 
-
+    // routine List 조회
     const routineSummary = await processDao.selectRoutine(connection, routineIdx);
 
+    // 운동별 세부사항 조회
     const routineDetails = await processDao.selectProcessDetail(connection, routineIdx);
 
     connection.release();
@@ -81,13 +83,18 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
             exerciseInfo: {
                 healthCategoryIdx: exerciseInfo.healthCategoryIdx,
                 exerciseName: exerciseInfo.exerciseName,
+                parts: exerciseInfo.parts,
+                muscle: exerciseInfo.muscle,
+                equipment: exerciseInfo.equipment,
+                caution: exerciseInfo.caution
             },
-            replace: detail.replace,
+            skip: detail.skip,
             totalSets: nonNullSets.length,
             rep: detail.sets[0].rep,
             weight: detail.sets[0].weight,
             predictTime: detail.predictTime,
             predictCalories: detail.predictCalories,
+            exerciseWeight: detail.exerciseWeight,
             rest: detail.rest,
             sets: nonNullSets.map(set => ({
                 set: set.set,
@@ -100,78 +107,26 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
 
     const totalPredictTime = combinedRoutineDetails.reduce((total, detail) => total + detail.predictTime, 0);
     const totalPredictCalories = combinedRoutineDetails.reduce((total, detail) => total + detail.predictCalories, 0);
+    const totalWeight = combinedRoutineDetails.reduce((total, detail) => total + detail.exerciseWeight, 0);
 
     return {
         dayOfWeek: dayOfWeek,
         routineIdx: routineIdx,
         routineDetails: combinedRoutineDetails,
-        totalDuration: Math.floor(totalPredictTime / 60),
+        totalTime: totalPredictTime,
         totalCalories: totalPredictCalories,
+        totalWeight: totalWeight,
     };
 };
 
-// // 루틴 조회
-// exports.retrieveRoutine = async function (dayOfWeek, userId) {
-//     const connection = await pool.getConnection(async (conn) => conn);
-//     const routineIdx = await processDao.selectRoutineIdx(connection, dayOfWeek, userId);
+// 무게, 횟수 증감 조회
+exports.getComparison = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn)
+    const comparison = await processDao.getComparison(connection, userId)
+    connection.release()
 
-//     const routine = await processDao.selectRoutine(connection, routineIdx)
-
-//     // const routineDetail = await processDao.selectProcessDetail(connection, routineDetailIdx);
-
-//     connection.release();
-
-//     return routine;
-// };
-
-// // 오늘 루틴 리스트 뽑아오기
-// exports.retrieveRoutineRow = async function (routineIdx) {
-//     const connection = await pool.getConnection(async (conn) => conn);
-//     const [routineRow] = await connection.query(
-//         'SELECT * FROM routine WHERE routineIdx = ?',
-//         [routineIdx]
-//       );
-//       connection.release();
-//       return routineRow[0] || null;
-// };
-
-// // before 운동 /  세트, 무게, 횟수
-// exports.retrieveBeforeProcessDetail = async function (routineIdx) {
-//     // Fetch the routine row based on routineIdx
-//     const routineRow = await this.retrieveRoutineRow(routineIdx);
-
-
-//     if (!routineRow) {
-//         return null;
-//     }
-
-//     // Create an array to store non-null and greater than 0 values from detailIdx0 to detailIdx9
-//     const routine_list = [];
-
-//     // Loop through detailIdx0 to detailIdx9 and store non-null and greater than 0 values in routine_list
-//     for (let i = 0; i < 10; i++) {
-//         const detailIdxValue = routineRow[`detailIdx${i}`];
-//         if (detailIdxValue !== null && detailIdxValue > 0) {
-//             routine_list.push(detailIdxValue);
-//         }
-//     }
-
-//     const connection = await pool.getConnection(async (conn) => conn);
-//     // Use routine_list to query the 'routineDetail' table
-//     const beforeProcessDetail = await processDao.selectBeforeProcessDetail(connection, routine_list);
-
-
-//     return beforeProcessDetail;
-// };
-
-// // 운동 중 / 세트, 무게, 횟수
-// exports.retrieveProcessDetail = async function (routineIdx) {
-//     const connection = await pool.getConnection(async (conn) => conn);
-//     const routineDetail = await processDao.selectProcessDetail(connection, routineIdx);
-//     connection.release();
-
-//     return routineDetail;
-// }
+    return comparison
+}
 
 // userId 매치 검증
 exports.isDetailIdxBelongsToUser = async function (userId, detailIdx) {
@@ -209,14 +164,13 @@ exports.updateHealthCategoryInRoutineDetail = async function (routineIdx, before
 
 };
 
-// exports.saveTime = async function (userId, routineDetailIdx, timeInMinutes) {
-//     const connection = await pool.getConnection(async (conn) => conn)
-//     try {
-//         const saveTimeResult = await processDao.saveTime(connection, userId, routineDetailIdx, timeInMinutes);
+// 운동횟수
+exports.getHealthCount = async function (userId) {
 
-//         connection.release()
-//         return saveTimeResult;
-//     } catch (err) {
-//         throw err;
-//     }
-// };
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const HealthCount = await processDao.getHealthCount(connection, userId)
+
+    connection.release()
+    return HealthCount
+}
