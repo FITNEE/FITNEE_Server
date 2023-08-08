@@ -517,7 +517,7 @@ async function getExercisePart(connection, healthCategoryIdx) {
     const getExercisePartQuery = `
         SELECT parts
         FROM healthCategory
-        WHERE healthCategoryIdx = ?
+        WHERE healthCategoryIdx = ?;
     `;
     const [exercisePartRows] = await connection.query(getExercisePartQuery, healthCategoryIdx);
 
