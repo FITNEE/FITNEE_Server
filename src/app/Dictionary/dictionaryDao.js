@@ -6,7 +6,7 @@ async function selectKeyword(connection, userIdFromJWT) {
         INNER JOIN keyword K ON U.userIdx = K.userIdx
         WHERE U.userId = ?
         GROUP BY K.text
-        ORDER BY K.updatedAt ASC
+        ORDER BY K.updatedAt DESC
         LIMIT 5;
     `;
 
