@@ -545,6 +545,33 @@ async function getReplacementExercisesLimited(connection, healthCategoryIdx, max
     return replacementExerciseRows;
 }
 
+async function updateRoutineDetail(connection, routineIdx, beforeHealthCategoryIdx, afterHealthCategoryIdx) {
+    const routineQuery = `
+        SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+        FROM routine
+        WHERE routineIdx = ?;
+    `;
+    const [routine_list] = await connection.query(routineQuery, routineIdx);
+
+    const newRoutineArray = [];
+
+    for (let i = 0; i < 10; i++) {
+        const detailIdxValue = routine_list[0][`detailIdx${i}`];
+
+        if (detailIdxValue !== 0) {
+            newRoutineArray.push(detailIdxValue);
+        }
+    }
+
+    const updateBeforeHealthCategoryQuery = `
+        UPDATE routineDetail
+        SET healthCategoryIdx = ?
+        WHERE routineDetailIdx IN (?) AND healthCategoryIdx = ?;
+    `;
+
+    await connection.query(updateBeforeHealthCategoryQuery, [afterHealthCategoryIdx, newRoutineArray, beforeHealthCategoryIdx])
+}
+
 
 async function updateSkipValue(connection, routineIdx, healthCategoryIdxParam) {
     const checkRoutineQuery = `
@@ -649,6 +676,7 @@ async function insertMyCalendar(connection, userIdx, userId, routineIdx, parsedT
 // }
 
 module.exports = {
+    updateRoutineDetail,
     selectReplaceDetail,
     isValidUser,
     selectUserIdCheck,

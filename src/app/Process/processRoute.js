@@ -15,10 +15,10 @@ const process = require('./processController')
 router.get('/', jwtMiddleware, process.getRoutine)
 
 // 2 운동 루틴 대체 추천 API(완)
-router.get('/replace/:healthCategoryIdx', jwtMiddleware, process.getReplacementRecommendations)
+router.get('/replace/:routineIdx', jwtMiddleware, process.getReplacementRecommendations)
 
 // 3. 운동 루틴 대체 수정
-router.patch('replace/:healthCategoryIdx', jwtMiddleware, process.patchReplaceExerciseInRoutine)
+router.patch('/replace/:routineIdx', jwtMiddleware, process.patchReplaceExerciseInRoutine)
 
 // 4. 운동 스킵 API(완)
 router.patch('/:routineIdx', jwtMiddleware, process.skipExercise)

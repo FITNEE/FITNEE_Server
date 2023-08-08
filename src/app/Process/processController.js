@@ -55,24 +55,27 @@ exports.getRoutine = async function (req, res) {
 
 /**
  *  4-1 API Name : 운동 루틴 대체 추천 API\
- * [GET] /app/process/replace/:healthCategoryIdx
+ * [GET] /app/process/replace/:routineIdx
  */
 exports.getReplacementRecommendations = async function (req, res) {
     /**
-     * Path Variable : healthCategoryIdx
+     * Path Variable : routineIdx
+     * Body : healthCateogryIdx
      */
-        const healthCategoryIdx = req.params.healthCategoryIdx
+        
+    const routineIdx = req.params.routineIdx
+    const healthCategoryIdx = req.body.healthCategoryIdx
 
 
-        // 동일 parts 내에서 랜덤 추출
-        const replacementRecommendations = await processProvider.getReplacementExercises(healthCategoryIdx)
+    // 동일 parts 내에서 랜덤 추출
+    const replacementRecommendations = await processProvider.getReplacementExercises(healthCategoryIdx)
 
-        if (replacementRecommendations.length === 0) {
-            console.log("No replacement exercises found")
-            return res.send(response(baseResponse.REPLACEMENT_EXERCISES_NOT_FOUND))
-        }
+    if (replacementRecommendations.length === 0) {
+        console.log("No replacement exercises found")
+        return res.send(response(baseResponse.REPLACEMENT_EXERCISES_NOT_FOUND))
+    }
 
-        return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))
+    return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))
 
 }
 
@@ -84,12 +87,13 @@ exports.getReplacementRecommendations = async function (req, res) {
 exports.patchReplaceExerciseInRoutine = async function (req, res) {
     /**
      * Decoded : userId
-     * Path Variable : healthCategoryIdx
-     * Body : afterHealthCategoryIdx
+     * Path Variable : routineIdx
+     * Body : afterHealthCategoryIdx, beforeHealthCategoryIdx
      */
     
-    const beforeHealthCategoryIdx = req.params.healthCategoryIdx
-    const afterHealthCategoryIdx = req.body
+    const routineIdx = req.params.routineIdx
+    const beforeHealthCategoryIdx = req.body.beforeHealthCategoryIdx
+    const afterHealthCategoryIdx = req.body.afterHealthCategoryIdx
     const userId = req.decoded.userId
 
     // 1. 회원과 요청된 데이터 검증
@@ -103,7 +107,7 @@ exports.patchReplaceExerciseInRoutine = async function (req, res) {
         return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
     }
 
-    await processProvider.updateHealthCategoryInRoutineDetail(beforeHealthCategoryIdx, afterHealthCategoryIdx, userId)
+    await processProvider.updateHealthCategoryInRoutineDetail(routineIdx, beforeHealthCategoryIdx, afterHealthCategoryIdx, userId)
 
     return res.send(response(baseResponse.SUCCESS));
 };

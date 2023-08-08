@@ -198,15 +198,12 @@ exports.getReplacementExercises = async function (healthCategoryIdx) {
 };
 
 // 대체한 운동의 healthCategoryIdx로 routineDetail 수정
-exports.updateHealthCategoryInRoutineDetail = async function (selectedHealthCategoryIdx, afterHealthCategoryIdx, routineDetailIdx) {
+exports.updateHealthCategoryInRoutineDetail = async function (routineIdx, beforeHealthCategoryIdx, afterHealthCategoryIdx) {
 
     const connection = await pool.getConnection(async (conn) => conn);
 
-    // routineDetail 수정
-    await processDao.updateRoutineDetail(connection, selectedHealthCategoryIdx, afterHealthCategoryIdx, routineDetailIdx);
-
-    // 대체한 운동의 status를 1로 업데이트
-    await processDao.updateRoutineStatus(connection, routineDetailIdx);
+    // beforeHealthCategoryIdx -> afterHealthCategoryIdx 수정
+    await processDao.updateRoutineDetail(connection, routineIdx, beforeHealthCategoryIdx, afterHealthCategoryIdx);
 
     connection.release();
 
