@@ -7,7 +7,7 @@ tags:
     tags:
       - Process
     summary: 운동 루틴 조회 API
-    description: 하루의 루틴을 조회하는 API
+    description: 하루의 루틴을 조회하는 API, 요일을 영어로 앞의 세 글자를 입력해주세요.
     parameters:
       - name: dayOfWeek
         in: query
@@ -104,7 +104,7 @@ tags:
     tags:
       - Process
     summary: 대체된 운동 정보 업데이트 API
-    description: 대체된 운동 정보를 수정합니다.
+    description: 대체된 운동 정보를 수정합니다. 대체된 운동에 대한 이름과 Idx를 발급합니다.
     parameters:
       - in: path
         name: routineIdx
@@ -155,23 +155,24 @@ tags:
     tags:
       - Process
     summary: 운동 건너뛰기 API
+    description: 건너뛰기를 통해 마지막 운동 결과 조회에서 표시가 됩니다.
     parameters:
       - in: path
         name: routineIdx
         required: true
-        description: 루틴 인덱스
+        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
         schema:
           type: integer
       - in: body
         name: body
         required: true
-        description: 요청 바디
+        description: 수정할 운동(healthCategoryIdx)과 요일(dayOfWeek)을 입력해주세요.
         schema:
           type: object
           properties:
             healthCategoryIdx:
               type: integer
-              description: 건너뛸 운동 카테고리 인덱스
+              description: 건너뛸 운동(healthCategoryIdx)
             dayOfWeek:
               type: string
               description: 요일 (mon, tue, wed, thu, fri, sat, sun)
@@ -201,6 +202,7 @@ tags:
 /process/end/{routineIdx}:
   post:
     summary: "myCalendar 기록 추가 API"
+    description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
     tags:
       - "Process"
     parameters:
@@ -217,7 +219,7 @@ tags:
           properties:
             totalExerciseTime:
               type: integer
-              description: "총 운동 시간을 분 단위로 써주세요."
+              description: "총 운동 시간을 초 단위로 써주세요."
     responses:
       '1000':
         description: "성공! myCalendar에 기록되었습니다."
