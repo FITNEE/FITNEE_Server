@@ -122,9 +122,9 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
 };
 
 // 무게, 횟수 증감 조회
-exports.getComparison = async function (userId) {
+exports.getComparison = async function (userId, rouinteIdx) {
     const connection = await pool.getConnection(async (conn) => conn)
-    const comparison = await processDao.getComparison(connection, userId)
+    const comparison = await processDao.getComparison(connection, userId, rouinteIdx)
     connection.release()
 
     return comparison

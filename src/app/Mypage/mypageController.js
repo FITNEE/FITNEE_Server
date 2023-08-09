@@ -27,18 +27,18 @@ exports.getExercisedData = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, exerciseByMonth));
 }
 
-/**
- * API No. 2
- * API Name : 선택한 날짜 운동 정보 조회
- * [GET] /app/mypage/exercise
- */
-exports.getExerciseInfo = async function (req, res) {
-    /**
-     * Query String: date
-     */
+// /**
+//  * API No. 2
+//  * API Name : 선택한 날짜 운동 정보 조회
+//  * [GET] /app/mypage/exercise
+//  */
+// exports.getExerciseInfo = async function (req, res) {
+//     /**
+//      * Query String: date
+//      */
 
     
-}
+// }
 
 /**
  * API No. 3

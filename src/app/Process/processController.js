@@ -141,21 +141,29 @@ exports.postMycalendar = async function (req, res) {
 
 /**
  * 6 API Name : 결과 조회 API
- * [GET] /app/process/end
+ * [GET] /app/process/end/:routineIdxs
  */
 exports.getProcessResult = async function (req, res) {
     /**
      * Decoded : userId
      * Query : dayOfWeek
+     * Path Variable : routineIdx
      */
     const dayOfWeek = req.query.dayOfWeek
     const userId = req.decoded.userId
+    const rouinteIdx = req.params.routineIdx
+
+    // 오늘 날짜 정보 가져오기
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // 월은 0부터 시작하므로 +1
+    const day = currentDate.getDate();
 
     // 대체 및 스킵된 데이터 다시 불러오기
     const updateRoutine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
     // 무게, 시간 차이 조회
-    const getComparison = await processProvider.getComparison(userId)
+    const getComparison = await processProvider.getComparison(userId, rouinteIdx)
 
     // 운동 횟수 조회
     const countHealth = await processProvider.getHealthCount(userId)
@@ -164,6 +172,11 @@ exports.getProcessResult = async function (req, res) {
         updateRoutine: updateRoutine,
         getComparison: getComparison,
         countHealth: countHealth,
+        currentDate: {
+            year: year,
+            month: month,
+            day: day,
+        },
     }))
 }
 

@@ -134,7 +134,7 @@ async function selectRoutine(connection, routineIdx) {
 
     // 운동 리스트 가져오기(healthCategory table)
     const exerciseListQuery = `
-        SELECT healthCategoryIdx, name, parts, muscle, equipment, caution1, distance
+        SELECT healthCategoryIdx, name, parts, muscle, equipment, caution1, distance, caution2, caution3
         FROM healthCategory;
     `;
     const [exerciseList] = await connection.query(exerciseListQuery);
@@ -160,7 +160,11 @@ async function selectRoutine(connection, routineIdx) {
                         parts: exerciseInfo.parts,
                         muscle: exerciseInfo.muscle,
                         equipment: exerciseInfo.equipment,
-                        caution: exerciseInfo.caution1,
+                        caution: {
+                            caution1: exerciseInfo.caution1,
+                            caution2: exerciseInfo.caution2,
+                            caution3: exerciseInfo.caution3,
+                        },
                         distance: exerciseInfo.distance
                     },
                 });
@@ -548,7 +552,7 @@ async function getReplacementExercisesLimited(connection, healthCategoryIdx, max
 
     // 대체 운동 추천 (중복 없이)
     const getReplacementExercisesQuery = `
-        SELECT name, healthCategoryIdx
+        SELECT name, healthCategoryIdx, parts, muscle, equipment
         FROM healthCategory
         WHERE parts = ? AND healthCategoryIdx <> ?
         ORDER BY RAND()
@@ -655,37 +659,35 @@ async function insertMyCalendar(connection, userIdx, userId, routineIdx, parsedT
     return insertRows;
 }
 
-
-// 오늘 운동한 데이터와 일주일 전 데이터의 무게, 시간 증감 조회
-async function getComparison(connection, userId) {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    
-    const selectTodayDataQuery = `
-        SELECT totalExerciseTime, totalWeight
+// routineIdx 기준으로 마지막 데이터 2개 합차 조회(-1 인덱스와 -2 인덱스 차이)
+async function getComparison(connection, userId, routineIdx) {
+    // 마지막 두 개의 데이터 조회
+    const selectLastTwoDataQuery = `
+        SELECT totalExerciseTime, totalWeight, healthDate
         FROM myCalendar
-        WHERE userId = ? AND healthDate = ?;
+        WHERE userId = ? AND routineIdx = ?
+        ORDER BY healthDate DESC
+        LIMIT 2;
     `;
 
-    const [TodayData] = await connection.query(selectTodayDataQuery, [userId, `${year}-${month}-${day}`]);
+    const [lastTwoData] = await connection.query(selectLastTwoDataQuery, [userId, routineIdx]);
 
-    const selectSevenDaysAgoDataQuery = `
-        SELECT totalExerciseTime, totalWeight
-        FROM myCalendar
-        WHERE userId = ? AND healthDate = DATE_SUB(?, INTERVAL 7 DAY);
-        `;
+    if (!lastTwoData || lastTwoData.length < 2) {
+        return { exerciseTimeChange: 0, weightChange: 0 };
+    }
 
-    const [SevenDaysAgoData] = await connection.query(selectSevenDaysAgoDataQuery, [userId, `${year}-${month}-${day}`]);
+    // 마지막 두 개 데이터의 차이를 계산합니다
+    const exerciseTimeChange = lastTwoData[1].totalExerciseTime - lastTwoData[0].totalExerciseTime;
+    const weightChange = lastTwoData[1].totalWeight - lastTwoData[0].totalWeight;
 
-    // 오늘과 7일 전 데이터의 합차를 계산합니다
-    const exerciseTimeChange = TodayData[0].totalExerciseTime - SevenDaysAgoData[0].totalExerciseTime;
-    const weightChange = TodayData[0].totalWeight - SevenDaysAgoData[0].totalWeight;
+    console.log("exerciseTimeChange:", exerciseTimeChange)
+    console.log("weightChange:", weightChange)
 
 
     return { exerciseTimeChange, weightChange };
 }
+
+
 
 // 한 달 운동 횟수 조회
 async function getHealthCount(connection, userId) { 

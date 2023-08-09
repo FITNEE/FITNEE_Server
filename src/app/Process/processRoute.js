@@ -27,7 +27,7 @@ router.patch('/:routineIdx', jwtMiddleware, process.skipExercise)
 router.post('/end/:routineIdx', jwtMiddleware, process.postMycalendar)
 
 // 6. 결과 데이터 조회 API
-router.get('/end', jwtMiddleware, process.getProcessResult)
+router.get('/end/:routineIdx', jwtMiddleware, process.getProcessResult)
 
 // 7. 결과 분석 조회 API
 // router.get('/analyze', jwtMiddleware, process.)
