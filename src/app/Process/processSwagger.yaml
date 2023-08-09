@@ -253,7 +253,6 @@ tags:
         schema:
           type: integer
         description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
-    parameters:
       - in: query
         name: dayOfWeek
         schema:
