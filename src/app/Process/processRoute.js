@@ -14,20 +14,20 @@ const process = require('./processController')
 // 1. 운동 루틴 조회 API(완)
 router.get('/', jwtMiddleware, process.getProcess)
 
-// 2 운동 루틴 대체 추천 API(완)
-router.get('/replace/:routineIdx', jwtMiddleware, process.getReplacementRecommendations)
+// 2. 운동 스킵 API(완)
+router.patch('/', jwtMiddleware, process.skipExercise)
 
-// 3. 운동 루틴 대체 수정 API(완)
-router.patch('/replace/:routineIdx', jwtMiddleware, process.patchReplaceExerciseInRoutine)
+// 3 운동 루틴 대체 추천 API(완)
+router.get('/replace', jwtMiddleware, process.getReplacementRecommendations)
 
-// 4. 운동 스킵 API(완)
-router.patch('/:routineIdx', jwtMiddleware, process.skipExercise)
+// 4. 운동 루틴 대체 수정 API(완)
+router.patch('/replace', jwtMiddleware, process.patchReplaceExerciseInRoutine)
 
 // 5. 마이 캘린더에 기록 API(완)
-router.post('/end/:routineIdx', jwtMiddleware, process.postMycalendar)
+router.post('/end', jwtMiddleware, process.postMycalendar)
 
 // 6. 결과 데이터 조회 API
-router.get('/end/:routineIdx', jwtMiddleware, process.getProcessResult)
+router.get('/end', jwtMiddleware, process.getProcessResult)
 
 // 7. 결과 분석 조회 API
 // router.get('/analyze', jwtMiddleware, process.)

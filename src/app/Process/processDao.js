@@ -160,11 +160,7 @@ async function selectRoutine(connection, routineIdx) {
                         parts: exerciseInfo.parts,
                         muscle: exerciseInfo.muscle,
                         equipment: exerciseInfo.equipment,
-                        caution: {
-                            caution1: exerciseInfo.caution1,
-                            caution2: exerciseInfo.caution2,
-                            caution3: exerciseInfo.caution3,
-                        },
+                        caution: [exerciseInfo.caution1, exerciseInfo.caution2, exerciseInfo.caution3],
                         distance: exerciseInfo.distance
                     },
                 });

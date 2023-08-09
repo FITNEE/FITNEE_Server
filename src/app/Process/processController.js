@@ -24,15 +24,14 @@ exports.getProcess = async function (req, res) {
 
 /**
  *  2 API Name : 운동 루틴 대체 추천 API
- * [GET] /app/process/replace/:routineIdx
+ * [GET] /app/process/replace
  */
 exports.getReplacementRecommendations = async function (req, res) {
     /**
-     * Path Variable : routineIdx
-     * Query Parameter : healthCateogryIdx
+     * Query Parameter : healthCateogryIdx, routineIdx
      */
         
-    const routineIdx = req.params.routineIdx
+    const routineIdx = req.query.routineIdx
     const healthCategoryIdx = req.query.healthCategoryIdx
 
 
@@ -51,16 +50,16 @@ exports.getReplacementRecommendations = async function (req, res) {
 
 /**
  *  3 API 이름 : 대체된 운동 정보 업데이트 API
- * [Patch] /app/process/replace/:routineIdx
+ * [Patch] /app/process/replace
  */
 exports.patchReplaceExerciseInRoutine = async function (req, res) {
     /**
      * Decoded : userId
-     * Path Variable : routineIdx
-     * Body : afterHealthCategoryIdx, beforeHealthCategoryIdx
+     * Query Parameter : routineIdx
+     * Body : afterHealthCategoryIdx, beforeHealthCategoryIdx, routineIdx
      */
     
-    const routineIdx = req.params.routineIdx
+    const routineIdx = req.query.routineIdx
     const beforeHealthCategoryIdx = req.body.beforeHealthCategoryIdx
     const afterHealthCategoryIdx = req.body.afterHealthCategoryIdx
     const userId = req.decoded.userId
@@ -83,16 +82,16 @@ exports.patchReplaceExerciseInRoutine = async function (req, res) {
 
 /**
  * 4 API Name : 운동 건너뛰기 API
- * [PATCH] /app/process/:routineIdx
+ * [PATCH] /app/process
  */
 exports.skipExercise = async function (req, res) {
     /**
      * Decoded : userId
-     * Path : routineIdx
+     * Query Parameter : routineIdx
      * Body : healthCategoryIdx
      */
     const healthCategoryIdxParam = req.body.healthCategoryIdx
-    const routineIdx = req.params.routineIdx
+    const routineIdx = req.query.routineIdx
     const userId = req.decoded.userId
 
     // 1. 회원과 요청된 데이터 검증
@@ -110,16 +109,16 @@ exports.skipExercise = async function (req, res) {
 
 /**
  * 5 API Name : myCalendar 추가 API
- * [POST] /app/process/end/:routineIdx
+ * [POST] /app/process/end
  */
 exports.postMycalendar = async function (req, res) {
     /**
      * Decoded : userId
-     * Path : routineIdx
+     * Query Parameter : routineIdx
      * Body : totalExerciseTime
      */
     // 시간은 초 단위로 받기
-    const routineIdx = req.params.routineIdx
+    const routineIdx = req.query.routineIdx
     const userId = req.decoded.userId
     const totalExerciseTime = req.body.totalExerciseTime
 
@@ -141,17 +140,16 @@ exports.postMycalendar = async function (req, res) {
 
 /**
  * 6 API Name : 결과 조회 API
- * [GET] /app/process/end/:routineIdx
+ * [GET] /app/process/end
  */
 exports.getProcessResult = async function (req, res) {
     /**
      * Decoded : userId
-     * Query : dayOfWeek
-     * Path Variable : routineIdx
+     * Query Parameter : dayOfWeek, routineIdx
      */
     const dayOfWeek = req.query.dayOfWeek
     const userId = req.decoded.userId
-    const rouinteIdx = req.params.routineIdx
+    const rouinteIdx = req.query.routineIdx
 
     // 오늘 날짜 정보 가져오기
     const currentDate = new Date();
