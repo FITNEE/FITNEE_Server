@@ -247,14 +247,16 @@ tags:
     summary: 결과 조회 API
     description: skip 포함해서 최종 운동 데이터 조회 및 일주일 전 데이터 증감, 한 달 동안 운동횟수 조회 API
     parameters:
-      - in: path
-        name: routineIdx
+      - name: routineidx
+        in: path
         required: true
+        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
         schema:
           type: integer
-        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
-      - in: query
-        name: dayOfWeek
+          example: 233
+      - name: dayOfWeek
+        in: query
+        required: true
         schema:
           type: string
         description: 조회할 요일 (mon, tue ...)
