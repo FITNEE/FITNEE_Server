@@ -310,7 +310,6 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
-/app/process/end/{routineIdx}:
   post:
     tags:
       - Process
