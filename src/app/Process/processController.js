@@ -141,7 +141,7 @@ exports.postMycalendar = async function (req, res) {
 
 /**
  * 6 API Name : 결과 조회 API
- * [GET] /app/process/end/:routineIdxs
+ * [GET] /app/process/end/:routineIdx
  */
 exports.getProcessResult = async function (req, res) {
     /**

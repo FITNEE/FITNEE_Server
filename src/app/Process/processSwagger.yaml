@@ -240,12 +240,19 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
-/app/process/end:
+/app/process/end/{routineIdx}:
   get:
     tags:
       - Process
     summary: 결과 조회 API
     description: skip 포함해서 최종 운동 데이터 조회 및 일주일 전 데이터 증감, 한 달 동안 운동횟수 조회 API
+    parameters:
+      - in: path
+        name: routineIdx
+        required: true
+        schema:
+          type: integer
+        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
     parameters:
       - in: query
         name: dayOfWeek
