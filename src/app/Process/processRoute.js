@@ -29,7 +29,10 @@ router.post('/end', jwtMiddleware, process.postMycalendar)
 // 6. 결과 데이터 조회 API
 router.get('/end', jwtMiddleware, process.getProcessResult)
 
-// 7. 결과 분석 조회 API
+// // 7. 결과 분석 업데이트 API
+// router.put('/analyze', jwtMiddleware, process.)
+
+// // 8. 결과 분석 조회 API
 // router.get('/analyze', jwtMiddleware, process.)
 
 // // 8. 운동 분석 API
