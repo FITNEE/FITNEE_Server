@@ -298,7 +298,6 @@ tags:
                         - set: 1
                           rep: 5
                           weight: 20
-                    # (다른 exerciseDetails 데이터)
                   totalTime: 439
                   totalCalories: 124
                   totalWeight: 114
@@ -306,6 +305,10 @@ tags:
                   exerciseTimeChange: 10
                   weightChange: 30
                 countHealth: 6
+                currentDate:
+                  - year: 2023
+                    month: 8
+                    day: 9
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
