@@ -30,7 +30,7 @@ router.get('/exercisechat', mypage.getChattingByName);
 router.post('/chatting', jwtMiddleware, mypage.postChatting);
 
 // 8.
-router.delete('/deleteChatt', jwtMiddleware, mypage.deleteChatt)
+router.patch('/deleteChatt', jwtMiddleware, mypage.deleteChatt)
 
 // 9.
 router.put('/chatRead', jwtMiddleware, mypage.updateChatRead)
