@@ -169,7 +169,7 @@ exports.deleteChatt = async function (req, res) {
  * API No. 9
  * API Name : 채팅 어디까지 읽었는지 update
  * [PUT] /app/dictionary/chatRead
- * path variable : userId, healthChattingIdx(지금 있는 채팅방의 마지막 채팅의 healthChattingIdx)
+ * path variable : userId, healthChattingIdx(지금 있는 채팅방의 마지막 채팅의 healthChattingIdx)-api no.6에서 알수있음.
  * body : healthChattingIdx
  */
 exports.updateChatRead = async function (req, res) {
@@ -180,5 +180,26 @@ exports.updateChatRead = async function (req, res) {
     if (!healthChattingIdx) return res.send(errResponse(baseResponse.DICTIONARY_HEALTHCHATTINGIDX_EMPTY));
     // userChatRead테이블 update
     const updateChatt = await dictionaryProvider.updateChatRead(userIdFromJWT, healthChattingIdx);
-    return res.send(updateChatt);
+    return res.send(response(baseResponse.SUCCESS, updateChatt));
 };
+
+
+// /**
+//  *  * API No. 10
+//  * API Name : healthName받아서 안읽은 채팅이 있다면 true, 모든 채팅을 다 읽었다면 false를 반환
+//  * [GET] /app/dictionary/readInfo
+//  */
+// exports.getReadInfo = async function (req, res) {
+
+//     /**
+//      * Path Variable: userIdx
+//      */
+//     const userIdFromJWT = req.decoded.userId;
+//     const name = req.query.name;
+
+//     if (!userIdFromJWT) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+//     if (!name) return res.send(errResponse(baseResponse.DICTIONARY_NAME_EMPTY));
+
+//     const readInfoByName = await dictionaryProvider.readInfo(userIdFromJWT, name);
+//     return res.send(response(baseResponse.SUCCESS, readInfoByName));
+// };
