@@ -318,5 +318,5 @@ module.exports = {
     updateRoutineCalendar,
     selectRoutine,
     updateRoutine,
-    deleteRoutine
+    deleteRoutine,
 };
