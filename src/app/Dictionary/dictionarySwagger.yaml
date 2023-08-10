@@ -241,7 +241,7 @@ tags:
 /app/dictionary/deleteChatt/{healthChattingIdx}:
   patch:
     summary: API NO.8 - 채팅 삭제 API (healthChatting status 컬럼 0 -> 1)
-    description: login할때 쿠키에 저장된 accesstoken가지고 있어야함.(api 내에서 검증함) app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함.
+    description: login할때 쿠키에 저장된 accesstoken가지고 있어야함.(api 내에서 검증함) app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함..
     tags:
       - Dictionary
     operationId: deleteChatt
