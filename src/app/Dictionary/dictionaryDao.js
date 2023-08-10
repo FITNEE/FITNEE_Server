@@ -163,6 +163,43 @@ async function updateChattInfo(connection, userId, healthChattingIdx) {
     return updateChattingRow;
 }
 
+// 채팅 어디까지 읽었는지 여부 userChatRead테이블 업데이트
+async function updateChattRead(connection, userIdFromJWT, healthChattingIdx) {
+    const existingRowQuery = `
+        SELECT * FROM userChatRead
+        WHERE userIdx = (SELECT userIdx FROM User WHERE userId = ?)
+        AND healthCategoryName = (SELECT healthCategoryName FROM healthChatting WHERE healthChattingIdx = ?);
+    `;
+    
+    const existingRows = await connection.query(existingRowQuery, [userIdFromJWT, healthChattingIdx]);
+    
+    if (existingRows[0].length === 0) {
+        // If no existing row found, insert a new row
+        const insertQuery = `
+            INSERT INTO userChatRead (userIdx, healthCategoryName, lastReadChatidx)
+            VALUES (
+                (SELECT userIdx FROM User WHERE userId = ?),
+                (SELECT healthCategoryName FROM healthChatting WHERE healthChattingIdx = ?),
+                ?
+            );
+        `;
+        // await connection.query(insertQuery, [userIdFromJWT, healthChattingIdx, healthChattingIdx]);
+        const updateChattReadRow = await connection.query(insertQuery, [userIdFromJWT, healthChattingIdx, healthChattingIdx]);
+        return updateChattReadRow;
+    } else {
+        // If existing row found, update the lastReadChatidx
+        const updateQuery = `
+            UPDATE userChatRead
+            SET lastReadChatidx = GREATEST(lastReadChatidx, ?)
+            WHERE userIdx= (SELECT userIdx FROM User WHERE userId = ?) AND healthCategoryName = ?;
+        `;
+        // await connection.query(updateQuery, [healthChattingIdx, userIdFromJWT, existingRows[0].healthCategoryName]);
+        const updateChattReadRow = await connection.query(updateQuery, [healthChattingIdx, userIdFromJWT, existingRows[0][0].healthCategoryName]);
+        return updateChattReadRow;
+    }
+}
+
+
 module.exports = {
     selectKeyword,
     putKeyword,
@@ -172,4 +209,5 @@ module.exports = {
     selectExerciseChatting,
     insertChatting,
     updateChattInfo,
+    updateChattRead,
 };

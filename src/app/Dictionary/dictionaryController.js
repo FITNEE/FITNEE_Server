@@ -165,3 +165,20 @@ exports.deleteChatt = async function (req, res) {
 };
 
 
+/**
+ * API No. 9
+ * API Name : 채팅 어디까지 읽었는지 update
+ * [PUT] /app/dictionary/chatRead
+ * path variable : userId, healthChattingIdx(지금 있는 채팅방의 마지막 채팅의 healthChattingIdx)
+ * body : healthChattingIdx
+ */
+exports.updateChatRead = async function (req, res) {
+    // jwt - userId, path variable :userId
+    const userIdFromJWT = req.decoded.userId;
+    const healthChattingIdx = req.query.healthChattingIdx;
+
+    if (!healthChattingIdx) return res.send(errResponse(baseResponse.DICTIONARY_HEALTHCHATTINGIDX_EMPTY));
+    // userChatRead테이블 update
+    const updateChatt = await dictionaryProvider.updateChatRead(userIdFromJWT, healthChattingIdx);
+    return res.send(updateChatt);
+};

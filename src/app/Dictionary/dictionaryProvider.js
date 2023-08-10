@@ -57,3 +57,13 @@ exports.retrieveChatting = async function (name) {
 
   return exerciseChattingResult;
 };
+
+
+//
+exports.updateChatRead = async function (userIdFromJWT, healthChattingIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const updateChatReadResult = await dictionaryDao.updateChattRead(connection, userIdFromJWT, healthChattingIdx);
+  connection.release();
+
+  return updateChatReadResult;
+};
