@@ -39,7 +39,7 @@ module.exports = function() {
     });
 
     app.get('/cat-log', (req, res) => {
-        exec('tail -50 /home/ubuntu/git_clone/healthgpt_backend/log/index.log', (err, stdout, stderr) => {
+        exec('tail -50 /home/ubuntu/.forever/5WoI.log', (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return res.sendStatus(500);
