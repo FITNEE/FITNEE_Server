@@ -239,7 +239,7 @@ tags:
 
 
 /app/dictionary/deleteChatt/{healthChattingIdx}:
-  delete:
+  patch:
     summary: API NO.8 - 채팅 삭제 API (healthChatting status 컬럼 0 -> 1)
     description: login할때 쿠키에 저장된 accesstoken가지고 있어야함.(api 내에서 검증함) app/dictionary/exercisechat에서 get한 healthChattingIdx params로 받아야함.
     tags:
@@ -258,3 +258,44 @@ tags:
         description: 채팅 삭제 성공(healthChatting status 컬럼 0 -> 1)
       '605':
         description: /app/dictionary/exercisechat에서 get한 healthChattingIdx를 입력해 주세요.
+
+
+/app/dictionary/chatRead:
+  put:
+    summary: API NO.9 - 채팅 어디까지 읽었는지 update하는 API
+    parameters:
+      - name: healthChattingIdx
+        in: query
+        required: true
+        description: healthChattingIdx(현재 채팅방의 가장 마지막 채팅의 idx)를 입력하세요
+        schema:
+          type: integer
+    description: 현재 채팅방의 가장 마지막 채팅의 healthChattingIdx 벋어서 테이블에 저장
+    tags:
+      - Dictionary
+    responses:
+      '1000':
+        description: 성공
+      '607':
+        description: 현재 채팅방의 가장 마지막 채팅의 healthChattingIdx를 입력해 주세요.
+
+/app/dictionary/readInfo:
+  get:
+    summary: API NO.10 - 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환 API
+    parameters:
+      - name: name
+        in: query
+        required: true
+        description: healthName을 입력하세요
+        schema:
+          type: string
+    description: healthName받아서 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환
+    tags:
+      - Dictionary
+    responses:
+      '1000':
+        description: 성공
+      '602':
+        description: 운동종목을 입력해 주세요.
+      '2012':
+        description: user토큰 없음.

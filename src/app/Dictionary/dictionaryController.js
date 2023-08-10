@@ -148,7 +148,7 @@ exports.postChatting = async function(req, res) {
 /**
  * API No. 8
  * API Name : 채팅 삭제(healthChatting status 컬럼 0 -> 1)
- * [DELETE] /app/dictionary/deleteChatt
+ * [PATCH] /app/dictionary/deleteChatt
  * path variable : userId
  * body : healthChattingIdx
  */
@@ -177,29 +177,29 @@ exports.updateChatRead = async function (req, res) {
     const userIdFromJWT = req.decoded.userId;
     const healthChattingIdx = req.query.healthChattingIdx;
 
-    if (!healthChattingIdx) return res.send(errResponse(baseResponse.DICTIONARY_HEALTHCHATTINGIDX_EMPTY));
+    if (!healthChattingIdx) return res.send(errResponse(baseResponse.DICTIONARY_HEALTHCHATTINGIDX2_EMPTY));
     // userChatRead테이블 update
     const updateChatt = await dictionaryProvider.updateChatRead(userIdFromJWT, healthChattingIdx);
     return res.send(response(baseResponse.SUCCESS, updateChatt));
 };
 
 
-// /**
-//  *  * API No. 10
-//  * API Name : healthName받아서 안읽은 채팅이 있다면 true, 모든 채팅을 다 읽었다면 false를 반환
-//  * [GET] /app/dictionary/readInfo
-//  */
-// exports.getReadInfo = async function (req, res) {
+/**
+ *  * API No. 10
+ * API Name : healthName받아서 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환
+ * [GET] /app/dictionary/readInfo
+ */
+exports.getReadInfo = async function (req, res) {
 
-//     /**
-//      * Path Variable: userIdx
-//      */
-//     const userIdFromJWT = req.decoded.userId;
-//     const name = req.query.name;
+    /**
+     * Path Variable: userIdx
+     */
+    const userIdFromJWT = req.decoded.userId;
+    const name = req.query.name;
 
-//     if (!userIdFromJWT) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
-//     if (!name) return res.send(errResponse(baseResponse.DICTIONARY_NAME_EMPTY));
+    if (!userIdFromJWT) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    if (!name) return res.send(errResponse(baseResponse.DICTIONARY_NAME_EMPTY));
 
-//     const readInfoByName = await dictionaryProvider.readInfo(userIdFromJWT, name);
-//     return res.send(response(baseResponse.SUCCESS, readInfoByName));
-// };
+    const readInfoByName = await dictionaryProvider.readInfo(userIdFromJWT, name);
+    return res.send(response(baseResponse.SUCCESS, readInfoByName));
+};

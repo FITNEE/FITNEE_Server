@@ -199,7 +199,7 @@ async function updateChattRead(connection, userIdFromJWT, healthChattingIdx) {
     }
 }
 
-// // userIdFromJWT, 운동 name받아서 유저가 그 운동의 채팅중 안읽은 채팅 있는지 반환(안읽은 채팅이 있다면 true, 모든 채팅을 다 읽었다면 false를 반환)
+// // userIdFromJWT, 운동 name받아서 유저가 그 운동의 채팅중 안읽은 채팅 있는지 반환(안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환)
 // async function readResult(connection, userIdFromJWT, name) {
 //     const chattReadInformationQuery = `
 //         SELECT
