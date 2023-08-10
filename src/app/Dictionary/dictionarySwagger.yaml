@@ -262,40 +262,84 @@ tags:
 
 /app/dictionary/chatRead:
   put:
-    summary: API NO.9 - 채팅 어디까지 읽었는지 update하는 API
-    parameters:
-      - name: healthChattingIdx
-        in: query
-        required: true
-        description: healthChattingIdx(현재 채팅방의 가장 마지막 채팅의 idx)를 입력하세요
-        schema:
-          type: integer
-    description: 현재 채팅방의 가장 마지막 채팅의 healthChattingIdx 벋어서 테이블에 저장
+    summary: "API NO.9 - 채팅 어디까지 읽었는지 update하는 API"
+    description: "현재 채팅방의 가장 마지막 채팅의 healthChattingIdx 벗어나지 않도록 테이블에 저장"
     tags:
       - Dictionary
+    parameters:
+      - in: header
+        name: Authorization
+        description: Access token obtained from user authentication
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: healthChattingIdx
+        description: "지금 있는 채팅방의 마지막 채팅의 healthChattingIdx (API No.6에서 확인 가능)"
+        required: true
+        schema:
+          type: integer
     responses:
       '1000':
-        description: 성공
+        description: "성공"
+        content:
+          application/json:
+            example:
+              code: 1000
+              message: "요청이 성공적으로 처리되었습니다."
+              data: {}
       '607':
-        description: 현재 채팅방의 가장 마지막 채팅의 healthChattingIdx를 입력해 주세요.
+        description: "현재 채팅방의 가장 마지막 채팅의 healthChattingIdx를 입력해 주세요."
+        content:
+          application/json:
+            example:
+              code: 607
+              message: "현재 채팅방의 가장 마지막 채팅의 healthChattingIdx를 입력해 주세요."
+              data: {}
+
 
 /app/dictionary/readInfo:
   get:
-    summary: API NO.10 - 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환 API
-    parameters:
-      - name: name
-        in: query
-        required: true
-        description: healthName을 입력하세요
-        schema:
-          type: string
-    description: healthName받아서 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환
+    summary: "API NO.10 - 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환하는 API"
+    description: "healthName을 받아서 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환"
     tags:
       - Dictionary
+    parameters:
+      - in: header
+        name: Authorization
+        description: Access token obtained from user authentication
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: name
+        description: "운동 이름(healthCategoryName)을 입력하세요."
+        required: true
+        schema:
+          type: string
     responses:
       '1000':
-        description: 성공
+        description: "성공"
+        content:
+          application/json:
+            example:
+              code: 1000
+              message: "요청이 성공적으로 처리되었습니다."
+              data:
+                hasUnreadChats: 1
       '602':
-        description: 운동종목을 입력해 주세요.
+        description: "운동종목을 입력해 주세요."
+        content:
+          application/json:
+            example:
+              code: 602
+              message: "운동종목을 입력해 주세요."
+              data: {}
       '2012':
-        description: user토큰 없음.
+        description: "user 토큰 없음."
+        content:
+          application/json:
+            example:
+              code: 2012
+              message: "사용자 토큰이 유효하지 않습니다."
+              data: {}
