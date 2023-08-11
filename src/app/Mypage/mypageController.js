@@ -76,7 +76,7 @@ exports.getExerciseInfo = async function (req, res) {
         exerciseInfo: {
             healthCategoryIdx: detail.exerciseInfo.healthCategoryIdx,
             exerciseName: detail.exerciseInfo.exerciseName,
-            weight: detail.weight
+            weight: detail.exerciseWeight
         }
     }))
 

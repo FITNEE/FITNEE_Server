@@ -175,12 +175,6 @@ exports.getProcessResult = async function (req, res) {
     const userId = req.decoded.userId
     const rouinteIdx = req.query.routineIdx
 
-    // 오늘 날짜 정보 가져오기
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // 월은 0부터 시작하므로 +1
-    const day = currentDate.getDate();
-
     // 대체 및 스킵된 데이터 다시 불러오기
     const updateRoutine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
