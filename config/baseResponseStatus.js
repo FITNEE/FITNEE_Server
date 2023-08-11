@@ -62,6 +62,9 @@ module.exports = {
     //
     MYPAGE_USERPW_UNEQUAL: { "isSuccess": false, "code": 707, "message":"입력한 userPw와 기존 userPw가 동일하지 않습니다." },
     
+
+    // process error
+    INVALID_DAY_OF_WEEK: { "isSuccess": false, "code":801, "message":"요일을 입력해주세요."},
     //Request error
 
     //signup(회원가입)

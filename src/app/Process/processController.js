@@ -16,6 +16,12 @@ exports.getProcess = async function (req, res) {
 
     // 날짜 및 아이디
     const { dayOfWeek } = req.query;
+
+    // dayOfWeek 유효성 검증
+    if (!['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayOfWeek)) {
+        return res.status(400).send(response(baseResponse.INVALID_DAY_OF_WEEK, 'Invalid dayOfWeek'));
+    }
+    
     const userId = req.decoded.userId
     const routine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
@@ -133,9 +139,27 @@ exports.postMycalendar = async function (req, res) {
         return res.send(response(baseResponse.TOKEN_VERIFICATION_FAILURE))
     }
 
+    // myCalendar에 데이터 저장
     const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime)
 
-    return res.send(response(baseResponse.SUCCESS, postMyCalendar))
+    // 마이캘린더에 볼 수 있는 루틴 리스트
+    const routine_list = await processProvider.getRoutineDetails()
+
+    // 오늘 날짜 정보 가져오기
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // 월은 0부터 시작하므로 +1
+    const day = currentDate.getDate();
+
+    return res.send(response(baseResponse.SUCCESS, {
+        postMyCalendar,
+        routine_list,
+        currentDate: {
+            year: year,
+            month: month,
+            day: day,
+        },
+    }))
 }
 
 /**
