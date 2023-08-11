@@ -9,6 +9,13 @@ const routine = require('./routineController');
  * /app/routine
  */
 
+router.get('/test', async (req, res)=>{
+    console.log("TEST : " + Date(0).toString());
+    await new Promise(r => setTimeout(r, 5000));
+    console.log("TEST : " + Date(0).toString());
+    return res.send({message:"OK"});
+});
+
 router.use(jwtMiddleware);
 
 // 루틴 예시 생성 API
