@@ -50,6 +50,7 @@ module.exports = {
     DICTIONARY_TEXT_EMPTY : { "isSuccess": false, "code": 604, "message":"채팅내용을 입력해 주세요." },
     DICTIONARY_HEALTHCHATTINGIDX_EMPTY: { "isSuccess": false, "code": 605, "message":"app/dictionary/exercisechat에서 get한 healthChattingIdx를 입력해 주세요." },
     DICTIONARY_SEARCH_EMPTY : { "isSuccess": false, "code": 606, "message":"검색내용을 입력해 주세요." },
+    DICTIONARY_HEALTHCHATTINGIDX2_EMPTY: { "isSuccess": false, "code": 607, "message":"현재 채팅방의 가장 마지막 채팅의 healthChattingIdx를 입력해 주세요." },    
 
     //mypage error
     MYPAGE_USERNICKNAME_EMPTY: { "isSuccess": false, "code": 701, "message":"수정할 userNickname을 입력해 주세요." },
@@ -62,6 +63,9 @@ module.exports = {
     //
     MYPAGE_USERPW_UNEQUAL: { "isSuccess": false, "code": 707, "message":"입력한 userPw와 기존 userPw가 동일하지 않습니다." },
     
+
+    // process error
+    INVALID_DAY_OF_WEEK: { "isSuccess": false, "code":801, "message":"요일을 입력해주세요."},
     //Request error
 
     //signup(회원가입)
