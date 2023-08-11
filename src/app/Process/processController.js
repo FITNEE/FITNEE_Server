@@ -194,11 +194,6 @@ exports.getProcessResult = async function (req, res) {
         updateRoutine: updateRoutine,
         getComparison: getComparison,
         countHealth: countHealth,
-        currentDate: {
-            year: year,
-            month: month,
-            day: day,
-        },
     }))
 }
 
