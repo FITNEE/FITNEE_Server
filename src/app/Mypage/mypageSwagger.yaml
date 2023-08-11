@@ -34,14 +34,14 @@ tags:
 /app/mypage/exercise:
   get:
     summary: API NO.2 - exerciseinfo 조회 api
-    description: 운동했던 기록들을 조회하는 api
     parameters:
       - name: date
         in: query
+        require: true
         schema:
           type: string
-        required: true
         description: 조회 날짜(YYYYMMDD 형식)
+    description: 운동했던 기록들을 조회하는 api
     tags:
       - Mypage
     responses:
