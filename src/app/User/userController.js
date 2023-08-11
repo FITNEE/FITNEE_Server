@@ -29,9 +29,9 @@ exports.postUsers = async function (req, res) {
     if (!birthYear) return res.send(errResponse(baseResponse.EMPTY_BIRTHYEAR));
 
     // 유효성 검사 : 길이 체크
-    if (userId.length > 20) return res.send(errResponse(baseResponse.LENGTH_ID));
-    if (userPw.length > 20) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
-    if (userNickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
+    // if (userId.length > 20) return res.send(errResponse(baseResponse.LENGTH_ID));
+    // if (userPw.length > 20) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
+    // if (userNickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
 
     // 유효성 검사 : 성별, 키, 몸무게
     // 성별 : 1(남자), 2(여자)
