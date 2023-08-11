@@ -128,6 +128,44 @@ async function insertRoutineCalendar(connection, userId, routineCalendar) {
     return ;
 };
 
+// 당일 루틴 조회
+async function selectTodayRoutine(connection, userId) {
+    const week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const existRoutineQuery = `
+                      SELECT ${week[new Date(0).getDay()]}RoutineIdx
+                      FROM routineCalendar
+                      WHERE userId = ?`;
+    const [[responseExistRoutine]] = await connection.query(existRoutineQuery, userId);
+
+    const todayRoutineIdx = Object.values(responseExistRoutine)[0];
+    if (!todayRoutineIdx) return ;
+
+    const userNicknameQuery = `
+                      SELECT userNickname
+                      From User
+                      WHERE userId = ?
+                      `;
+    const [[responseUserNickname]] = await connection.query(userNicknameQuery, userId);
+    const responseTodayRoutine = await selectRoutine(connection, todayRoutineIdx);
+
+    const exerciseNames = new Array();
+    const exercisePartSets = new Set();
+
+    for (var i=0; i<responseTodayRoutine.length; i++) {
+        exerciseNames.push(responseTodayRoutine[i].exerciseName);
+        exercisePartSets.add(responseTodayRoutine[i].exerciseParts);
+    };
+
+    const responseToday = {
+                userNickName : responseUserNickname.userNickname,
+                exerciseCount : responseTodayRoutine.length,
+                exerciseNames : exerciseNames,
+                exerciseParts : Array.from(exercisePartSets)
+    };
+
+    return responseToday;
+}
+
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
     const selectRoutineCalendarQuery = `
@@ -316,6 +354,7 @@ module.exports = {
     insertRoutineCalendar,
     selectRoutineCalendar,
     updateRoutineCalendar,
+    selectTodayRoutine,
     selectRoutine,
     updateRoutine,
     deleteRoutine,

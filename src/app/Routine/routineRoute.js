@@ -9,20 +9,6 @@ const routine = require('./routineController');
  * /app/routine
  */
 
-router.post('/test', async (req, res)=>{
-    console.log("TEST : " + Date(0).toString());
-    await new Promise(r => setTimeout(r, 70000));
-    console.log("TEST : " + Date(0).toString());
-    return res.send({message:"OK"});
-});
-
-router.post('/test2', async (req, res)=>{
-    console.log("TEST : " + Date(0).toString());
-    await new Promise(r => setTimeout(r, 130000));
-    console.log("TEST : " + Date(0).toString());
-    return res.send({message:"OK"});
-});
-
 router.use(jwtMiddleware);
 
 // 루틴 예시 생성 API
@@ -36,6 +22,9 @@ router.get('/calendar', routine.getRoutineCalendar);
 
 // 루틴 일정 수정 API
 router.put('/calendar', routine.putRoutineCalendar);
+
+// 당일 루틴 조회 API
+router.get('/today', routine.getTodayRoutine);
 
 // 루틴 조회 API
 router.get('/:routineIdx', routine.getRoutine);

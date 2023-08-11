@@ -77,6 +77,22 @@ exports.putRoutineCalendar = async function (req, res) {
 };
 
 /**
+ * API Name : 당일 루틴 조회 API
+ * [GET] /app/routine/today
+ */
+exports.getTodayRoutine = async function (req, res) {
+    /**
+     * Decoded : userId
+     */
+    const userId = req.decoded.userId;
+
+    const todayRoutine = await routineProvider.retrieveTodayRoutine(userId);
+
+    if (!todayRoutine) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
+    else return res.send(response(baseResponse.SUCCESS, todayRoutine));
+};
+
+/**
  * API Name : 루틴 조회 API
  * [GET] /app/routine/:routineIdx
  */
