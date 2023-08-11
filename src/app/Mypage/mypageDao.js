@@ -94,9 +94,7 @@ async function selectMyRecord(connection, month, userId) {
         weeklyExerciseTime: parseInt(row.weeklyExerciseTime),
         weeklyCalories: parseInt(row.weeklyCalories)
     }));
-    
-    console.log("rrr", formattedRows);
-    
+        
     return formattedRows;
 }
 
