@@ -68,7 +68,7 @@ module.exports = function() {
             return res.sendStatus(501);
         }
 
-        exec(`tail -${30*len} /home/ubuntu/.forever/5QEB.log`, (err, stdout, stderr) => {
+        exec(`tail -${30*len} /home/ubuntu/.forever/_yv3.log`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return res.sendStatus(500);
