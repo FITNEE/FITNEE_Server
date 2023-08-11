@@ -97,21 +97,23 @@ exports.getExerciseInfo = async function (req, res) {
 
 /**
  * API No. 3
- * API Name :
+ * API Name : 최근 일주일 데이터 조회
  * [GET] /app/mypage/record
  */
 exports.getExerciseRecord= async function (req, res) {
 
     /**
      * Query String: month
+     * Decoded : userId
      */
-    const { month, day } = req.query;
+    const { month } = req.query;
     if (!month) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
-    if (!day) return res.send(errResponse(baseResponse.CALENDAR_DAY_EMPTY));
+    // if (!day) return res.send(errResponse(baseResponse.CALENDAR_DAY_EMPTY));
 
-    const recordByMonth = await mypageProvider.searchRecord(month, day);
+    const userId = req.decoded.userId
+
+    const recordByMonth = await mypageProvider.searchRecord(month, userId);
     return res.send(response(baseResponse.SUCCESS, recordByMonth));
-
 }
 
 /**

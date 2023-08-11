@@ -61,10 +61,10 @@ exports.retrieveNicknameList = async function (userNickName) {
 
 
 
-//
-exports.searchRecord = async function (month, day) {
+// 최근 일주일 데이터 조회
+exports.searchRecord = async function (month, userId) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const myRecordResult = await mypageDao.selectMyRecord(connection, month, day);
+  const myRecordResult = await mypageDao.selectMyRecord(connection, month, userId);
   connection.release();
 
   return myRecordResult;

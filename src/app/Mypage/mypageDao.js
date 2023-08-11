@@ -74,14 +74,38 @@ async function selectUserNickname(connection, userNickName) {
 
 
 // 내 기록(최근 일주일간 이동거리, 일주일간 소모한 칼로리, 모든 누적 운동시간)
-async function selectMyRecord(connection, month, day) {
+async function selectMyRecord(connection, month, userId) {
     const selectMyRecordQuery = `
-                
-                `;
+        SELECT
+            CONCAT(MONTH(healthDate), '월 ', WEEK(healthDate, 2) - WEEK(DATE_FORMAT(CONCAT(YEAR(healthDate), "-", MONTH(healthDate), "-01"), '%Y-%m-%d'), 2) + 1, '째 주') AS weekNumber,
+            SUM(totalExerciseTime) AS weeklyExerciseTime,
+            SUM(CASE WHEN WEEKDAY(healthDate) < 6 THEN totalCalories ELSE 0 END) AS weeklyCalories
+        FROM myCalendar
+        WHERE userId = ?
+          AND MONTH(healthDate) = ?
+        GROUP BY weekNumber;
+    `;
 
-    const myRecord = await connection.query(selectMyRecordQuery, [userIdx, month]);
-    return myRecord;
+    const [myRecordRows] = await connection.query(selectMyRecordQuery, [userId, month]);
+    
+    // Convert the string values to integers
+    const formattedRows = myRecordRows.map(row => ({
+        weekNumber: row.weekNumber,
+        weeklyExerciseTime: parseInt(row.weeklyExerciseTime),
+        weeklyCalories: parseInt(row.weeklyCalories)
+    }));
+    
+    console.log("rrr", formattedRows);
+    
+    return formattedRows;
 }
+
+
+
+
+
+
+
 
 
 

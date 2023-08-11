@@ -89,6 +89,44 @@ tags:
       '801':
         description: 요일을 입력해주세요.
 
+/app/mypage/record:
+  get:
+    summary: API NO.3 - 일주일 운동 데이터 조회 api
+    parameters:
+      - name : month
+        in: query
+        require: true
+        description: 조회할 월
+        schema:
+          type: integer
+    description: 월별 주차별 운동 기록 데이터 조회 api
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  exerciseRecord:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        weekNumer:
+                          type: string
+                          description: 주차 정보 ex) 8월 1째 주
+                        weeklyExerciseTime:
+                          type: integer
+                          description: 주간 운동 시간
+                        weeklyCalories:
+                          type: integer
+                          description: 주간 소모 칼로리
+      '502':
+        description: 달을 입력해주세요.
 
 
 /app/mypage/userinfo:
