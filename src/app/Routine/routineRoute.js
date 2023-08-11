@@ -9,9 +9,16 @@ const routine = require('./routineController');
  * /app/routine
  */
 
-router.get('/test', async (req, res)=>{
+router.post('/test', async (req, res)=>{
     console.log("TEST : " + Date(0).toString());
     await new Promise(r => setTimeout(r, 70000));
+    console.log("TEST : " + Date(0).toString());
+    return res.send({message:"OK"});
+});
+
+router.post('/test2', async (req, res)=>{
+    console.log("TEST : " + Date(0).toString());
+    await new Promise(r => setTimeout(r, 130000));
     console.log("TEST : " + Date(0).toString());
     return res.send({message:"OK"});
 });
