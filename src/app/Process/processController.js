@@ -25,7 +25,14 @@ exports.getProcess = async function (req, res) {
     const userId = req.decoded.userId
     const routine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
-    return res.send(response(baseResponse.SUCCESS, routine));
+    return res.send(response(baseResponse.SUCCESS, {
+        dayOfWeek: routine.dayOfWeek,
+        routineIdx: routine.routineIdx,
+        routineDetails: routine.routineDetails,
+        totalTime: routine.totalTime,
+        totalCalories: routine.totalCalories,
+        totalWeight: routine.totalWeight,
+    }));
 };
 
 /**
@@ -131,35 +138,15 @@ exports.postMycalendar = async function (req, res) {
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
     const totalWeight = await processProvider.getTotalWeight(routineIdx)
+
     const parsedTotalWeight = parseInt(totalWeight[0].totalWeight);
 
-
-    const isValidUser = await processProvider.validateUser(userId, routineIdx);
-    if (!isValidUser) {
-        return res.send(response(baseResponse.TOKEN_VERIFICATION_FAILURE))
-    }
+    const totalCalories = await processProvider.getTotalCalories(routineIdx)
 
     // myCalendar에 데이터 저장
-    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime)
+    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories)
 
-    // 마이캘린더에 볼 수 있는 루틴 리스트
-    const routine_list = await processProvider.getRoutineDetails()
-
-    // 오늘 날짜 정보 가져오기
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // 월은 0부터 시작하므로 +1
-    const day = currentDate.getDate();
-
-    return res.send(response(baseResponse.SUCCESS, {
-        postMyCalendar,
-        routine_list,
-        currentDate: {
-            year: year,
-            month: month,
-            day: day,
-        },
-    }))
+    return res.send(response(baseResponse.SUCCESS))
 }
 
 /**
@@ -173,19 +160,34 @@ exports.getProcessResult = async function (req, res) {
      */
     const dayOfWeek = req.query.dayOfWeek
     const userId = req.decoded.userId
-    const rouinteIdx = req.query.routineIdx
+    const routineIdx = req.query.routineIdx
+
+    // 오늘 날짜 정보 가져오기
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+    const day = String(currentDate.getDate()).padStart(2, '0');
+
+    const todayDate = `${year}-${month}-${day}`;
 
     // 대체 및 스킵된 데이터 다시 불러오기
     const updateRoutine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
+    // myCalendar에서 데이터 조회
+    const totalData = await processProvider.getTotalData(userId, todayDate)
+
     // 무게, 시간 차이 조회
-    const getComparison = await processProvider.getComparison(userId, rouinteIdx)
+    const getComparison = await processProvider.getComparison(userId, routineIdx)
 
     // 운동 횟수 조회
     const countHealth = await processProvider.getHealthCount(userId)
 
     return res.send(response(baseResponse.SUCCESS, {
-        updateRoutine: updateRoutine,
+        routineIdx: updateRoutine.routineIdx,
+        updateRoutine: updateRoutine.routineDetails,
+        totalWeight: totalData.totalWeight,
+        totalCalories: totalData.totalCalories,
+        totalTime: totalData.totalTime,
         getComparison: getComparison,
         countHealth: countHealth,
     }))

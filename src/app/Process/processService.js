@@ -34,10 +34,10 @@ exports.updateSkipValue = async function (routineIdx, healthCategoryIdxParam) {
 
 
 // 캘린더 추가
-exports.postMyCalendar = async function (userId, userIdx, routineIdx, parsedTotalWeight, totalExerciseTime) {
+exports.postMyCalendar = async function (userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories) {
     const connection = await pool.getConnection(async (conn) => conn) 
 
-    const calendarData = await processDao.insertMyCalendar(connection, userId, userIdx, routineIdx, parsedTotalWeight, totalExerciseTime)
+    const calendarData = await processDao.insertMyCalendar(connection, userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories)
     connection.release()
     return calendarData
 }

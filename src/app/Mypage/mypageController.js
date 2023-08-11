@@ -80,9 +80,12 @@ exports.getExerciseInfo = async function (req, res) {
         }
     }))
 
-    const totalWeight = exerciseInfo.totalWeight
-    const totalCalories = exerciseInfo.totalCalories
-    const totalTime = exerciseInfo.totalTime
+    // 마이캘린더에서 조회
+    const realTotal = await processProvider.getRealTotal(userId, date)
+
+    const totalWeight = realTotal.totalWeight
+    const totalCalories = realTotal.totalCalories
+    const totalTime = realTotal.totalTime
 
     return res.send(response(baseResponse.SUCCESS, {
         exercise: exerciseResult,
