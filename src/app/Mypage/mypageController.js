@@ -39,30 +39,36 @@ exports.getExerciseInfo = async function (req, res) {
      * Decoded : userId
      */
 
-    const date = req.query.date
+    const date = req.query.date;
+    const userId = req.decoded.userId
 
-    // 유효성 검증: date는 YYYYMMDD 형식으로 8글자여야 함
+    // 유효성 검증: date는 8자리 정수여야 함
     if (!/^\d{8}$/.test(date)) {
         return res.send(response(baseResponse.MYPAGE_DATE_INVALID));
     }
 
-    // 문자열을 날짜 객체로 변환
-    const dateObj = new Date(date)
-    
     // 요일 계산 (0 : 일요일, 1 : 월요일, ... 6 : 토요일)
-    const weekday = dateObj.getDay()
-    const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+    const dateObj = new Date(date.substring(0, 4), parseInt(date.substring(4, 6)) - 1, date.substring(6, 8));
+    const weekday = dateObj.getDay();
+    const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-    const dayOfWeek = weekdays[weekday]
+    const dayOfWeek = weekdays[weekday];
 
     // dayOfWeek 유효성 검증
     if (!['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayOfWeek)) {
         return res.send(response(baseResponse.INVALID_DAY_OF_WEEK));
     }
 
-    const userId = req.decoded.userId
-
     const exerciseInfo = await processProvider.getRoutineDetails(dayOfWeek, userId)
+
+
+    // 운동이 등록되었는지 검증
+    const checkRoutineIdx = await processProvider.getCheckMyCalendar(exerciseInfo.routineIdx, date)
+
+    // myCalendar에서 운동 기록 유효성 검증
+    if(!checkRoutineIdx) {
+        return res.send(response(baseResponse.MYPAGE_EXERCISE_NOT_EXIST))
+    }
 
     // exercise 데이터 조회
     const exerciseResult = exerciseInfo.routineDetails.map(detail => ({
@@ -78,12 +84,12 @@ exports.getExerciseInfo = async function (req, res) {
     const totalCalories = exerciseInfo.totalCalories
     const totalTime = exerciseInfo.totalTime
 
-    res.status(200).json({
+    return res.send(response(baseResponse.SUCCESS, {
         exercise: exerciseResult,
         totalCalories: totalCalories,
         totalWeight: totalWeight,
-        totalTime: totalTime,
-    })
+        totalTime: totalTime
+    }))
 }
 
 /**

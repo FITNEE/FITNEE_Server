@@ -62,7 +62,8 @@ module.exports = {
     MYPAGE_USERPW_EQUAL2: { "isSuccess": true, "code": 706, "message":"입력한 userPw와 기존 userPw가 동일합니다." },
     //
     MYPAGE_USERPW_UNEQUAL: { "isSuccess": false, "code": 707, "message":"입력한 userPw와 기존 userPw가 동일하지 않습니다." },
-    MYPAGE_DATE_INVALID: {"isSuccess": false, "code": 708, "message":"유효하지 않은 날짜 형식입니다."},
+    MYPAGE_DATE_INVALID: { "isSuccess": false, "code": 708, "message":"유효하지 않은 날짜 형식입니다." },
+    MYPAGE_EXERCISE_NOT_EXIST: { "isSuccess": false, "code": 709, "message":"운동 기록이 없습니다."},
     
 
     // process error

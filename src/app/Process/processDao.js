@@ -706,7 +706,26 @@ async function getHealthCount(connection, userId) {
     return selectHealthCount[0][0].count;
 }
 
+// myCalendar에 routineIdx 및 날짜 검증
+async function getValidRoutineIdx(connection, routineIdx, date) {
+    // 날짜 값 변환: YYYYMMDD -> YYYY-MM-DD
+    const formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+
+    const checkMyCalendarQuery = `
+        SELECT EXISTS ( 
+            SELECT 1
+            FROM myCalendar
+            WHERE routineIdx = ? AND healthDate = ?
+        ) AS \`exists\`;
+    `;
+    const [rows] = await connection.query(checkMyCalendarQuery, [routineIdx, formattedDate])
+    const exists = rows[0].exists === 1
+
+    return exists
+}
+
 module.exports = {
+    getValidRoutineIdx,
     getComparison,
     getHealthCount,
     updateRoutineDetail,

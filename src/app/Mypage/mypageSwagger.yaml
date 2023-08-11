@@ -84,6 +84,8 @@ tags:
                     description: 총 시간
       '708':
         description: 날짜형식을 YYYYMMDD 형식으로 입력해주세요.
+      '709':
+        description: 해당 날짜에 routine이 등록(기록)되지 않았습니다.
       '801':
         description: 요일을 입력해주세요.
 
