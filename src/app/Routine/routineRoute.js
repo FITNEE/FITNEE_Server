@@ -11,7 +11,7 @@ const routine = require('./routineController');
 
 router.get('/test', async (req, res)=>{
     console.log("TEST : " + Date(0).toString());
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise(r => setTimeout(r, 70000));
     console.log("TEST : " + Date(0).toString());
     return res.send({message:"OK"});
 });
