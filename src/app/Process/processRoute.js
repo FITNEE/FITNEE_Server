@@ -35,7 +35,4 @@ router.get('/end', jwtMiddleware, process.getProcessResult)
 // // 8. 결과 분석 조회 API
 // router.get('/analyze', jwtMiddleware, process.)
 
-// // 8. 운동 분석 API
-// router.get('/:routineIdx/end/detail', jwtMiddleware, )
-
 module.exports = router;

@@ -69,7 +69,7 @@ exports.patchReplaceExerciseInRoutine = async function (req, res) {
     /**
      * Decoded : userId
      * Query Parameter : routineIdx
-     * Body : afterHealthCategoryIdx, beforeHealthCategoryIdx, routineIdx
+     * Body : afterHealthCategoryIdx, beforeHealthCategoryIdx
      */
     
     const routineIdx = req.query.routineIdx
@@ -83,7 +83,7 @@ exports.patchReplaceExerciseInRoutine = async function (req, res) {
         return res.send(response(baseResponse.TOKEN_VERIFICATION_FAILURE))
     }
 
-    // 유효성 검증
+    // routineIdx 에 포함된 heatlthCategoryIdx 검증
     if (!Number.isInteger(parseInt(beforeHealthCategoryIdx)) || parseInt(beforeHealthCategoryIdx) <= 0) {
         return res.send(response(baseResponse.INVALID_ROUTINE_IDX));
     }
@@ -135,6 +135,11 @@ exports.postMycalendar = async function (req, res) {
     const userId = req.decoded.userId
     const totalExerciseTime = req.body.totalExerciseTime
 
+    // 총 운동 시간 유효성 검증
+    if(!totalExerciseTime) {
+        return res.send(response(baseResponse.PROCESS_TOTALTIME_INVALID))
+    }
+
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
     const totalWeight = await processProvider.getTotalWeight(routineIdx)
@@ -146,7 +151,7 @@ exports.postMycalendar = async function (req, res) {
     // myCalendar에 데이터 저장
     const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories)
 
-    return res.send(response(baseResponse.SUCCESS))
+    return res.send(response(baseResponse.SUCCESS, postMyCalendar))
 }
 
 /**
