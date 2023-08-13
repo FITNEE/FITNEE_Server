@@ -167,7 +167,7 @@ async function selectTodayRoutine(connection, userId) {
         responseToday.isToday = false;
         var offset = 1;
         while (existRoutineIdx = existRoutineCalendar[`${weekEn[(exerciseDay.getDay()+offset)%7]}RoutineIdx`]) offset += 1;
-        exerciseDay.setDate(exerciseDay.getDate()+offset-1);
+        exerciseDay.setDate(exerciseDay.getDate()+offset);
         existRoutineIdx = existRoutineCalendar[`${weekEn[exerciseDay.getDay()]}RoutineIdx`];
         responseToday.todayStrKo = toStringByMyFormatting(exerciseDay);
         console.log(exerciseDay);
