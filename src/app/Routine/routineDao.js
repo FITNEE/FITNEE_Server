@@ -138,28 +138,41 @@ async function selectTodayRoutine(connection, userId) {
                       `;
     const [[responseUserNickname]] = await connection.query(userNicknameQuery, userId);
 
+    const exerciseDay = new Date();
+    exerciseDay.setTime(exerciseDay.getTime()+9*60*60*1000);
+
     const weekEn = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const weekKo = ['일', '월', '화', '수', '목', '금', '토'];
-    const today = new Date();
     const leftPad = (value) => (value<10) ? `0${value}` : value;
     const toStringByMyFormatting = (source) => {
         const yyyy = source.getFullYear();
         const mm = leftPad(source.getMonth()+1);
         const dd = leftPad(source.getDate());
-        return [yyyy, mm, dd].join('. ')+` (${weekKo[source.getDay()]})`
+        const hh = leftPad(source.getHours());
+        return [yyyy, mm, dd, hh].join('. ')+` (${weekKo[source.getDay()]})`
     };
 
     const responseToday = {
-        todayStrKo : toStringByMyFormatting(today),
+        todayStrKo : toStringByMyFormatting(exerciseDay),
         userNickName : responseUserNickname.userNickname,
         exerciseCount : 0,
+        isToday: true,
     };
 
     const existRoutineCalendar = await selectRoutineCalendar(connection, userId);
     if (!Object.keys(lodash.pickBy(existRoutineCalendar)).length) return ;
 
-    const existRoutineIdx = existRoutineCalendar[weekEn[today.getDay()] + 'RoutineIdx'];
-    if (!existRoutineIdx) return responseToday;
+    var existRoutineIdx = existRoutineCalendar[`${weekEn[exerciseDay.getDay()]}RoutineIdx`];
+    if (!existRoutineIdx) {
+        responseToday.isToday = false;
+        var offset = 1;
+        while (existRoutineIdx = existRoutineCalendar[`${weekEn[(exerciseDay.getDay()+offset)%7]}RoutineIdx`]) offset += 1;
+        exerciseDay.setDate(exerciseDay.getDate()+offset-1);
+        existRoutineIdx = existRoutineCalendar[`${weekEn[exerciseDay.getDay()]}RoutineIdx`];
+        responseToday.todayStrKo = toStringByMyFormatting(exerciseDay);
+        console.log(exerciseDay);
+        console.log(exerciseDay.getHours());
+    };
 
     const responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
     const exerciseNames = new Array();
