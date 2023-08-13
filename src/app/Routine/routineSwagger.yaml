@@ -57,6 +57,39 @@ tags:
                   items: 
                     $ref : '#/components/schemas/RecRoutineCalendar'
 
+/app/routine/today:
+  get:
+    tags:
+      - Routine
+    summary: 당일 루틴 조회 API
+    description: 당일하는 루틴 개요을 조회하는 API
+    responses:
+      '1000':
+        description: 성공 - 당일 루틴에 대한 내용을 반환합니다.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'userNickName':
+                  type: string
+                  example: 쿠앤크맛
+                'exerciseCount':
+                  type: integer
+                  example: 1
+                'exerciseNames':
+                  type: array
+                  items:
+                    properties:
+                      type: string
+                      example: 푸쉬업
+                'exerciseParts':
+                  type: array
+                  items:
+                    properties:
+                      type: string
+                      example: 유산소
+
 /app/routine/calendar:
   post:
     tags:

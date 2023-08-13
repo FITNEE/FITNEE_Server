@@ -175,7 +175,7 @@ exports.deleteChatt = async function (req, res) {
 exports.updateChatRead = async function (req, res) {
     // jwt - userId, path variable :userId
     const userIdFromJWT = req.decoded.userId;
-    const healthChattingIdx = req.query.healthChattingIdx;
+    const healthChattingIdx = req.body.healthChattingIdx;
 
     if (!healthChattingIdx) return res.send(errResponse(baseResponse.DICTIONARY_HEALTHCHATTINGIDX2_EMPTY));
     // userChatRead테이블 update

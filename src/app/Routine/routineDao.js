@@ -160,7 +160,7 @@ async function selectTodayRoutine(connection, userId) {
                 userNickName : responseUserNickname.userNickname,
                 exerciseCount : responseTodayRoutine.length,
                 exerciseNames : exerciseNames,
-                exerciseParts : Array.from(exercisePartSets)
+                exerciseParts : Array.from(exercisePartSets),
     };
 
     return responseToday;

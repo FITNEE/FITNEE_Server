@@ -33,7 +33,6 @@ module.exports = function() {
                 return res.sendStatus(500);
             }
             console.log(stdout);
-            // res.sendStatus(200);
             res.redirect('/cat-log');
         });
     });
