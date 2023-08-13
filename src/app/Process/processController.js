@@ -124,8 +124,6 @@ exports.getProcessResult = async function (req, res) {
     const originRoutineIdx = req.query.routineIdx
     if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
-    const checkUserId = await processProvider.validateUser(userId, originRoutineIdx)
-    if(!checkUserId) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_NOT_EXIST))
     // // 오늘 날짜 정보 가져오기
     const currentDate = new Date();
     const year = currentDate.getFullYear();
