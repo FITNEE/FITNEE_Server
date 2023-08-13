@@ -67,24 +67,26 @@ tags:
       '1000':
         description: 성공 - 당일 루틴에 대한 내용을 반환합니다.
         content:
-          'userNickName':
-            type: string
-            example: 쿠앤크맛
-          'exerciseCount':
-            type: integer
-            example: 1
-          'exerciseNames':
-            type: array
-            items:
-              properties:
+          application/json:
+            schema:
+              'userNickName':
                 type: string
-                example: 푸쉬업
-          'exerciseParts':
-            type: array
-            items:
-              properties:
-                type: string
-                example: 유산소
+                example: 쿠앤크맛
+              'exerciseCount':
+                type: integer
+                example: 1
+              'exerciseNames':
+                type: array
+                items:
+                  properties:
+                    type: string
+                    example: 푸쉬업
+              'exerciseParts':
+                type: array
+                items:
+                  properties:
+                    type: string
+                    example: 유산소
 
 /app/routine/calendar:
   post:
