@@ -73,26 +73,28 @@ async function selectUserNickname(connection, userNickName) {
 }
 
 
-// 내 기록(최근 일주일간 이동거리, 일주일간 소모한 칼로리, 모든 누적 운동시간)
-async function selectMyRecord(connection, month, userId) {
+// 내 기록(소모한 칼로리, 이동거리, 운동시간)
+async function selectMyRecord(connection, userId) {
     const selectMyRecordQuery = `
         SELECT
             CONCAT(MONTH(healthDate), '월 ', WEEK(healthDate, 2) - WEEK(DATE_FORMAT(CONCAT(YEAR(healthDate), "-", MONTH(healthDate), "-01"), '%Y-%m-%d'), 2) + 1, '째 주') AS weekNumber,
-            SUM(totalExerciseTime) AS weeklyExerciseTime,
-            SUM(CASE WHEN WEEKDAY(healthDate) < 6 THEN totalCalories ELSE 0 END) AS weeklyCalories
+            SUM(CASE WHEN WEEKDAY(healthDate) < 6 THEN totalCalories ELSE 0 END) AS weeklyCalories,
+            SUM(totalDist) AS weeklyDistance,
+            SUM(totalExerciseTime) AS weeklyExerciseTime
         FROM myCalendar
         WHERE userId = ?
-          AND MONTH(healthDate) = ?
-        GROUP BY weekNumber;
+        GROUP BY weekNumber
+        ORDER BY MONTH(healthDate) ASC, WEEK(healthDate, 2);;
     `;
 
-    const [myRecordRows] = await connection.query(selectMyRecordQuery, [userId, month]);
+    const [myRecordRows] = await connection.query(selectMyRecordQuery, [userId]);
     
     // Convert the string values to integers
     const formattedRows = myRecordRows.map(row => ({
         weekNumber: row.weekNumber,
-        weeklyExerciseTime: parseInt(row.weeklyExerciseTime),
-        weeklyCalories: parseInt(row.weeklyCalories)
+        weeklyCalories: parseInt(row.weeklyCalories),
+        weeklyDistance: parseInt(row.weeklyDistance),
+        weeklyExerciseTime: parseInt(row.weeklyExerciseTime)
     }));
         
     return formattedRows;
