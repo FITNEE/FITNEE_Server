@@ -148,8 +148,7 @@ async function selectTodayRoutine(connection, userId) {
         const yyyy = source.getFullYear();
         const mm = leftPad(source.getMonth()+1);
         const dd = leftPad(source.getDate());
-        const hh = leftPad(source.getHours());
-        return [yyyy, mm, dd, hh].join('. ')+` (${weekKo[source.getDay()]})`
+        return [yyyy, mm, dd].join('. ')+` (${weekKo[source.getDay()]})`
     };
 
     const responseToday = {
