@@ -61,7 +61,9 @@ async function insertRoutine(connection, userId, info, gpt) {
                 parts : responseValues[j+1].target,
                 exercises : []
             };
-            const tempRoutine = {};
+            const tempRoutine = {
+                parts : responseValues[j+1].target,
+            };
 
             for (var k=0; k<recRoutine.length; k++) {
                 const recDetail = recRoutine[k];
@@ -170,9 +172,12 @@ async function selectTodayRoutine(connection, userId) {
         responseToday.todayStrKo = toStringByMyFormatting(exerciseDay);
     };
 
-    const responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
+    var responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
+    responseTodayRoutine = responseTodayRoutine.routineDetails;
+
     const exerciseNames = new Array();
     const exercisePartSets = new Set();
+
     for (var i=0; i<responseTodayRoutine.length; i++) {
         exerciseNames.push(responseTodayRoutine[i].exerciseName);
         exercisePartSets.add(responseTodayRoutine[i].exerciseParts);
@@ -180,9 +185,9 @@ async function selectTodayRoutine(connection, userId) {
 
     responseToday.exerciseCount = responseTodayRoutine.length;
     responseToday.exerciseNames = exerciseNames;
-    responseToday.exerciseParts = Array.from(exercisePartSets);
+    responseToday.exerciseParts = Array.from(exercisePartSets).join(', ');
     return responseToday;
-}
+};
 
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
@@ -204,14 +209,17 @@ async function selectRoutine(connection, routineIdx) {
     const [exerciseList] = await connection.query(selectExerciseListQuery);
 
     const selectRoutineQuery = `
-                  SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+                  SELECT parts, detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
                   FROM routine
                   WHERE routineIdx = ?
                   `;
     const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
     if (!routine) return routine;
 
-    var routineContent = [];
+    var routineContent = {
+        parts : routine.parts,
+        routineDetails: []
+    };
     for (var i=0; i<10; i++) {
         const selectRoutineDetailQuery = `
                       SELECT healthCategoryIdx, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
@@ -243,7 +251,7 @@ async function selectRoutine(connection, routineIdx) {
             detailContent['exerciseName'] = exerciseList[routineDetail.healthCategoryIdx-1].name;
             detailContent['exerciseParts'] = exerciseList[routineDetail.healthCategoryIdx-1].parts;
             detailContent['content'] = detailItem;
-            routineContent.push(detailContent);
+            routineContent.routineDetails.push(detailContent);
         }
     }
 
@@ -264,7 +272,11 @@ async function updateRoutineCalendar(connection, userId, routineCalendar) {
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
-    const updateRoutine =  {};
+    const originContent = selectRoutine(connection, routineIdx);
+
+    const updateRoutine =  {
+        parts : originContent.parts,
+    };
 
     for (var i=0; i<routineContent.length; i++) {
         var updateRoutineDetail = {
@@ -278,8 +290,6 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
                 updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
         };
 
-        console.log(`update routine detail - ` + JSON.stringify(updateRoutineDetail));
-
         const updateRoutineDetailQuery = `
                               INSERT INTO routineDetail
                               SET ?;
@@ -289,7 +299,6 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
     };
 
-    console.log(`update routine - ` + JSON.stringify(updateRoutine));
     const updateRoutineQuery = `
                           INSERT INTO routine
                           SET ?;
