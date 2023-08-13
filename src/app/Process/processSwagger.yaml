@@ -319,11 +319,11 @@ tags:
     summary: "myCalendar 기록 추가 API"
     description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
     parameters:
-      - in: query
+      - in: body
         name: routineIdx
         required: true
         type: integer
-        description: "Routine index"
+        description: "운동 루틴 Idx를 입력해주세요."
       - in: body
         name: totalExerciseTime
         required: true

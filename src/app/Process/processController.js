@@ -132,7 +132,7 @@ exports.postMycalendar = async function (req, res) {
      * Body : totalExerciseTime
      */
     // 시간은 초 단위로 받기
-    const routineIdx = req.query.routineIdx
+    const routineIdx = req.body.routineIdx
     const userId = req.decoded.userId
     const totalExerciseTime = req.body.totalExerciseTime
 
