@@ -76,7 +76,8 @@ exports.getExerciseInfo = async function (req, res) {
         exerciseInfo: {
             healthCategoryIdx: detail.exerciseInfo.healthCategoryIdx,
             exerciseName: detail.exerciseInfo.exerciseName,
-            weight: detail.exerciseWeight
+            weight: detail.exerciseWeight,
+            dist: detail.predictDist
         }
     }))
 
@@ -85,13 +86,15 @@ exports.getExerciseInfo = async function (req, res) {
 
     const totalWeight = realTotal.totalWeight
     const totalCalories = realTotal.totalCalories
-    const totalTime = realTotal.totalTime
+    const totalTime = realTotal.totalExerciseTime
+    const totalDist = realTotal.totalDist
 
     return res.send(response(baseResponse.SUCCESS, {
         exercise: exerciseResult,
         totalCalories: totalCalories,
         totalWeight: totalWeight,
-        totalTime: totalTime
+        totalTime: totalTime,
+        totalDist: totalDist
     }))
 }
 
