@@ -93,7 +93,7 @@ async function selectTotalWeight(connection, routineIdx) {
     SELECT SUM(${caseClauses.join(" + ")}) AS totalWeight
     FROM routineDetail
     WHERE routineDetailIdx IN (${routineDetailIdxList})
-    AND (${caseClauses.join(" + ")}) > 0
+    AND (${caseClauses.join(" + ")}) > 0;';
     AND skip != 1;`;
 
     const [TotalWeight] = await connection.query(selectDetailRows)
@@ -406,7 +406,7 @@ async function selectProcessDetail(connection, routineIdx) {
     const selectDetailQuery = `
         SELECT rd.routineDetailIdx, rd.healthCategoryIdx,
                rep0, rep1, rep2, rep3, rep4, rep5, rep6, rep7, rep8, rep9,
-               weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9, skip
+               weight0, weight1, weight2, weight3, weight4, weight5, weight6, weight7, weight8, weight9
         FROM routineDetail AS rd
         WHERE rd.routineDetailIdx IN (?);
     `;
@@ -464,7 +464,6 @@ async function selectProcessDetail(connection, routineIdx) {
             predictDist: predictDist,
             rest: exerciseInfo.rest,
             predictCalories: predictCalories,
-            skip: detail.skip
         });
     }
 
@@ -783,6 +782,49 @@ async function updateRoutineDetail(connection, routineIdx, beforeHealthCategoryI
     await connection.query(updateBeforeHealthCategoryQuery, [afterHealthCategoryIdx, newRoutineArray, beforeHealthCategoryIdx])
 }
 
+async function insertRoutineIdx(connection, routineContent) {
+    const updateRoutine =  {};
+    let offset = 0;
+
+    for (var i=0; i<routineContent.length; i++) {
+        if(routineContent[i].skip === "1") {
+            offset += 1
+            continue;
+        }
+        var updateRoutineDetail = {
+            healthCategoryIdx : routineContent[i].exerciseInfo.healthCategoryIdx,
+        };
+
+        curContent = routineContent[i].sets;
+        for (var j=0; j<curContent.length; j++) {
+            updateRoutineDetail["rep"+String(j)] = curContent[j].rep;
+            if (curContent[j].weight)
+                updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
+        };
+
+        console.log(`update routine detail - ` + JSON.stringify(updateRoutineDetail));
+
+        const updateRoutineDetailQuery = `
+                              INSERT INTO routineDetail
+                              SET ?;
+                              SELECT LAST_INSERT_ID();
+                              `;
+        const [responseUpdateRD] = await connection.query(updateRoutineDetailQuery, updateRoutineDetail);
+        updateRoutine["detailIdx"+String(i-offset)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
+    };
+
+    console.log(`update routine - ` + JSON.stringify(updateRoutine));
+    const updateRoutineQuery = `
+                          INSERT INTO routine
+                          SET ?;
+                          SELECT LAST_INSERT_ID();
+                          `;
+    const [responseUpdateR] = await connection.query(updateRoutineQuery, updateRoutine);
+    const updateRIdx = responseUpdateR[1][0]['LAST_INSERT_ID()'];
+
+    return updateRIdx
+}
+
 
 async function updateSkipValue(connection, routineIdx, healthCategoryIdxParam) {
     const checkRoutineQuery = `
@@ -837,14 +879,14 @@ async function updateSkipValue(connection, routineIdx, healthCategoryIdxParam) {
 }
 
 // Insert calendar data
-async function insertMyCalendar(connection, userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist) {
+async function insertMyCalendar(connection, userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist) {
     const insertMyCalendarQuery = `
-    INSERT INTO myCalendar (userIdx, userId, routineIdx, totalExerciseTime, totalWeight, healthDate, totalCalories, totalDist)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO myCalendar (userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, healthDate, totalCalories, totalDist)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const cuurentDate = new Date()
 
-    const insertParams = [userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, cuurentDate, totalCalories, totalDist];
+    const insertParams = [userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, parsedTotalWeight, cuurentDate, totalCalories, totalDist];
 
     const [insertRows] = await connection.query(insertMyCalendarQuery, insertParams);
 
@@ -853,14 +895,14 @@ async function insertMyCalendar(connection, userIdx, userId, routineIdx, totalEx
 }
 
 // 마이캘린더에서 데이터 조회
-async function selectTotalData(connection, userId, todayDate) {
+async function selectTotalData(connection, userId, todayDate, originRoutineIdx) {
     const totalDataQuery = `
         SELECT totalExerciseTime, totalWeight, totalCalories, totalDist
         FROM myCalendar
         WHERE userId = ? AND healthDate = ?;
     `;
 
-    const [totalDataRows] = await connection.query(totalDataQuery, [userId, todayDate])
+    const [totalDataRows] = await connection.query(totalDataQuery, [userId, todayDate, originRoutineIdx])
     
     return totalDataRows[0]
 }
@@ -954,6 +996,7 @@ async function getRealTotal(connection, userId, date) {
 }
 
 module.exports = {
+    insertRoutineIdx,
     selectTotalDist,
     selectTotalData,
     selectTotalTime,

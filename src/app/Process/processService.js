@@ -32,12 +32,20 @@ exports.updateSkipValue = async function (routineIdx, healthCategoryIdxParam) {
     return skipValue
 };
 
+// routineIdx 새로 생성
+exports.insertRoutineIdx = async function (routineContent) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const newRoutineIdx = await processDao.insertRoutineIdx(connection, routineContent)
+    connection.release()
+    return newRoutineIdx
+}
 
 // 캘린더 추가
-exports.postMyCalendar = async function (userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist) {
+exports.postMyCalendar = async function (userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist) {
     const connection = await pool.getConnection(async (conn) => conn) 
 
-    const calendarData = await processDao.insertMyCalendar(connection, userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist)
+    const calendarData = await processDao.insertMyCalendar(connection, userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist)
     connection.release()
     return calendarData
 }

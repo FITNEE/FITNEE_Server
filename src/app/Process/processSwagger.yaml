@@ -249,12 +249,6 @@ tags:
         schema:
           type: integer
           example: 233
-      - in: query
-        name: dayOfWeek
-        required: true
-        schema:
-          type: string
-        description: 조회할 요일 (mon, tue ...)
     responses:
       '1000':
         description: 성공적으로 결과 데이터를 조회한 경우
