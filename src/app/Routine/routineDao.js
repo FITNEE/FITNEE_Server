@@ -1,3 +1,4 @@
+const { response } = require('express');
 const lodash = require('lodash');
 const { exceptions } = require('winston');
 
@@ -130,39 +131,47 @@ async function insertRoutineCalendar(connection, userId, routineCalendar) {
 
 // 당일 루틴 조회
 async function selectTodayRoutine(connection, userId) {
-    const week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    const existRoutineQuery = `
-                      SELECT ${week[new Date(0).getDay()]}RoutineIdx
-                      FROM routineCalendar
-                      WHERE userId = ?`;
-    const [[responseExistRoutine]] = await connection.query(existRoutineQuery, userId);
-
-    const todayRoutineIdx = Object.values(responseExistRoutine)[0];
-    if (!todayRoutineIdx) return ;
-
     const userNicknameQuery = `
                       SELECT userNickname
                       From User
                       WHERE userId = ?
                       `;
     const [[responseUserNickname]] = await connection.query(userNicknameQuery, userId);
-    const responseTodayRoutine = await selectRoutine(connection, todayRoutineIdx);
 
+    const weekEn = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const weekKo = ['일', '월', '화', '수', '목', '금', '토'];
+    const today = new Date();
+    const leftPad = (value) => (value<10) ? `0${value}` : value;
+    const toStringByMyFormatting = (source) => {
+        const yyyy = source.getFullYear();
+        const mm = leftPad(source.getMonth()+1);
+        const dd = leftPad(source.getDate());
+        return [yyyy, mm, dd].join('. ')+` (${weekKo[source.getDay()]})`
+    };
+
+    const responseToday = {
+        todayStrKo : toStringByMyFormatting(today),
+        userNickName : responseUserNickname.userNickname,
+        exerciseCount : 0,
+    };
+
+    const existRoutineCalendar = await selectRoutineCalendar(connection, userId);
+    if (!Object.keys(lodash.pickBy(existRoutineCalendar)).length) return ;
+
+    const existRoutineIdx = existRoutineCalendar[weekEn[today.getDay()] + 'RoutineIdx'];
+    if (!existRoutineIdx) return responseToday;
+
+    const responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
     const exerciseNames = new Array();
     const exercisePartSets = new Set();
-
     for (var i=0; i<responseTodayRoutine.length; i++) {
         exerciseNames.push(responseTodayRoutine[i].exerciseName);
         exercisePartSets.add(responseTodayRoutine[i].exerciseParts);
     };
 
-    const responseToday = {
-                userNickName : responseUserNickname.userNickname,
-                exerciseCount : responseTodayRoutine.length,
-                exerciseNames : exerciseNames,
-                exerciseParts : Array.from(exercisePartSets),
-    };
-
+    responseToday.exerciseCount = responseTodayRoutine.length;
+    responseToday.exerciseNames = exerciseNames;
+    responseToday.exerciseParts = Array.from(exercisePartSets);
     return responseToday;
 }
 
