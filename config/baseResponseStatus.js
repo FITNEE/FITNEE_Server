@@ -71,7 +71,10 @@ module.exports = {
     INVALID_DAY_OF_WEEK: { "isSuccess": false, "code":801, "message":"요일을 입력해주세요."},
     PROCESS_TOTALTIME_INVALID: { "isSuccess": false, "code":802, "message":"운동 총 시간을 입력해주세요."},
     PROCESS_ROUTINECONTENT_INVALID: { "isSuccess": false, "code":803, "message":"routineDetails를 입력해주세요."},
-    PROCESS_ORIGINROUTINEIDX_INVALID: { "isSuccess": false, "code":804, "message":"routineIdx 값을 입력해주세요."},
+    PROCESS_ORIGINROUTINEIDX_INVALID: { "isSuccess": false, "code":804, "message":"추천 받았던 routineIdx 값을 입력해주세요."},
+    PROCESS_EXERCISE_NOT_EXIST: { "isSuccess":false, "code":805, "message":"운동 기록이 저장되지 않았습니다."},
+    PROCESS_COMPARISON_NOT_EXIST: { "isSuccess":false, "code":806, "message":"비교할 직전 데이터가 존재하지 않습니다."},
+    PROCESS_ORIGINROUTINEIDX_NOT_EXIST: { "isSuccess":false, "code":807, "message":"마이 캘린더에 추천받은 routineIdx가 존재하지 않습니다."},
     //Request error
 
     //signup(회원가입)

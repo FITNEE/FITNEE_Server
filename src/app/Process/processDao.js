@@ -1,5 +1,22 @@
 const sqlstring = require('sqlstring');
 
+async function getCheckUserId(connection, userId) {
+    const isValidUserQuery = `
+        SELECT EXISTS (
+            SELECT userId
+            FROM User
+            WHERE userId = ? AND EXISTS (
+                SELECT routineIdx
+                FROM myCalendar
+                WHERE userId = ? AND routineIdx = ?
+            )
+        ) AS isValidUser;
+    `;
+    const [result] = await connection.query(isValidUserQuery, [userId, userId, routineIdx]);
+
+    return result[0].isValidUser === 1;
+}
+
 async function selectProcessData(connection, date, userId) {
     // 날짜 값 변환: YYYYMMDD -> YYYY-MM-DD
     const formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
@@ -65,7 +82,7 @@ async function selectProcessData(connection, date, userId) {
     return healthNames;
 }
 
-async function isValidUser(connection, userId, routineIdx) {
+async function isValidUser(connection, userId, originRoutineIdx) {
     const isValidUserQuery = `
         SELECT EXISTS (
             SELECT userId
@@ -73,11 +90,11 @@ async function isValidUser(connection, userId, routineIdx) {
             WHERE userId = ? AND EXISTS (
                 SELECT routineIdx
                 FROM myCalendar
-                WHERE userId = ? AND routineIdx = ?
+                WHERE userId = ? AND originRoutineIdx = ?
             )
         ) AS isValidUser;
     `;
-    const [result] = await connection.query(isValidUserQuery, [userId, userId, routineIdx]);
+    const [result] = await connection.query(isValidUserQuery, [userId, userId, originRoutineIdx]);
 
     return result[0].isValidUser === 1;
 }

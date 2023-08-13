@@ -23,6 +23,8 @@ exports.getProcess = async function (req, res) {
     }
     
     const userId = req.decoded.userId
+
+    // TODO : userId 유효성 검증
     const routine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
     return res.send(response(baseResponse.SUCCESS, {
@@ -120,7 +122,10 @@ exports.getProcessResult = async function (req, res) {
      */
     const userId = req.decoded.userId
     const originRoutineIdx = req.query.routineIdx
+    if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
+    const checkUserId = await processProvider.validateUser(userId, originRoutineIdx)
+    if(!checkUserId) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_NOT_EXIST))
     // // 오늘 날짜 정보 가져오기
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -129,14 +134,15 @@ exports.getProcessResult = async function (req, res) {
 
     const todayDate = `${year}-${month}-${day}`;
 
-    // myCalendar에서 데이터 조회
-    const totalData = await processProvider.getTotalData(userId, todayDate)
-
     // 무게, 시간 차이 조회
     const getComparison = await processProvider.getComparison(userId, originRoutineIdx)
+    if(!getComparison) return res.send(response(baseResponse.PROCESS_COMPARISON_NOT_EXIST))
 
+    // myCalendar에서 데이터 조회
+    const totalData = await processProvider.getTotalData(userId, todayDate)
     // 운동 횟수 조회
     const countHealth = await processProvider.getHealthCount(userId)
+    if(!countHealth || !totalData) return res.send(response(baseResponse.PROCESS_EXERCISE_NOT_EXIST))
 
     return res.send(response(baseResponse.SUCCESS, {
         todayTotalWeight: totalData.totalWeight,

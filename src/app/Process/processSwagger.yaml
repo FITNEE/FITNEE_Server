@@ -146,70 +146,6 @@ tags:
         description: JWT 토큰 검증 실패
 
 /app/process/end:
-  get:
-    tags:
-      - Process
-    summary: 결과 조회 API
-    description: skip 포함해서 최종 운동 데이터 조회 및 일주일 전 데이터 증감, 한 달 동안 운동횟수 조회 API
-    parameters:
-      - in: query
-        name: routineIdx
-        required: true
-        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
-        schema:
-          type: integer
-          example: 233
-    responses:
-      '1000':
-        description: 성공적으로 결과 데이터를 조회한 경우
-        content:
-          application/json:
-            example:
-              isSuccess: true
-              code: 1000
-              message: 성공
-              result:
-                updateRoutine:
-                  dayOfWeek: wed
-                  routineIdx: 3
-                  routineDetails:
-                    - order: 1
-                      exerciseInfo:
-                        healthCategoryIdx: 14
-                        exerciseName: 레그 컬
-                        parts: 하체
-                        muscle: 뒷넓다리근
-                        equipment: 머신
-                        caution: 레그 컬 주의사항
-                        distance: 0
-                      skip: "1"
-                      totalSets: 2
-                      rep: 5
-                      weight: 20
-                      predictTime: 300
-                      predictCalories: 38
-                      exerciseWeight: 40
-                      rest: 30
-                      sets:
-                        - set: 0
-                          rep: 5
-                          weight: 20
-                        - set: 1
-                          rep: 5
-                          weight: 20
-                  totalTime: 439
-                  totalCalories: 124
-                  totalWeight: 114
-                  totalDist: 1000
-                getComparison:
-                  exerciseTimeChange: 10
-                  weightChange: 30
-                countHealth: 6
-      '2000':
-        description: JWT 토큰을 입력해주세요
-      '3000':
-        description: JWT 토큰 검증 실패
-
   post:
     tags:
       - Process
@@ -347,3 +283,81 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+      '802':
+        description: 총 운동 시간을 입력해주세요
+      '803':
+        description: routineDetails 값들을 입력해주세요
+      '804':
+        description: 추천받았던 routineIdx 값을 입력해주세요
+
+  get:
+    tags:
+      - Process
+    summary: 결과 조회 API
+    description: skip 포함해서 최종 운동 데이터 조회 및 일주일 전 데이터 증감, 한 달 동안 운동횟수 조회 API
+    parameters:
+      - in: query
+        name: routineIdx
+        required: true
+        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
+        schema:
+          type: integer
+          example: 233
+    responses:
+      '1000':
+        description: 성공적으로 결과 데이터를 조회한 경우
+        content:
+          application/json:
+            example:
+              isSuccess: true
+              code: 1000
+              message: 성공
+              result:
+                updateRoutine:
+                  dayOfWeek: wed
+                  routineIdx: 3
+                  routineDetails:
+                    - order: 1
+                      exerciseInfo:
+                        healthCategoryIdx: 14
+                        exerciseName: 레그 컬
+                        parts: 하체
+                        muscle: 뒷넓다리근
+                        equipment: 머신
+                        caution: 레그 컬 주의사항
+                        distance: 0
+                      skip: "1"
+                      totalSets: 2
+                      rep: 5
+                      weight: 20
+                      predictTime: 300
+                      predictCalories: 38
+                      exerciseWeight: 40
+                      rest: 30
+                      sets:
+                        - set: 0
+                          rep: 5
+                          weight: 20
+                        - set: 1
+                          rep: 5
+                          weight: 20
+                  totalTime: 439
+                  totalCalories: 124
+                  totalWeight: 114
+                  totalDist: 1000
+                getComparison:
+                  exerciseTimeChange: 10
+                  weightChange: 30
+                countHealth: 6
+      '2000':
+        description: JWT 토큰을 입력해주세요
+      '3000':
+        description: JWT 토큰 검증 실패
+      '804':
+        description: 추천 받았던 routineIdx 값을 입력해주세요.
+      '805':
+        description: 운동 기록이 저장되지 않았습니다.
+      '806':
+        description: 비교할 직전 데이터가 존재하지 않습니다.
+      '807':
+        description: 마이 캘린더에 추천받은 routineIdx가 존재하지 않습니다.
