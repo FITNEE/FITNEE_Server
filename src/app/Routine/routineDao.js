@@ -172,9 +172,12 @@ async function selectTodayRoutine(connection, userId) {
         responseToday.todayStrKo = toStringByMyFormatting(exerciseDay);
     };
 
-    const responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
+    var responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
+    responseTodayRoutine = responseTodayRoutine.routineDetails;
+
     const exerciseNames = new Array();
     const exercisePartSets = new Set();
+
     for (var i=0; i<responseTodayRoutine.length; i++) {
         exerciseNames.push(responseTodayRoutine[i].exerciseName);
         exercisePartSets.add(responseTodayRoutine[i].exerciseParts);
@@ -269,7 +272,11 @@ async function updateRoutineCalendar(connection, userId, routineCalendar) {
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
-    const updateRoutine =  {};
+    const originContent = selectRoutine(connection, routineIdx);
+
+    const updateRoutine =  {
+        parts : originContent.parts,
+    };
 
     for (var i=0; i<routineContent.length; i++) {
         var updateRoutineDetail = {
