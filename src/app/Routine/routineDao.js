@@ -61,7 +61,9 @@ async function insertRoutine(connection, userId, info, gpt) {
                 parts : responseValues[j+1].target,
                 exercises : []
             };
-            const tempRoutine = {};
+            const tempRoutine = {
+                parts : responseValues[j+1].target,
+            };
 
             for (var k=0; k<recRoutine.length; k++) {
                 const recDetail = recRoutine[k];
@@ -180,7 +182,7 @@ async function selectTodayRoutine(connection, userId) {
 
     responseToday.exerciseCount = responseTodayRoutine.length;
     responseToday.exerciseNames = exerciseNames;
-    responseToday.exerciseParts = Array.from(exercisePartSets);
+    responseToday.exerciseParts = Array.from(exercisePartSets).join(', ');
     return responseToday;
 }
 
@@ -278,8 +280,6 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
                 updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
         };
 
-        console.log(`update routine detail - ` + JSON.stringify(updateRoutineDetail));
-
         const updateRoutineDetailQuery = `
                               INSERT INTO routineDetail
                               SET ?;
@@ -289,7 +289,6 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
     };
 
-    console.log(`update routine - ` + JSON.stringify(updateRoutine));
     const updateRoutineQuery = `
                           INSERT INTO routine
                           SET ?;
