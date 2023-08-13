@@ -318,21 +318,19 @@ tags:
       - Process
     summary: "myCalendar 기록 추가 API"
     description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
-    parameters:
-      - in: body
-        name: routineIdx
-        required: true
-        description: 운동 루틴 인덱스
+    requestBody:
+    required: true
+    content:
+      application/json:
         schema:
-          type: integer
-          example: 6
-      - in: body
-        name: totalExerciseTime
-        required: true
-        description: 운동 총 시간
-        schema:
-          type: integer
-          example: 1000
+          type: object
+          properties:
+            routineIdx:
+              type: integer
+              description: "운동 루틴 Idx를 입력해주세요."
+            totalExerciseTime:
+              type: integer
+              description: "총 운동 시간을 초 단위로 써주세요."
     responses:
       '1000':
         description: "성공! myCalendar에 기록되었습니다."
