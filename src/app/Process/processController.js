@@ -42,10 +42,9 @@ exports.getProcess = async function (req, res) {
  */
 exports.getReplacementRecommendations = async function (req, res) {
     /**
-     * Query Parameter : healthCateogryIdx, routineIdx
+     * Query Parameter : healthCateogryIdx
      */
         
-    const routineIdx = req.query.routineIdx
     const healthCategoryIdx = req.query.healthCategoryIdx
 
 
