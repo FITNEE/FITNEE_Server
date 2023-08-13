@@ -69,10 +69,10 @@ exports.getTotalTime = async function (userId, todayDate) {
     return totalTime
 }
 
-exports.getTotalData = async function (userId, todayDate, originRoutineIdx) {
+exports.getTotalData = async function (userId, todayDate) {
     const connection = await pool.getConnection(async (conn) => conn)
 
-    const totalData = await processDao.selectTotalData(connection, userId, todayDate, originRoutineIdx)
+    const totalData = await processDao.selectTotalData(connection, userId, todayDate)
 
     connection.release()
 
@@ -89,6 +89,16 @@ exports.getDetailIdx = async function (healthCategory) {
 
     return detailIdx
 }
+
+// exports.getMycalendar = async function (date, userId) {
+//     const connection = await pool.getConnection(async (conn) => conn);
+    
+//     const processData = await processDao.selectProcessData(connection, date, userId)
+
+//     connection.release()
+
+//     return processData
+// }
 
 exports.getRoutineDetails = async function (dayOfWeek, userId) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -164,9 +174,9 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
 };
 
 // 무게, 횟수 증감 조회
-exports.getComparison = async function (userId, rouinteIdx) {
+exports.getComparison = async function (userId, originRoutineIdx) {
     const connection = await pool.getConnection(async (conn) => conn)
-    const comparison = await processDao.getComparison(connection, userId, rouinteIdx)
+    const comparison = await processDao.getComparison(connection, userId, originRoutineIdx)
     connection.release()
 
     return comparison

@@ -1,5 +1,19 @@
 const sqlstring = require('sqlstring');
 
+// async function selectProcessData(connection, date, userId) {
+//     // 날짜 값 변환: YYYYMMDD -> YYYY-MM-DD
+//     const formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+
+//     const myCalendarProcessQuery = `
+//         SELECT routineIdx
+//         FROM myCalendar
+//         WHERE healthDate = ? AND userId = ?
+//     `;
+//     const routineIdx = await connection.query(myCalendarProcessQuery, [formattedDate, userId])
+
+//     const 
+// }
+
 async function isValidUser(connection, userId, routineIdx) {
     const isValidUserQuery = `
         SELECT EXISTS (
@@ -895,38 +909,38 @@ async function insertMyCalendar(connection, userIdx, userId, routineIdx, originR
 }
 
 // 마이캘린더에서 데이터 조회
-async function selectTotalData(connection, userId, todayDate, originRoutineIdx) {
+async function selectTotalData(connection, userId, todayDate) {
     const totalDataQuery = `
         SELECT totalExerciseTime, totalWeight, totalCalories, totalDist
         FROM myCalendar
         WHERE userId = ? AND healthDate = ?;
     `;
 
-    const [totalDataRows] = await connection.query(totalDataQuery, [userId, todayDate, originRoutineIdx])
+    const [totalDataRows] = await connection.query(totalDataQuery, [userId, todayDate])
     
     return totalDataRows[0]
 }
 
 // routineIdx 기준으로 마지막 데이터 2개 합차 조회(-1 인덱스와 -2 인덱스 차이)
-async function getComparison(connection, userId, routineIdx) {
+async function getComparison(connection, userId, originRoutineIdx) {
     // 마지막 두 개의 데이터 조회
     const selectLastTwoDataQuery = `
         SELECT totalExerciseTime, totalWeight, healthDate
         FROM myCalendar
-        WHERE userId = ? AND routineIdx = ?
+        WHERE userId = ? AND originRoutineIdx = ?
         ORDER BY healthDate DESC
         LIMIT 2;
     `;
 
-    const [lastTwoData] = await connection.query(selectLastTwoDataQuery, [userId, routineIdx]);
+    const [lastTwoData] = await connection.query(selectLastTwoDataQuery, [userId, originRoutineIdx]);
 
     if (!lastTwoData || lastTwoData.length < 2) {
         return { exerciseTimeChange: 0, weightChange: 0 };
     }
 
     // 마지막 두 개 데이터의 차이를 계산합니다
-    const exerciseTimeChange = lastTwoData[1].totalExerciseTime - lastTwoData[0].totalExerciseTime;
-    const weightChange = lastTwoData[1].totalWeight - lastTwoData[0].totalWeight;
+    const exerciseTimeChange = lastTwoData[0].totalExerciseTime - lastTwoData[1].totalExerciseTime;
+    const weightChange = lastTwoData[0].totalWeight - lastTwoData[1].totalWeight;
 
 
 

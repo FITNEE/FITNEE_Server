@@ -68,13 +68,13 @@ exports.getReplacementRecommendations = async function (req, res) {
 exports.postMycalendar = async function (req, res) {
     /**
      * Decoded : userId
-     * Body : totalExerciseTime, routineDetails, originRoutineIdx
+     * Body : originRoutineIdx, totalExerciseTime, routineDetails
      */
     // 시간은 초 단위로 받기
     const userId = req.decoded.userId
+    const originRoutineIdx = req.body.routineIdx
     const totalExerciseTime = req.body.totalExerciseTime
     const routineContent = req.body.routineDetails
-    const originRoutineIdx = req.body.routineIdx
 
     // 총 운동 시간 유효성 검증
     if(!totalExerciseTime) {
@@ -130,7 +130,7 @@ exports.getProcessResult = async function (req, res) {
     const todayDate = `${year}-${month}-${day}`;
 
     // myCalendar에서 데이터 조회
-    const totalData = await processProvider.getTotalData(userId, todayDate, originRoutineIdx)
+    const totalData = await processProvider.getTotalData(userId, todayDate)
 
     // 무게, 시간 차이 조회
     const getComparison = await processProvider.getComparison(userId, originRoutineIdx)
@@ -139,12 +139,13 @@ exports.getProcessResult = async function (req, res) {
     const countHealth = await processProvider.getHealthCount(userId)
 
     return res.send(response(baseResponse.SUCCESS, {
-        totalWeight: totalData.totalWeight,
-        totalCalories: totalData.totalCalories,
-        totalTime: totalData.totalTime,
-        totalDist: totalData.totalDist,
-        getComparison: getComparison,
-        countHealth: countHealth,
+        todayTotalWeight: totalData.totalWeight,
+        todayTotalCalories: totalData.totalCalories,
+        todayTotalTime: totalData.totalTime,
+        todayTotalDist: totalData.totalDist,
+        exerciseTimeChange: getComparison.exerciseTimeChange,
+        weightChange: getComparison.weightChange,
+        monthCountHealth: countHealth,
     }))
 }
 
