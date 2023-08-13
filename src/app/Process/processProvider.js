@@ -90,15 +90,15 @@ exports.getDetailIdx = async function (healthCategory) {
     return detailIdx
 }
 
-// exports.getMycalendar = async function (date, userId) {
-//     const connection = await pool.getConnection(async (conn) => conn);
+exports.getMycalendar = async function (date, userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
     
-//     const processData = await processDao.selectProcessData(connection, date, userId)
+    const processData = await processDao.selectProcessData(connection, date, userId)
 
-//     connection.release()
+    connection.release()
 
-//     return processData
-// }
+    return processData
+}
 
 exports.getRoutineDetails = async function (dayOfWeek, userId) {
     const connection = await pool.getConnection(async (conn) => conn);

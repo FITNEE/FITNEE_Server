@@ -28,73 +28,48 @@ exports.getExercisedData = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, exerciseByMonth));
 }
 
-// /**
-//  * API No. 2
-//  * API Name : 선택한 날짜 운동 정보 조회
-//  * [GET] /app/mypage/exercise
-//  */
-// exports.getExerciseInfo = async function (req, res) {
-//     /**
-//      * Query String: date
-//      * Decoded : userId
-//      */
+/**
+ * API No. 2
+ * API Name : 선택한 날짜 운동 정보 조회
+ * [GET] /app/mypage/exercise
+ */
+exports.getExerciseInfo = async function (req, res) {
+    /**
+     * Query String: date
+     * Decoded : userId
+     */
 
-//     const date = req.query.date;
-//     const userId = req.decoded.userId
+    const date = req.query.date;
+    const userId = req.decoded.userId
 
-//     // 유효성 검증: date는 8자리 정수여야 함
-//     if (!/^\d{8}$/.test(date)) {
-//         return res.send(response(baseResponse.MYPAGE_DATE_INVALID));
-//     }
+    // 유효성 검증: date는 8자리 정수여야 함
+    if (!/^\d{8}$/.test(date)) {
+        return res.send(response(baseResponse.MYPAGE_DATE_INVALID));
+    }
 
-//     // 요일 계산 (0 : 일요일, 1 : 월요일, ... 6 : 토요일)
-//     const dateObj = new Date(date.substring(0, 4), parseInt(date.substring(4, 6)) - 1, date.substring(6, 8));
-//     const weekday = dateObj.getDay();
-//     const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const exerciseName = await processProvider.getMycalendar(date, userId)
 
-//     const dayOfWeek = weekdays[weekday];
+    // 운동 기록이 하나도 없을 경우
+    if(exerciseName === 0) return res.send(response(baseResponse.MYPAGE_EXERCISE_NOT_EXIST))
+    // 운동 기록이 두 개 이상 있을 경우
+    if(exerciseName > 2) return res.send(response(baseResponse.MYPAGE_EXERCISE_INVALID))
 
-//     // dayOfWeek 유효성 검증
-//     if (!['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayOfWeek)) {
-//         return res.send(response(baseResponse.INVALID_DAY_OF_WEEK));
-//     }
+    // 마이캘린더에서 조회
+    const realTotal = await processProvider.getRealTotal(userId, date)
 
-//     const exerciseInfo = await processProvider.getMycalendar(date, userId)
+    const totalWeight = realTotal.totalWeight
+    const totalCalories = realTotal.totalCalories
+    const totalTime = realTotal.totalExerciseTime
+    const totalDist = realTotal.totalDist
 
-
-//     // 운동이 등록되었는지 검증
-//     const checkRoutineIdx = await processProvider.getCheckMyCalendar(exerciseInfo.routineIdx, date)
-
-//     // myCalendar에서 운동 기록 유효성 검증
-//     if(!checkRoutineIdx) {
-//         return res.send(response(baseResponse.MYPAGE_EXERCISE_NOT_EXIST))
-//     }
-
-//     // exercise 데이터 조회
-//     const exerciseResult = exerciseInfo.routineDetails.map(detail => ({
-//         order: detail.order,
-//         exerciseInfo: {
-//             healthCategoryIdx: detail.exerciseInfo.healthCategoryIdx,
-//             exerciseName: detail.exerciseInfo.exerciseName,
-//         }
-//     }))
-
-//     // 마이캘린더에서 조회
-//     const realTotal = await processProvider.getRealTotal(userId, date)
-
-//     const totalWeight = realTotal.totalWeight
-//     const totalCalories = realTotal.totalCalories
-//     const totalTime = realTotal.totalExerciseTime
-//     const totalDist = realTotal.totalDist
-
-//     return res.send(response(baseResponse.SUCCESS, {
-//         exercise: exerciseResult,
-//         totalCalories: totalCalories,
-//         totalWeight: totalWeight,
-//         totalTime: totalTime,
-//         totalDist: totalDist
-//     }))
-// }
+    return res.send(response(baseResponse.SUCCESS, {
+        exercise: exerciseName,
+        totalCalories: totalCalories,
+        totalWeight: totalWeight,
+        totalTime: totalTime,
+        totalDist: totalDist
+    }))
+}
 
 /**
  * API No. 3

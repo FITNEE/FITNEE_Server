@@ -11,8 +11,8 @@ const mypage = require('./mypageController');
 // 1. 해당 month에 운동한 모든 날짜 반환.
 router.get('/', jwtMiddleware, mypage.getExercisedData);
 
-// // 2. 선택한 날짜 운동 정보 조회
-// router.get('/exercise', jwtMiddleware, mypage.getExerciseInfo);
+// 2. 선택한 날짜 운동 정보 조회
+router.get('/exercise', jwtMiddleware, mypage.getExerciseInfo);
 
 // 3. 최근 일주일 운동 데이터 조회
 router.get('/record', jwtMiddleware, mypage.getExerciseRecord);
