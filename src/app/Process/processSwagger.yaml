@@ -322,8 +322,12 @@ tags:
       - in: body
         name: routineIdx
         required: true
-        type: integer
-        description: "운동 루틴 Idx를 입력해주세요."
+        schema: integer
+          type: object
+          properties:
+            routineIdx:
+              type: integer
+              description: "운동 루틴 Idx를 입력해주세요."
       - in: body
         name: totalExerciseTime
         required: true
