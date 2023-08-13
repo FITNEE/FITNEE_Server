@@ -319,16 +319,18 @@ tags:
     summary: "myCalendar 기록 추가 API"
     description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
     requestBody:
-    required: true
     content:
       application/json:
         schema:
           type: object
+          required:
+            - routineIdx
+            - totalExerciseTime
           properties:
-            routineIdx:
+            'routineIdx':
               type: integer
               description: "운동 루틴 Idx를 입력해주세요."
-            totalExerciseTime:
+            'totalExerciseTime':
               type: integer
               description: "총 운동 시간을 초 단위로 써주세요."
     responses:
