@@ -109,13 +109,13 @@ exports.getExerciseRecord= async function (req, res) {
      * Query String: month
      * Decoded : userId
      */
-    const { month } = req.query;
-    if (!month) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
+    // const { month } = req.query;
+    // if (!month) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
     // if (!day) return res.send(errResponse(baseResponse.CALENDAR_DAY_EMPTY));
 
     const userId = req.decoded.userId
 
-    const recordByMonth = await mypageProvider.searchRecord(month, userId);
+    const recordByMonth = await mypageProvider.searchRecord(userId);
     return res.send(response(baseResponse.SUCCESS, recordByMonth));
 }
 

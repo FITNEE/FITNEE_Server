@@ -94,15 +94,8 @@ tags:
 
 /app/mypage/record:
   get:
-    summary: API NO.3 - 일주일 운동 데이터 조회 api
-    parameters:
-      - name : month
-        in: query
-        require: true
-        description: 조회할 월
-        schema:
-          type: integer
-    description: 월별 주차별 운동 기록 데이터 조회 api
+    summary: API NO.3 - 모든 운동 데이터 조회 api
+    description: 주차별 운동 기록 데이터 모두 조회
     tags:
       - Mypage
     responses:
