@@ -166,10 +166,11 @@ async function selectTodayRoutine(connection, userId) {
     if (!existRoutineIdx) {
         responseToday.isToday = false;
         var offset = 1;
-        while (existRoutineIdx = existRoutineCalendar[`${weekEn[(exerciseDay.getDay()+offset)%7]}RoutineIdx`]) offset += 1;
-        exerciseDay.setDate(exerciseDay.getDate()+offset);
-        existRoutineIdx = existRoutineCalendar[`${weekEn[exerciseDay.getDay()]}RoutineIdx`];
+        while (!(existRoutineIdx = existRoutineCalendar[`${weekEn[(exerciseDay.getDay()+offset)%7]}RoutineIdx`])) offset += 1;
+        
+        exerciseDay.setDate(exerciseDay.getDate()+offset+1);
         responseToday.todayStrKo = toStringByMyFormatting(exerciseDay);
+        console.log(existRoutineIdx);
         console.log(exerciseDay);
         console.log(exerciseDay.getHours());
     };
