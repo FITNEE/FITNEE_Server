@@ -71,24 +71,34 @@ tags:
             schema:
               type: object
               properties:
-                'userNickName':
-                  type: string
-                  example: 쿠앤크맛
-                'exerciseCount':
+                'isSuccess':
+                  type: boolean
+                  example: true
+                'code':
                   type: integer
-                  example: 1
-                'exerciseNames':
-                  type: array
-                  items:
-                    properties:
+                  example: 1000
+                'message':
+                  type: string
+                  example: '성공'
+                'result':
+                  type: object
+                  properties:
+                    'userNickName':
                       type: string
-                      example: 푸쉬업
-                'exerciseParts':
-                  type: array
-                  items:
-                    properties:
-                      type: string
-                      example: 유산소
+                      example: 쿠앤크맛
+                    'exerciseCount':
+                      type: integer
+                      example: 1
+                    'exerciseNames':
+                      type: array
+                      items:
+                        type: string
+                        example: 푸쉬업
+                    'exerciseParts':
+                      type: array
+                      items:
+                        type: string
+                        example: 유산소
 
 /app/routine/calendar:
   post:

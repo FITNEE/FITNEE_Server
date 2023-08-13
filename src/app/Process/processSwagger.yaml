@@ -95,48 +95,48 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
-  patch:
-    tags:
-      - Process
-    summary: 운동 건너뛰기 API
-    description: 건너뛰기를 통해 마지막 운동 결과 조회에서 표시가 됩니다.
-    parameters:
-      - in: query
-        name: routineIdx
-        required: true
-        description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
-        schema:
-          type: integer
-      - in: query
-        name: healthCategoryIdx
-        required: true
-        description: 건너뛸 운동 명칭 인덱스
-        schema:
-          type: integer
-    responses:
-      '1000':
-        description: 운동 건너뛰기 성공
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                isSuccess:
-                  type: boolean
-                  description: 성공 여부
-                code:
-                  type: string
-                  description: 응답 코드
-                message:
-                  type: string
-                  description: 응답 메시지
-                result:
-                  type: string
-                  description: 건너뛴 운동 이름
-      '2000':
-        description: JWT 토큰을 입력해주세요
-      '3000':
-        description: JWT 토큰 검증 실패
+  # patch:
+  #   tags:
+  #     - Process
+  #   summary: 운동 건너뛰기 API
+  #   description: 건너뛰기를 통해 마지막 운동 결과 조회에서 표시가 됩니다.
+  #   parameters:
+  #     - in: query
+  #       name: routineIdx
+  #       required: true
+  #       description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
+  #       schema:
+  #         type: integer
+  #     - in: query
+  #       name: healthCategoryIdx
+  #       required: true
+  #       description: 건너뛸 운동 명칭 인덱스
+  #       schema:
+  #         type: integer
+  #   responses:
+  #     '1000':
+  #       description: 운동 건너뛰기 성공
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               isSuccess:
+  #                 type: boolean
+  #                 description: 성공 여부
+  #               code:
+  #                 type: string
+  #                 description: 응답 코드
+  #               message:
+  #                 type: string
+  #                 description: 응답 메시지
+  #               result:
+  #                 type: string
+  #                 description: 건너뛴 운동 이름
+  #     '2000':
+  #       description: JWT 토큰을 입력해주세요
+  #     '3000':
+  #       description: JWT 토큰 검증 실패
 
 /app/process/replace:
   get:
@@ -145,13 +145,6 @@ tags:
     summary: 운동 루틴 대체 추천 조회 API
     description: 같은 부위 중 랜덤으로 최대 3가지 추천
     parameters:
-      - in: query
-        name: routineIdx
-        required: true
-        description: 운동 루틴 인덱스(오늘 운동 리스트들)
-        schema:
-          type: integer
-          example: 3
       - in: query
         name: healthCategoryIdx
         required: true
@@ -195,52 +188,52 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
-  patch:
-    tags:
-      - Process
-    summary: 대체된 운동 정보 업데이트 API
-    description: 대체된 운동 정보를 수정합니다. 대체된 운동에 대한 이름과 Idx를 발급합니다.
-    parameters:
-      - in: query
-        name: routineIdx
-        required: true
-        description: 운동 루틴 인덱스
-        schema:
-          type: integer
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              beforeHealthCategoryIdx:
-                type: integer
-                example: 1
-              afterHealthCategoryIdx:
-                type: integer
-                example: 2
-    responses:
-      '1000':
-        description: 성공 - 대체된 운동 정보가 업데이트되었습니다.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                isSuccess:
-                  type: boolean
-                  example: true
-                code:
-                  type: integer
-                  example: 1000
-                message:
-                  type: string
-                  example: 성공
-      '2000':
-        description: JWT 토큰을 입력해주세요
-      '3000':
-        description: JWT 토큰 검증 실패
+  # patch:
+  #   tags:
+  #     - Process
+  #   summary: 대체된 운동 정보 업데이트 API
+  #   description: 대체된 운동 정보를 수정합니다. 대체된 운동에 대한 이름과 Idx를 발급합니다.
+  #   parameters:
+  #     - in: query
+  #       name: routineIdx
+  #       required: true
+  #       description: 운동 루틴 인덱스
+  #       schema:
+  #         type: integer
+  #   requestBody:
+  #     required: true
+  #     content:
+  #       application/json:
+  #         schema:
+  #           type: object
+  #           properties:
+  #             beforeHealthCategoryIdx:
+  #               type: integer
+  #               example: 1
+  #             afterHealthCategoryIdx:
+  #               type: integer
+  #               example: 2
+  #   responses:
+  #     '1000':
+  #       description: 성공 - 대체된 운동 정보가 업데이트되었습니다.
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               isSuccess:
+  #                 type: boolean
+  #                 example: true
+  #               code:
+  #                 type: integer
+  #                 example: 1000
+  #               message:
+  #                 type: string
+  #                 example: 성공
+  #     '2000':
+  #       description: JWT 토큰을 입력해주세요
+  #     '3000':
+  #       description: JWT 토큰 검증 실패
 
 /app/process/end:
   get:
@@ -327,12 +320,11 @@ tags:
               - routineIdx
               - totalExerciseTime
             properties:
-              'routineIdx':
-                type: integer
-                description: "운동 루틴 Idx를 입력해주세요."
               'totalExerciseTime':
                 type: integer
                 description: "총 운동 시간을 초 단위로 써주세요."
+              'routineDetails':
+                type: integer
     responses:
       '1000':
         description: "성공! myCalendar에 기록되었습니다."
