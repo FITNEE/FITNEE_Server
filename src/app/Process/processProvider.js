@@ -39,6 +39,16 @@ exports.getTotalWeight = async function (routineIdx) {
     return TotalWeight
 }
 
+exports.getTotalDist = async function (routineIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const totalDist = await processDao.selectTotalDist(connection, routineIdx)
+    
+    connection.release()
+
+    return totalDist
+}
+
 exports.getTotalCalories = async function (rouinteIdx) {
     const connection = await pool.getConnection(async (conn) => conn)
 
@@ -127,6 +137,7 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
             predictTime: detail.predictTime,
             predictCalories: detail.predictCalories,
             exerciseWeight: detail.exerciseWeight,
+            predictDist: detail.predictDist,
             rest: detail.rest,
             sets: nonNullSets.map(set => ({
                 set: set.set,
@@ -139,6 +150,7 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
 
     const totalPredictTime = combinedRoutineDetails.reduce((total, detail) => total + detail.predictTime, 0);
     const totalPredictCalories = combinedRoutineDetails.reduce((total, detail) => total + detail.predictCalories, 0);
+    const totalPredictDist = combinedRoutineDetails.reduce((total, detail) => total + detail.predictDist, 0);
     const totalWeight = combinedRoutineDetails.reduce((total, detail) => total + detail.exerciseWeight, 0);
 
     return {
@@ -148,6 +160,7 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
         totalTime: totalPredictTime,
         totalCalories: totalPredictCalories,
         totalWeight: totalWeight,
+        totalDist: totalPredictDist
     };
 };
 

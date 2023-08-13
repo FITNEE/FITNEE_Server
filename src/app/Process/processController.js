@@ -32,6 +32,7 @@ exports.getProcess = async function (req, res) {
         totalTime: routine.totalTime,
         totalCalories: routine.totalCalories,
         totalWeight: routine.totalWeight,
+        totalDist: routine.totalDist
     }));
 };
 
@@ -131,7 +132,7 @@ exports.postMycalendar = async function (req, res) {
      * Body : totalExerciseTime
      */
     // 시간은 초 단위로 받기
-    const routineIdx = req.query.routineIdx
+    const routineIdx = req.body.routineIdx
     const userId = req.decoded.userId
     const totalExerciseTime = req.body.totalExerciseTime
 
@@ -145,11 +146,11 @@ exports.postMycalendar = async function (req, res) {
     const totalWeight = await processProvider.getTotalWeight(routineIdx)
 
     const parsedTotalWeight = parseInt(totalWeight[0].totalWeight);
-
     const totalCalories = await processProvider.getTotalCalories(routineIdx)
+    const totalDist = await processProvider.getTotalDist(routineIdx)
 
     // myCalendar에 데이터 저장
-    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories)
+    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist)
 
     return res.send(response(baseResponse.SUCCESS, postMyCalendar))
 }
@@ -193,6 +194,7 @@ exports.getProcessResult = async function (req, res) {
         totalWeight: totalData.totalWeight,
         totalCalories: totalData.totalCalories,
         totalTime: totalData.totalTime,
+        totalDist: totalData.totalDist,
         getComparison: getComparison,
         countHealth: countHealth,
     }))
