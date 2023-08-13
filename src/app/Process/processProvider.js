@@ -130,7 +130,6 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
                 caution: exerciseInfo.caution,
                 distance: exerciseInfo.distance
             },
-            skip: detail.skip,
             totalSets: nonNullSets.length,
             rep: detail.sets[0].rep,
             weight: detail.sets[0].weight,

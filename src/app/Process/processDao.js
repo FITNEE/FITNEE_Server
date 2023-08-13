@@ -787,7 +787,7 @@ async function insertRoutineIdx(connection, routineContent) {
     let offset = 0;
 
     for (var i=0; i<routineContent.length; i++) {
-        if(routineContent[i].skip === "1") {
+        if(routineContent[i].skip) {
             offset += 1
             continue;
         }
