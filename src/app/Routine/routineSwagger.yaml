@@ -69,24 +69,26 @@ tags:
         content:
           application/json:
             schema:
-              'userNickName':
-                type: string
-                example: 쿠앤크맛
-              'exerciseCount':
-                type: integer
-                example: 1
-              'exerciseNames':
-                type: array
-                items:
-                  properties:
-                    type: string
-                    example: 푸쉬업
-              'exerciseParts':
-                type: array
-                items:
-                  properties:
-                    type: string
-                    example: 유산소
+              type: object
+              properties:
+                'userNickName':
+                  type: string
+                  example: 쿠앤크맛
+                'exerciseCount':
+                  type: integer
+                  example: 1
+                'exerciseNames':
+                  type: array
+                  items:
+                    properties:
+                      type: string
+                      example: 푸쉬업
+                'exerciseParts':
+                  type: array
+                  items:
+                    properties:
+                      type: string
+                      example: 유산소
 
 /app/routine/calendar:
   post:

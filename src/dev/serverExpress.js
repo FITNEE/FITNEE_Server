@@ -33,9 +33,6 @@ module.exports = function() {
                 return res.sendStatus(500);
             }
             console.log(stdout);
-            
-            while (Date.now() < Date.now()+1000);
-
             res.redirect('/cat-log');
         });
     });
