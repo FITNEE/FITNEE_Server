@@ -46,6 +46,7 @@ tags:
                     predictTime: 135
                     predictCalories: 3
                     exerciseWeight: 135
+                    predictDist: 0
                     rest: 30
                     sets:
                       - set: 0
@@ -73,6 +74,7 @@ tags:
                     predictTime: 129.60000000000002
                     predictCalories: 48
                     exerciseWeight: 36
+                    predictDist: 0
                     rest: 30
                     sets:
                       - set: 0
@@ -87,6 +89,7 @@ tags:
                 totalTime: 561.6
                 totalCalories: 108
                 totalWeight: 351
+                totalDist: 0
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
@@ -300,14 +303,11 @@ tags:
                   totalTime: 439
                   totalCalories: 124
                   totalWeight: 114
+                  totalDist: 1000
                 getComparison:
                   exerciseTimeChange: 10
                   weightChange: 30
                 countHealth: 6
-                currentDate:
-                  - year: 2023
-                    month: 8
-                    day: 9
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
@@ -362,6 +362,9 @@ tags:
                     totalExerciseTime:
                       type: integer
                       example: 60
+                    totalDist:
+                      type: integer
+                      example: 1000
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
