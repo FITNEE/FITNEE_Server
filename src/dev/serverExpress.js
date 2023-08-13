@@ -33,7 +33,7 @@ module.exports = function() {
                 return res.sendStatus(500);
             }
             console.log(stdout);
-            async () => { await new Promise(r => setTimeout(r, 1000)); };
+            async () => { await new Promise(r => setTimeout(r, 2000)); };
             res.redirect('/cat-log');
         });
     });
