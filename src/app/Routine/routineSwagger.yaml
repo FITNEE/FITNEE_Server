@@ -187,7 +187,13 @@ tags:
                   type: string
                   example: '성공'
                 'result':
-                  $ref: '#/components/schemas/Routine'
+                  type: object
+                  properties:
+                    'parts':
+                      type: string
+                      example: 등
+                    'routineDetails':
+                      $ref: '#/components/schemas/Routine'
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':

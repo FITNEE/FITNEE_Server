@@ -184,7 +184,7 @@ async function selectTodayRoutine(connection, userId) {
     responseToday.exerciseNames = exerciseNames;
     responseToday.exerciseParts = Array.from(exercisePartSets).join(', ');
     return responseToday;
-}
+};
 
 // 루틴 일정 조희
 async function selectRoutineCalendar(connection, userId) {
@@ -206,14 +206,17 @@ async function selectRoutine(connection, routineIdx) {
     const [exerciseList] = await connection.query(selectExerciseListQuery);
 
     const selectRoutineQuery = `
-                  SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+                  SELECT parts, detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
                   FROM routine
                   WHERE routineIdx = ?
                   `;
     const [[routine]] = await connection.query(selectRoutineQuery, routineIdx);
     if (!routine) return routine;
 
-    var routineContent = [];
+    var routineContent = {
+        parts : routine.parts,
+        routineDetails: []
+    };
     for (var i=0; i<10; i++) {
         const selectRoutineDetailQuery = `
                       SELECT healthCategoryIdx, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
@@ -245,7 +248,7 @@ async function selectRoutine(connection, routineIdx) {
             detailContent['exerciseName'] = exerciseList[routineDetail.healthCategoryIdx-1].name;
             detailContent['exerciseParts'] = exerciseList[routineDetail.healthCategoryIdx-1].parts;
             detailContent['content'] = detailItem;
-            routineContent.push(detailContent);
+            routineContent.routineDetails.push(detailContent);
         }
     }
 
