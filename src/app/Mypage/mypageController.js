@@ -3,6 +3,7 @@ const mypageProvider = require("./mypageProvider");
 const mypageService = require("./mypageService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
+const processProvider = require("../Process/processProvider")
 
 const crypto = require("crypto");
 
@@ -27,36 +28,92 @@ exports.getExercisedData = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, exerciseByMonth));
 }
 
-// /**
-//  * API No. 2
-//  * API Name : 선택한 날짜 운동 정보 조회
-//  * [GET] /app/mypage/exercise
-//  */
-// exports.getExerciseInfo = async function (req, res) {
-//     /**
-//      * Query String: date
-//      */
+/**
+ * API No. 2
+ * API Name : 선택한 날짜 운동 정보 조회
+ * [GET] /app/mypage/exercise
+ */
+exports.getExerciseInfo = async function (req, res) {
+    /**
+     * Query String: date
+     * Decoded : userId
+     */
 
-    
-// }
+    const date = req.query.date;
+    const userId = req.decoded.userId
+
+    // 유효성 검증: date는 8자리 정수여야 함
+    if (!/^\d{8}$/.test(date)) {
+        return res.send(response(baseResponse.MYPAGE_DATE_INVALID));
+    }
+
+    // 요일 계산 (0 : 일요일, 1 : 월요일, ... 6 : 토요일)
+    const dateObj = new Date(date.substring(0, 4), parseInt(date.substring(4, 6)) - 1, date.substring(6, 8));
+    const weekday = dateObj.getDay();
+    const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+    const dayOfWeek = weekdays[weekday];
+
+    // dayOfWeek 유효성 검증
+    if (!['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayOfWeek)) {
+        return res.send(response(baseResponse.INVALID_DAY_OF_WEEK));
+    }
+
+    const exerciseInfo = await processProvider.getRoutineDetails(dayOfWeek, userId)
+
+
+    // 운동이 등록되었는지 검증
+    const checkRoutineIdx = await processProvider.getCheckMyCalendar(exerciseInfo.routineIdx, date)
+
+    // myCalendar에서 운동 기록 유효성 검증
+    if(!checkRoutineIdx) {
+        return res.send(response(baseResponse.MYPAGE_EXERCISE_NOT_EXIST))
+    }
+
+    // exercise 데이터 조회
+    const exerciseResult = exerciseInfo.routineDetails.map(detail => ({
+        order: detail.order,
+        exerciseInfo: {
+            healthCategoryIdx: detail.exerciseInfo.healthCategoryIdx,
+            exerciseName: detail.exerciseInfo.exerciseName,
+            weight: detail.exerciseWeight
+        }
+    }))
+
+    // 마이캘린더에서 조회
+    const realTotal = await processProvider.getRealTotal(userId, date)
+
+    const totalWeight = realTotal.totalWeight
+    const totalCalories = realTotal.totalCalories
+    const totalTime = realTotal.totalTime
+
+    return res.send(response(baseResponse.SUCCESS, {
+        exercise: exerciseResult,
+        totalCalories: totalCalories,
+        totalWeight: totalWeight,
+        totalTime: totalTime
+    }))
+}
 
 /**
  * API No. 3
- * API Name :
+ * API Name : 최근 일주일 데이터 조회
  * [GET] /app/mypage/record
  */
 exports.getExerciseRecord= async function (req, res) {
 
     /**
      * Query String: month
+     * Decoded : userId
      */
-    const { month, day } = req.query;
+    const { month } = req.query;
     if (!month) return res.send(errResponse(baseResponse.CALENDAR_MONTH_EMPTY));
-    if (!day) return res.send(errResponse(baseResponse.CALENDAR_DAY_EMPTY));
+    // if (!day) return res.send(errResponse(baseResponse.CALENDAR_DAY_EMPTY));
 
-    const recordByMonth = await mypageProvider.searchRecord(month, day);
+    const userId = req.decoded.userId
+
+    const recordByMonth = await mypageProvider.searchRecord(month, userId);
     return res.send(response(baseResponse.SUCCESS, recordByMonth));
-
 }
 
 /**

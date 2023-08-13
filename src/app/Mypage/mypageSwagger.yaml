@@ -31,6 +31,104 @@ tags:
       '502':
         description: month를 입력해 주세요
 
+/app/mypage/exercise:
+  get:
+    summary: API NO.2 - exerciseinfo 조회 api
+    parameters:
+      - name: date
+        in: query
+        require: true
+        description: 조회 날짜(YYYYMMDD 형식)
+        schema:
+          type: integer
+    description: 운동했던 기록들을 조회하는 api
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  exerciseInfo:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        order:
+                          type: integer
+                          description: 운동 순서
+                        exerciseInfo:
+                          type: object
+                          properties:
+                            healthCategoryIdx:
+                              type: integer
+                              description: 운동 명칭 인덱스
+                            exerciseName:
+                              type: string
+                              description: 운동 이름
+                            weight:
+                              type: integer
+                              description: 운동 무게
+                  totalCalories:
+                    type: integer
+                    description: 총 칼로리
+                  totalWeight:
+                    type: integer
+                    description: 총 무게
+                  totalTime:
+                    type: integer
+                    description: 총 시간(초 단위)
+      '708':
+        description: 날짜형식을 YYYYMMDD 형식으로 입력해주세요.
+      '709':
+        description: 해당 날짜에 routine이 등록(기록)되지 않았습니다.
+      '801':
+        description: 요일을 입력해주세요.
+
+/app/mypage/record:
+  get:
+    summary: API NO.3 - 일주일 운동 데이터 조회 api
+    parameters:
+      - name : month
+        in: query
+        require: true
+        description: 조회할 월
+        schema:
+          type: integer
+    description: 월별 주차별 운동 기록 데이터 조회 api
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  exerciseRecord:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        weekNumer:
+                          type: string
+                          description: 주차 정보 ex) 8월 1째 주
+                        weeklyExerciseTime:
+                          type: integer
+                          description: 주간 운동 시간(초 단위)
+                        weeklyCalories:
+                          type: integer
+                          description: 주간 소모 칼로리
+      '502':
+        description: 달을 입력해주세요.
+
+
 /app/mypage/userinfo:
   get:
     summary: API NO.4 - userinfo 조회 api

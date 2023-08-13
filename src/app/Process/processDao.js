@@ -87,10 +87,14 @@ async function selectTotalWeight(connection, routineIdx) {
         .filter(detailIdx => detailIdx !== 0)
         .join(", ");
 
-    const selectDetailRows = `SELECT SUM(${caseClauses.join(" + ")}) AS totalWeight
+
+    // 스킵일 때는 total에 포함시키지 않음
+    const selectDetailRows = `
+    SELECT SUM(${caseClauses.join(" + ")}) AS totalWeight
     FROM routineDetail
     WHERE routineDetailIdx IN (${routineDetailIdxList})
-        AND (${caseClauses.join(" + ")}) > 0;`
+    AND (${caseClauses.join(" + ")}) > 0
+    AND skip != 1;`;
 
     const [TotalWeight] = await connection.query(selectDetailRows)
 
@@ -107,6 +111,109 @@ async function selectRoutineIdx(connection, dayOfWeek, userId) {
     const [routineIdRows] = await connection.query(selectRoutineIdxQuery, userId);
     
     return routineIdRows[0][`${dayOfWeek}RoutineIdx`];
+}
+
+// 총 칼로리 조회
+async function selectTotalCalories(connection, routineIdx) {
+    const selectRoutineQuery = `
+        SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
+        FROM routine
+        WHERE routineIdx = ?
+    `;
+    const [routineRows] = await connection.query(selectRoutineQuery, routineIdx);
+
+    const nonZeroDetailIdx = routineRows
+        .map((row) => [
+            row.detailIdx0,
+            row.detailIdx1,
+            row.detailIdx2,
+            row.detailIdx3,
+            row.detailIdx4,
+            row.detailIdx5,
+            row.detailIdx6,
+            row.detailIdx7,
+            row.detailIdx8,
+            row.detailIdx9
+        ])
+        .flat()
+        .filter((detailIdx) => detailIdx !== 0);
+
+    if (nonZeroDetailIdx.length === 0) {
+        return 0; // 0이 아닌 값이 없으면 칼로리도 0
+    }
+
+    const selectCaloriesQuery = `
+        SELECT SUM(
+            CASE
+                WHEN rd.rep0 IS NOT NULL THEN rd.rep0 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep1 IS NOT NULL THEN rd.rep1 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep2 IS NOT NULL THEN rd.rep2 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep3 IS NOT NULL THEN rd.rep3 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep4 IS NOT NULL THEN rd.rep4 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep5 IS NOT NULL THEN rd.rep5 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep6 IS NOT NULL THEN rd.rep6 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep7 IS NOT NULL THEN rd.rep7 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep8 IS NOT NULL THEN rd.rep8 * hc.calories
+                ELSE 0
+            END +
+            CASE
+                WHEN rd.rep9 IS NOT NULL THEN rd.rep9 * hc.calories
+                ELSE 0
+            END
+        ) AS totalCalories
+        FROM routineDetail rd
+        INNER JOIN healthCategory hc ON rd.healthCategoryIdx = hc.healthCategoryIdx
+        WHERE rd.routineDetailIdx IN (?)
+    `;
+
+    const [caloriesRows] = await connection.query(selectCaloriesQuery, [nonZeroDetailIdx]);
+
+    const totalCalories = caloriesRows[0].totalCalories;
+
+    return totalCalories;
+
+
+}
+
+
+
+async function selectTotalTime(connection, userId, todayDate) {
+    const selectTotalTimeQuery = `
+        SELECT totalExerciseTime
+        FROM myCalendar
+        WHERE userId = ? AND healthDate = ?;
+    `;
+    const [totalTimeRows] = await connection.query(selectTotalTimeQuery, [userId, todayDate])
+
+    if(totalTimeRows.length === 0) {
+        return 0
+    }
+
+    return totalTimeRows[0].totalExerciseTime
 }
 
 async function selectDetailIdx(connection, healthCategory) {
@@ -643,18 +750,32 @@ async function updateSkipValue(connection, routineIdx, healthCategoryIdxParam) {
 }
 
 // Insert calendar data
-async function insertMyCalendar(connection, userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime) {
+async function insertMyCalendar(connection, userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, totalCalories) {
     const insertMyCalendarQuery = `
-    INSERT INTO myCalendar (userIdx, userId, routineIdx, totalWeight, totalExerciseTime, healthDate)
-    VALUES (?, ?, ?, ?, ?, ?);
+    INSERT INTO myCalendar (userIdx, userId, routineIdx, totalExerciseTime, totalWeight, healthDate, totalCalories)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
     `;
     const cuurentDate = new Date()
 
-    const insertParams = [userIdx, userId, routineIdx, parsedTotalWeight, totalExerciseTime, cuurentDate];
+    const insertParams = [userIdx, userId, routineIdx, totalExerciseTime, parsedTotalWeight, cuurentDate, totalCalories];
 
     const [insertRows] = await connection.query(insertMyCalendarQuery, insertParams);
 
+
     return insertRows;
+}
+
+// 마이캘린더에서 데이터 조회
+async function selectTotalData(connection, userId, todayDate) {
+    const totalDataQuery = `
+        SELECT totalExerciseTime, totalWeight, totalCalories
+        FROM myCalendar
+        WHERE userId = ? AND healthDate = ?;
+    `;
+
+    const [totalDataRows] = await connection.query(totalDataQuery, [userId, todayDate])
+    
+    return totalDataRows[0]
 }
 
 // routineIdx 기준으로 마지막 데이터 2개 합차 조회(-1 인덱스와 -2 인덱스 차이)
@@ -678,8 +799,6 @@ async function getComparison(connection, userId, routineIdx) {
     const exerciseTimeChange = lastTwoData[1].totalExerciseTime - lastTwoData[0].totalExerciseTime;
     const weightChange = lastTwoData[1].totalWeight - lastTwoData[0].totalWeight;
 
-    console.log("exerciseTimeChange:", exerciseTimeChange)
-    console.log("weightChange:", weightChange)
 
 
     return { exerciseTimeChange, weightChange };
@@ -706,7 +825,52 @@ async function getHealthCount(connection, userId) {
     return selectHealthCount[0][0].count;
 }
 
+// myCalendar에 routineIdx 및 날짜 검증
+async function getValidRoutineIdx(connection, routineIdx, date) {
+    // 날짜 값 변환: YYYYMMDD -> YYYY-MM-DD
+    const formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+
+    const checkMyCalendarQuery = `
+        SELECT EXISTS ( 
+            SELECT 1
+            FROM myCalendar
+            WHERE routineIdx = ? AND healthDate = ?
+        ) AS \`exists\`;
+    `;
+    const [rows] = await connection.query(checkMyCalendarQuery, [routineIdx, formattedDate])
+    const exists = rows[0].exists === 1
+
+    return exists
+}
+
+// myCalendar에서 운동 시간, 무게, 칼로리 조회
+async function getRealTotal(connection, userId, date) {
+    const selectRealTotalQuery = `
+        SELECT totalExerciseTime, totalWeight, totalCalories
+        FROM myCalendar
+        WHERE userId = ? AND healthDate = ?;
+    `;
+    const [rows] = await connection.query(selectRealTotalQuery, [userId, date])
+
+    if (rows.length === 0) {
+        return null
+    }
+
+    const { totalExerciseTime, totalWeight, totalCalories } = rows[0]
+
+    return {
+        totalExerciseTime,
+        totalWeight,
+        totalCalories
+    }
+}
+
 module.exports = {
+    selectTotalData,
+    selectTotalTime,
+    selectTotalCalories,
+    getRealTotal,
+    getValidRoutineIdx,
     getComparison,
     getHealthCount,
     updateRoutineDetail,

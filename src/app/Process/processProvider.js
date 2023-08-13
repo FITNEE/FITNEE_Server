@@ -39,6 +39,36 @@ exports.getTotalWeight = async function (routineIdx) {
     return TotalWeight
 }
 
+exports.getTotalCalories = async function (rouinteIdx) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const totalCalories = await processDao.selectTotalCalories(connection, rouinteIdx)
+
+    connection.release()
+
+    return totalCalories
+}
+
+exports.getTotalTime = async function (userId, todayDate) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const totalTime = await processDao.selectTotalTime(connection, userId, todayDate)
+
+    connection.release()
+
+    return totalTime
+}
+
+exports.getTotalData = async function (userId, todayDate) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const totalData = await processDao.selectTotalData(connection, userId, todayDate)
+
+    connection.release()
+
+    return totalData
+}
+
 exports.getDetailIdx = async function (healthCategory) {
     const connection = await pool.getConnection(async (conn) => conn);
     
@@ -175,4 +205,24 @@ exports.getHealthCount = async function (userId) {
 
     connection.release()
     return HealthCount
+}
+
+// 마이캘린더에 날짜 및 routineIdx 유효성 검증
+exports.getCheckMyCalendar = async function (routineIdx, date) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const ValidRoutineIdx = await processDao.getValidRoutineIdx(connection, routineIdx, date)
+
+    connection.release()
+    return ValidRoutineIdx
+}
+
+// 마이캘린더의 총 운동 무게, 시간, 칼로리 조회
+exports.getRealTotal = async function (userId, date) {
+    const connection = await pool.getConnection(async (conn) => conn)
+
+    const realTotal = await processDao.getRealTotal(connection, userId, date)
+
+    connection.release()
+    return realTotal
 }
