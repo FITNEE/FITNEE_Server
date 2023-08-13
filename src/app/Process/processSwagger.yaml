@@ -329,6 +329,7 @@ tags:
       - in: body
         name: totalExerciseTime
         required: true
+        description: 운동 총 시간
         schema:
           type: integer
           example: 1000
