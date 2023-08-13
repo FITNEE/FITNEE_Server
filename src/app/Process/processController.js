@@ -143,8 +143,7 @@ exports.getProcessResult = async function (req, res) {
         todayTotalCalories: totalData.totalCalories,
         todayTotalTime: totalData.totalTime,
         todayTotalDist: totalData.totalDist,
-        exerciseTimeChange: getComparison.exerciseTimeChange,
-        weightChange: getComparison.weightChange,
+        getComparison: getComparison,
         monthCountHealth: countHealth,
     }))
 }
