@@ -361,3 +361,5 @@ tags:
         description: 비교할 직전 데이터가 존재하지 않습니다.
       '807':
         description: 마이 캘린더에 추천받은 routineIdx가 존재하지 않습니다.
+      '808':
+        description: 해당 날짜에 routineIdx가 존재하지 않습니다.
