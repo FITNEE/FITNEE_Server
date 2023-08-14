@@ -756,8 +756,6 @@ async function getHealthCount(connection, userId) {
 
 // myCalendar에 routineIdx 및 날짜 검증
 async function getValidRoutineIdx(connection, routineIdx, date) {
-    // 날짜 값 변환: YYYYMMDD -> YYYY-MM-DD
-    const formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
 
     const checkMyCalendarQuery = `
         SELECT EXISTS ( 
@@ -766,7 +764,7 @@ async function getValidRoutineIdx(connection, routineIdx, date) {
             WHERE routineIdx = ? AND healthDate = ?
         ) AS \`exists\`;
     `;
-    const [rows] = await connection.query(checkMyCalendarQuery, [routineIdx, formattedDate])
+    const [rows] = await connection.query(checkMyCalendarQuery, [routineIdx, date])
     const exists = rows[0].exists === 1
 
     return exists

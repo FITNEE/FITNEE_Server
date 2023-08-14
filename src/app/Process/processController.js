@@ -132,6 +132,10 @@ exports.getProcessResult = async function (req, res) {
 
     const todayDate = `${year}-${month}-${day}`;
 
+    // 마이 캘린더에 존재하는 routineIdx인지 검증ㅇ
+    const  checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
+    if(!checkRoutineIdx) return res.send(response(baseResponse.PROCESS_ROUTINEIDX_NOT_EXIST))
+
     // 무게, 시간 차이 조회
     const getComparison = await processProvider.getComparison(userId, originRoutineIdx)
     if(!getComparison) return res.send(response(baseResponse.PROCESS_COMPARISON_NOT_EXIST))

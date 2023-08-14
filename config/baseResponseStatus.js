@@ -75,6 +75,7 @@ module.exports = {
     PROCESS_EXERCISE_NOT_EXIST: { "isSuccess":false, "code":805, "message":"운동 기록이 저장되지 않았습니다."},
     PROCESS_COMPARISON_NOT_EXIST: { "isSuccess":false, "code":806, "message":"비교할 직전 데이터가 존재하지 않습니다."},
     PROCESS_ORIGINROUTINEIDX_NOT_EXIST: { "isSuccess":false, "code":807, "message":"마이 캘린더에 추천받은 routineIdx가 존재하지 않습니다."},
+    PROCESS_ROUTINEIDX_NOT_EXIST: { "isSuccess": false, "code": 808, "message":"해당 날짜에 routineIdx가 존재하지 않습니다."},
     //Request error
 
     //signup(회원가입)
