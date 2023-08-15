@@ -767,16 +767,16 @@ async function getHealthCount(connection, userId) {
 }
 
 // myCalendar에 routineIdx 및 날짜 검증
-async function getValidRoutineIdx(connection, routineIdx, date) {
+async function getValidRoutineIdx(connection, originRoutineIdx, date) {
 
     const checkMyCalendarQuery = `
         SELECT EXISTS ( 
             SELECT 1
             FROM myCalendar
-            WHERE routineIdx = ? AND healthDate = ?
+            WHERE originRoutineIdx = ? AND healthDate = ?
         ) AS \`exists\`;
     `;
-    const [rows] = await connection.query(checkMyCalendarQuery, [routineIdx, date])
+    const [rows] = await connection.query(checkMyCalendarQuery, [originRoutineIdx, date])
     const exists = rows[0].exists === 1
 
     return exists

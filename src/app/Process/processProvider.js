@@ -235,10 +235,10 @@ exports.getHealthCount = async function (userId) {
 }
 
 // 마이캘린더에 날짜 및 routineIdx 유효성 검증
-exports.getCheckMyCalendar = async function (routineIdx, date) {
+exports.getCheckMyCalendar = async function (originRoutineIdx, date) {
     const connection = await pool.getConnection(async (conn) => conn)
 
-    const ValidRoutineIdx = await processDao.getValidRoutineIdx(connection, routineIdx, date)
+    const ValidRoutineIdx = await processDao.getValidRoutineIdx(connection, originRoutineIdx, date)
 
     connection.release()
     return ValidRoutineIdx
