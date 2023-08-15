@@ -64,9 +64,7 @@ exports.getReplacementRecommendations = async function (req, res) {
         parts: row.parts,
         muscle: row.muscle,
         equipment: row.equipment,
-        ...(row.caution1 !== null && { caution1: row.caution1 }), // caution1이 null이 아닌 경우만 caution1 속성 추가
-        ...(row.caution2 !== null && { caution2: row.caution2 }), // caution2가 null이 아닌 경우만 caution2 속성 추가
-        ...(row.caution3 !== null && { caution3: row.caution3 }), // caution3이 null이 아닌 경우만 caution3 속성 추가
+        caution: [row.caution1, row.caution2, row.caution3].filter(caution => caution !== null && caution !== ''),
     }));
 
     return res.send(response(baseResponse.SUCCESS, processedRows))
