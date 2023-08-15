@@ -154,7 +154,43 @@ tags:
             $ref: '#/components/schemas/RoutineCalendar'
     responses:
       '1000':
-        description: 성공 - 각 요일별 루틴 Idx 값을 통해 수정합니다. 
+        description: 성공 - 각 요일별 루틴 Idx 값을 통해 수정합니다.
+
+/app/routine/calendar/parts:
+  get:
+    tags:
+      - Routine
+    summary: 루틴 부위 조회 API
+    description: 일주일 루틴의 각 부위를 조회하는 API
+    responses:
+      '1000':
+        description: 성공 - 루틴이 존재하지 않는 요일은 "" 빈 값으로 반환됩니다.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'mon':
+                  type: string
+                  example: ""
+                'tue':
+                  type: string
+                  example: "가슴"
+                'wed':
+                  type: string
+                  example: ""
+                'thu':
+                  type: string
+                  example: "등"
+                'fri':
+                  type: string
+                  example: ""
+                'sat':
+                  type: string
+                  example: "하체"
+                'sun':
+                  type: string
+                  example: ""
 
 /app/routine/{routineIdx}:
   get:
