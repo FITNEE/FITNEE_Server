@@ -121,8 +121,8 @@ tags:
                         weeklyCalories:
                           type: integer
                           description: 주간 소모 칼로리
-      '502':
-        description: 달을 입력해주세요.
+      # '502':
+      #   description: 달을 입력해주세요.
 
 
 /app/mypage/userinfo:
