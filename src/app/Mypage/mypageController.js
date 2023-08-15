@@ -94,7 +94,7 @@ exports.getExerciseRecord= async function (req, res) {
 
 /**
  * API No. 4
- * API Name : 토큰으로 유저 검증후 유저info 조회 - userNickname, birthYear, userId 반환
+ * API Name : 토큰으로 유저 검증후 유저info 조회 - userNickname, birthYear, userId, gender 반환
  * [GET] /app/mypage/userinfo
  */
 exports.getUserData = async function (req, res) {
