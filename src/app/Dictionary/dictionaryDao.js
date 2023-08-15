@@ -200,35 +200,48 @@ async function updateChattRead(connection, userIdFromJWT, healthChattingIdx) {
 }
 
 async function readResult(connection, userIdFromJWT, name) {
-    const chattReadInformationQuery = `
-        SELECT
-            IFNULL(
-                (
-                    SELECT
-                        IF(
-                            userChatReadIdx IS NULL,
-                            1,
-                            IF(
-                                lastReadChatidx < (
-                                    SELECT MAX(healthChattingIdx) FROM healthChatting WHERE healthCategoryName = ?
-                                ),
-                                1,
-                                0
-                            )
-                        ) AS hasUnreadChats
-                    FROM userChatRead
-                    WHERE userIdx = (SELECT userIdx FROM User WHERE userId = ?)
-                    AND healthCategoryName = ?
-                    LIMIT 1
-                ),
-                1
-            ) AS hasUnreadChats;
+    const chatExistQuery = `
+        SELECT CASE WHEN EXISTS (
+            SELECT 1
+            FROM healthChatting
+            WHERE healthCategoryName = ? 
+            LIMIT 1
+        ) THEN TRUE ELSE FALSE END AS chatExists;
     `;
 
-    const [informationRows] = await connection.query(chattReadInformationQuery, [name, userIdFromJWT, name]);
-    return informationRows;
-}
+    const [chatExist] = await connection.query(chatExistQuery, [name]);
 
+    if (chatExist[0].chatExists === 1) {
+        const chattReadInformationQuery = `
+            SELECT
+                IFNULL(
+                    (
+                        SELECT
+                            IF(
+                                userChatReadIdx IS NULL,
+                                1,
+                                IF(
+                                    lastReadChatidx < (
+                                        SELECT MAX(healthChattingIdx) FROM healthChatting WHERE healthCategoryName = ?
+                                    ),
+                                    1,
+                                    0
+                                )
+                            ) AS hasUnreadChats
+                        FROM userChatRead
+                        WHERE userIdx = (SELECT userIdx FROM User WHERE userId = ?)
+                        AND healthCategoryName = ?
+                        LIMIT 1
+                    ),
+                    1
+                ) AS hasUnreadChats;
+        `;
+        const [informationRows] = await connection.query(chattReadInformationQuery, [name, userIdFromJWT, name]);
+        return { chatExist: chatExist[0], informationRows: informationRows[0] };
+    } else {
+        return { chatExist: chatExist[0] };
+    }
+}
 
 
 module.exports = {

@@ -186,7 +186,7 @@ exports.updateChatRead = async function (req, res) {
 
 /**
  *  * API No. 10
- * API Name : healthName받아서 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환
+ * API Name : healthChatting테이블에 채팅이 존재하는지 / healthName받아서 안읽은 채팅이 있다면 1(true), 모든 채팅을 다 읽었다면 0(false)를 반환
  * [GET] /app/dictionary/readInfo
  */
 exports.getReadInfo = async function (req, res) {
