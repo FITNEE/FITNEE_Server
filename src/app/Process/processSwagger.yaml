@@ -94,6 +94,11 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+      '801':
+        description: 요일을 입력해주세요
+      '810':
+        description: 해당 요일에 루틴이 존재하지 않습니다.
+      
 
 /app/process/replace:
   get:
@@ -136,16 +141,174 @@ tags:
                         properties:
                           name:
                             type: string
-                            example: 체스트 프레스 머신
+                            example: 레그 프레스
                           healthCategoryIdx:
                             type: integer
-                            example: 3
+                            example: 15
+                          parts:
+                            type: string
+                            example: "하체"
+                          muscle:
+                            type: string
+                            example: 대퇴사두근
+                          equipent:
+                            type: string
+                            example: 머신
+                          caution:
+                            type: string
+                            example: 레그 프레스 주의사항
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+      '811':
+        description: 해당 운동과 관련된 다른 운동이 존재하지 않습니다.
 
 /app/process/end:
+  post:
+    tags:
+      - Process
+    summary: "myCalendar 기록 추가 API"
+    description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - originRoutineIdx
+              - totalExerciseTime
+              - routineDetails
+            properties:
+              originRoutineIdx:
+                type: integer
+                description: 추천 받았던 routineIdx 값을 입력해주세요.
+              totalExerciseTime:
+                type: integer
+                description: "총 운동 시간을 초 단위로 써주세요."
+              routineDetails:
+                type: array
+                items:
+                    type: object
+                    required:
+                      - order
+                      - exerciseInfo
+                      - totalSets
+                      - rep
+                      - weight
+                      - predictTime
+                      - predictCalories
+                      - exerciseWeight
+                      - predictDist
+                      - rest
+                      - sets
+                    properties:
+                      order:
+                        type: integer
+                        example: 1
+                      exerciseInfo:
+                        type: object
+                        required:
+                          - healthCategoryIdx
+                          - exerciseName
+                          - parts
+                          - muscle
+                          - equipment
+                          - caution
+                          - distance
+                        properties:
+                          healthCategoryIdx:
+                            type: integer
+                          exerciseName:
+                            type: string
+                          parts:
+                            type: string
+                          muscle:
+                            type: string
+                          equipment:
+                            type: string
+                          caution:
+                            type: array
+                            items:
+                              type: string
+                          distance:
+                            type: integer
+                      totalSets:
+                        type: integer
+                      rep:
+                        type: integer
+                      weight:
+                        type: integer
+                      predictTime:
+                        type: integer
+                      predictCalories:
+                        type: integer
+                      exerciseWeight:
+                        type: integer
+                      predictDist:
+                        type: integer
+                      rest:
+                        type: integer
+                      sets:
+                        type: array      
+                        items:
+                          type: object
+                          required:
+                            - set
+                            - rep
+                            - weight
+                          properties:
+                            set:
+                              type: integer
+                            rep:
+                              type: integer
+                            weight:
+                              type: integer
+
+    responses:
+      '1000':
+        description: "성공! myCalendar에 기록되었습니다."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: "success"
+                data:
+                  type: object
+                  properties:
+                    myCalendarId:
+                      type: integer
+                      example: 123
+                    userId:
+                      type: integer
+                      example: 456
+                    routineIdx:
+                      type: integer
+                      example: 789
+                    totalWeight:
+                      type: integer
+                      example: 150
+                    totalExerciseTime:
+                      type: integer
+                      example: 60
+                    totalDist:
+                      type: integer
+                      example: 1000
+      '2000':
+        description: JWT 토큰을 입력해주세요
+      '3000':
+        description: JWT 토큰 검증 실패
+      '802':
+        description: 총 운동 시간을 입력해주세요
+      '803':
+        description: routineDetails 값들을 입력해주세요
+      '804':
+        description: 추천받았던 routineIdx 값을 입력해주세요
+
   get:
     tags:
       - Process
@@ -209,59 +372,15 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
-
-  post:
-    tags:
-      - Process
-    summary: "myCalendar 기록 추가 API"
-    description: 운동 기록을 마이 캘린더에 저장합니다. 초 단위로 입력해주세요.
-    requestBody:
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - routineIdx
-              - totalExerciseTime
-            properties:
-              'totalExerciseTime':
-                type: integer
-                description: "총 운동 시간을 초 단위로 써주세요."
-              'routineDetails':
-                type: integer
-    responses:
-      '1000':
-        description: "성공! myCalendar에 기록되었습니다."
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  example: "success"
-                data:
-                  type: object
-                  properties:
-                    myCalendarId:
-                      type: integer
-                      example: 123
-                    userId:
-                      type: integer
-                      example: 456
-                    routineIdx:
-                      type: integer
-                      example: 789
-                    totalWeight:
-                      type: integer
-                      example: 150
-                    totalExerciseTime:
-                      type: integer
-                      example: 60
-                    totalDist:
-                      type: integer
-                      example: 1000
-      '2000':
-        description: JWT 토큰을 입력해주세요
-      '3000':
-        description: JWT 토큰 검증 실패
+      '804':
+        description: 추천 받았던 routineIdx 값을 입력해주세요.
+      '805':
+        description: 운동 기록이 저장되지 않았습니다.
+      '806':
+        description: 비교할 직전 데이터가 존재하지 않습니다.
+      '807':
+        description: 마이 캘린더에 추천받은 routineIdx가 존재하지 않습니다.
+      '808':
+        description: 해당 날짜에 routineIdx가 존재하지 않습니다.
+      '809':
+        description: 총 칼로리는 0보다 커야 합니다.

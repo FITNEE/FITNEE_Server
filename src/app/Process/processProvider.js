@@ -4,10 +4,16 @@ const { logger } = require("../../../config/winston");
 const processDao = require("./processDao");
 
 // Provider: Read 비즈니스 로직 처리
-
-exports.validateUser = async function (userId, routineIdx) {
+exports.getCheckRoutineCalendar = async function(dayOfWeek, userId) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const isValidUserCheck = await processDao.isValidUser(connection, userId, routineIdx)
+    const routineCheck = await processDao.getRoutineIdxCheck(connection, dayOfWeek, userId)
+    connection.release()
+    return routineCheck
+}
+
+exports.validateUser = async function (userId, originRoutineIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const isValidUserCheck = await processDao.isValidUser(connection, userId, originRoutineIdx)
     connection.release()
     return isValidUserCheck
 }
@@ -69,10 +75,10 @@ exports.getTotalTime = async function (userId, todayDate) {
     return totalTime
 }
 
-exports.getTotalData = async function (userId, todayDate, originRoutineIdx) {
+exports.getTotalData = async function (userId, todayDate) {
     const connection = await pool.getConnection(async (conn) => conn)
 
-    const totalData = await processDao.selectTotalData(connection, userId, todayDate, originRoutineIdx)
+    const totalData = await processDao.selectTotalData(connection, userId, todayDate)
 
     connection.release()
 
@@ -88,6 +94,16 @@ exports.getDetailIdx = async function (healthCategory) {
     connection.release()
 
     return detailIdx
+}
+
+exports.getMycalendar = async function (date, userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    const processData = await processDao.selectProcessData(connection, date, userId)
+
+    connection.release()
+
+    return processData
 }
 
 exports.getRoutineDetails = async function (dayOfWeek, userId) {
@@ -164,9 +180,9 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
 };
 
 // 무게, 횟수 증감 조회
-exports.getComparison = async function (userId, rouinteIdx) {
+exports.getComparison = async function (userId, originRoutineIdx) {
     const connection = await pool.getConnection(async (conn) => conn)
-    const comparison = await processDao.getComparison(connection, userId, rouinteIdx)
+    const comparison = await processDao.getComparison(connection, userId, originRoutineIdx)
     connection.release()
 
     return comparison
@@ -188,7 +204,6 @@ exports.getReplacementExercises = async function (healthCategoryIdx) {
     // 랜덤 3개(최대) 데이터 뽑아오기
     const maxRecommendations = 3;
     const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, healthCategoryIdx, maxRecommendations);
-
 
     connection.release()
 
@@ -220,10 +235,10 @@ exports.getHealthCount = async function (userId) {
 }
 
 // 마이캘린더에 날짜 및 routineIdx 유효성 검증
-exports.getCheckMyCalendar = async function (routineIdx, date) {
+exports.getCheckMyCalendar = async function (originRoutineIdx, todayDate) {
     const connection = await pool.getConnection(async (conn) => conn)
 
-    const ValidRoutineIdx = await processDao.getValidRoutineIdx(connection, routineIdx, date)
+    const ValidRoutineIdx = await processDao.getValidRoutineIdx(connection, originRoutineIdx, todayDate)
 
     connection.release()
     return ValidRoutineIdx

@@ -52,27 +52,27 @@ tags:
             schema:
               type: object
               properties:
+                isSuccess:
+                  type: boolean
+                  description: 성공 여부
+                  example: true
+                code:
+                  type: integer
+                  description: 응답 코드
+                  example: 1000
+                message:
+                  type: string
+                  description: 응답 메시지
+                  example: 성공
                 result:
-                  exerciseInfo:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        order:
-                          type: integer
-                          description: 운동 순서
-                        exerciseInfo:
-                          type: object
-                          properties:
-                            healthCategoryIdx:
-                              type: integer
-                              description: 운동 명칭 인덱스
-                            exerciseName:
-                              type: string
-                              description: 운동 이름
-                            weight:
-                              type: integer
-                              description: 운동 무게
+                  type: object
+                  properties:
+                    exercise:
+                      type: array
+                      description: 운동 목록
+                      items:
+                        type: string
+                        example: ["데드리프트", "풀업"]
                   totalCalories:
                     type: integer
                     description: 총 칼로리
@@ -89,8 +89,8 @@ tags:
         description: 날짜형식을 YYYYMMDD 형식으로 입력해주세요.
       '709':
         description: 해당 날짜에 routine이 등록(기록)되지 않았습니다.
-      '801':
-        description: 요일을 입력해주세요.
+      '710':
+        description: 해당 날짜에 운동 기록이 두 개 이상 존재합니다.
 
 /app/mypage/record:
   get:

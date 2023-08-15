@@ -64,13 +64,21 @@ module.exports = {
     MYPAGE_USERPW_UNEQUAL: { "isSuccess": false, "code": 707, "message":"입력한 userPw와 기존 userPw가 동일하지 않습니다." },
     MYPAGE_DATE_INVALID: { "isSuccess": false, "code": 708, "message":"유효하지 않은 날짜 형식입니다." },
     MYPAGE_EXERCISE_NOT_EXIST: { "isSuccess": false, "code": 709, "message":"운동 기록이 없습니다."},
+    MYPAGE_EXERCISE_INVALID: { "isSuccess": false, "code": 710, "message":"운동 기록이 두 개 이상 존재합니다."},
     
 
     // process error
     INVALID_DAY_OF_WEEK: { "isSuccess": false, "code":801, "message":"요일을 입력해주세요."},
     PROCESS_TOTALTIME_INVALID: { "isSuccess": false, "code":802, "message":"운동 총 시간을 입력해주세요."},
     PROCESS_ROUTINECONTENT_INVALID: { "isSuccess": false, "code":803, "message":"routineDetails를 입력해주세요."},
-    PROCESS_ORIGINROUTINEIDX_INVALID: { "isSuccess": false, "code":804, "message":"routineIdx 값을 입력해주세요."},
+    PROCESS_ORIGINROUTINEIDX_INVALID: { "isSuccess": false, "code":804, "message":"추천 받았던 routineIdx 값을 입력해주세요."},
+    PROCESS_EXERCISE_NOT_EXIST: { "isSuccess":false, "code":805, "message":"운동 기록이 저장되지 않았습니다."},
+    PROCESS_COMPARISON_NOT_EXIST: { "isSuccess":false, "code":806, "message":"비교할 직전 데이터가 존재하지 않습니다."},
+    PROCESS_ORIGINROUTINEIDX_NOT_EXIST: { "isSuccess":false, "code":807, "message":"마이 캘린더에 추천받은 routineIdx가 존재하지 않습니다."},
+    PROCESS_ROUTINEIDX_NOT_EXIST: { "isSuccess": false, "code": 808, "message":"해당 날짜에 routineIdx가 존재하지 않습니다."},
+    PROCESS_CALORIES_NOT_EXIST: { "isSuccess": false, "code": 809, "message":"총 칼로리는 0보다 커야 합니다."},
+    PROCESS_DAYOFWEEK_NOT_EXIST: { "isSuccess": false, "code": 810, "message":"해당 요일에 루틴이 존재하지 않습니다."},
+    PROCESS_REPLACEMENT_NOT_EXIST: { "isSuccess": false, "code": 811, "message":"해당 운동과 관련된 다른 운동이 존재하지 않습니다."},
     //Request error
 
     //signup(회원가입)

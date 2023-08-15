@@ -47,39 +47,12 @@ exports.getExerciseInfo = async function (req, res) {
         return res.send(response(baseResponse.MYPAGE_DATE_INVALID));
     }
 
-    // 요일 계산 (0 : 일요일, 1 : 월요일, ... 6 : 토요일)
-    const dateObj = new Date(date.substring(0, 4), parseInt(date.substring(4, 6)) - 1, date.substring(6, 8));
-    const weekday = dateObj.getDay();
-    const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const exerciseName = await processProvider.getMycalendar(date, userId)
 
-    const dayOfWeek = weekdays[weekday];
-
-    // dayOfWeek 유효성 검증
-    if (!['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayOfWeek)) {
-        return res.send(response(baseResponse.INVALID_DAY_OF_WEEK));
-    }
-
-    const exerciseInfo = await processProvider.getRoutineDetails(dayOfWeek, userId)
-
-
-    // 운동이 등록되었는지 검증
-    const checkRoutineIdx = await processProvider.getCheckMyCalendar(exerciseInfo.routineIdx, date)
-
-    // myCalendar에서 운동 기록 유효성 검증
-    if(!checkRoutineIdx) {
-        return res.send(response(baseResponse.MYPAGE_EXERCISE_NOT_EXIST))
-    }
-
-    // exercise 데이터 조회
-    const exerciseResult = exerciseInfo.routineDetails.map(detail => ({
-        order: detail.order,
-        exerciseInfo: {
-            healthCategoryIdx: detail.exerciseInfo.healthCategoryIdx,
-            exerciseName: detail.exerciseInfo.exerciseName,
-            weight: detail.exerciseWeight,
-            dist: detail.predictDist
-        }
-    }))
+    // 운동 기록이 하나도 없을 경우
+    if(exerciseName === 0) return res.send(response(baseResponse.MYPAGE_EXERCISE_NOT_EXIST))
+    // 운동 기록이 두 개 이상 있을 경우
+    if(exerciseName >= 2) return res.send(response(baseResponse.MYPAGE_EXERCISE_INVALID))
 
     // 마이캘린더에서 조회
     const realTotal = await processProvider.getRealTotal(userId, date)
@@ -90,7 +63,7 @@ exports.getExerciseInfo = async function (req, res) {
     const totalDist = realTotal.totalDist
 
     return res.send(response(baseResponse.SUCCESS, {
-        exercise: exerciseResult,
+        exercise: exerciseName,
         totalCalories: totalCalories,
         totalWeight: totalWeight,
         totalTime: totalTime,
@@ -121,7 +94,7 @@ exports.getExerciseRecord= async function (req, res) {
 
 /**
  * API No. 4
- * API Name : 토큰으로 유저 검증후 유저info 조회 - userNickname, birthYear, userId 반환
+ * API Name : 토큰으로 유저 검증후 유저info 조회 - userNickname, birthYear, userId, gender 반환
  * [GET] /app/mypage/userinfo
  */
 exports.getUserData = async function (req, res) {

@@ -16,6 +16,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "date-fns": "^2.30.0",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
     "lodash": "^4.17.21",
@@ -26,11 +27,11 @@
     "regex-email": "^1.0.2"
   },
   "devDependencies": {
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.2.1",
+    "child_process": "^1.0.2",
     "swagger-autogen": "^2.23.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
-    "child_process": "^1.0.2"
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.2.1"
   }
 }
