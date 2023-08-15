@@ -695,13 +695,13 @@ async function insertRoutineIdx(connection, routineContent) {
 }
 
 // Insert calendar data
-async function insertMyCalendar(connection, userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, currentDate, totalCalories, totalDist) {
+async function insertMyCalendar(connection, userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, todayDate, totalCalories, totalDist) {
     const insertMyCalendarQuery = `
     INSERT INTO myCalendar (userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, healthDate, totalCalories, totalDist)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
 
-    const insertParams = [userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, currentDate, totalCalories, totalDist];
+    const insertParams = [userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, todayDate, totalCalories, totalDist];
 
     const [insertRows] = await connection.query(insertMyCalendarQuery, insertParams);
 
