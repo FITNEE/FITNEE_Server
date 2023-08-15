@@ -38,4 +38,7 @@ router.put('/:routineIdx', routine.putRoutine);
 // 루틴 삭제 API
 router.delete('/:routineIdx', routine.deleteRoutine);
 
+// 운동 과정 업데이트 API
+// router.get('/end/detail', routine)
+
 module.exports = router;

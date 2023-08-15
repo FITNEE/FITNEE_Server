@@ -203,7 +203,11 @@ async function selectRoutineCalendar(connection, userId) {
 
 async function selectRoutineParts(connection, userId) {
     const weekEn = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    const parts = {};
+    const responseRoutineParts = {
+        routineIdx: {},
+        parts: {},
+    };
+
     const selectRoutineCalendarQuery = `
                   SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
                   FROM routineCalendar
@@ -218,15 +222,17 @@ async function selectRoutineParts(connection, userId) {
 
     for (var i=0; i<7; i++) {
         const curIdx = routineCalendar[`${weekEn[i]}RoutineIdx`];
+        responseRoutineParts.routineIdx[`${weekEn[i]}`] = curIdx;
+
         if (!curIdx) {
-            parts[`${weekEn[i]}`] = '';
+            responseRoutineParts.parts[`${weekEn[i]}`] = '';
         } else {
             const [[routineParts]] = await connection.query(selectRoutinePartsQuery, curIdx);
-            parts[`${weekEn[i]}`] = routineParts.parts;
+            responseRoutineParts.parts[`${weekEn[i]}`] = routineParts.parts;
         };
     };
 
-    return parts;
+    return responseRoutineParts;
 };
 
 
