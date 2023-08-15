@@ -104,6 +104,19 @@ exports.postMycalendar = async function (req, res) {
     // 새로 만들어진 routineIdx(업데이트 될 수도 있기 때문)
     const routineIdx = await processService.insertRoutineIdx(routineContent)
 
+    // 현재 시간을 UTC로 가져오기
+    const currentDate = new Date();
+    const utcDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() * 60000));
+
+    // 9시간 추가하여 한국 시간대로 변환
+    const koreanDate = new Date(utcDate.getTime() + (9 * 3600000)); // 9시간 * 60분 * 60초 * 1000밀리초
+
+    const year = koreanDate.getFullYear();
+    const month = String(koreanDate.getMonth() + 1).padStart(2, '0');
+    const day = String(koreanDate.getDate()).padStart(2, '0');
+
+    const todayDate = `${year}-${month}-${day}`;
+
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
     const weight = await processProvider.getTotalWeight(routineIdx)
@@ -115,7 +128,7 @@ exports.postMycalendar = async function (req, res) {
     if(!totalCalories) return res.send(response(baseResponse.PROCESS_CALORIES_NOT_EXIST))
 
     // myCalendar에 데이터 저장
-    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, totalCalories, totalDist)
+    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, todayDate, totalCalories, totalDist)
 
     return res.send(response(baseResponse.SUCCESS, routineContent))
 }
@@ -133,16 +146,21 @@ exports.getProcessResult = async function (req, res) {
     const originRoutineIdx = req.query.routineIdx
     if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
-    // // 오늘 날짜 정보 가져오기
+    // 현재 시간을 UTC로 가져오기
     const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
-    const day = String(currentDate.getDate()).padStart(2, '0');
+    const utcDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() * 60000));
+
+    // 9시간 추가하여 한국 시간대로 변환
+    const koreanDate = new Date(utcDate.getTime() + (9 * 3600000)); // 9시간 * 60분 * 60초 * 1000밀리초
+
+    const year = koreanDate.getFullYear();
+    const month = String(koreanDate.getMonth() + 1).padStart(2, '0');
+    const day = String(koreanDate.getDate()).padStart(2, '0');
 
     const todayDate = `${year}-${month}-${day}`;
 
-    // 마이 캘린더에 존재하는 routineIdx인지 검증ㅇ
-    const  checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
+    // 마이 캘린더에 존재하는 routineIdx인지 검증
+    const checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
     if(!checkRoutineIdx) return res.send(response(baseResponse.PROCESS_ROUTINEIDX_NOT_EXIST))
 
     // 무게, 시간 차이 조회
@@ -151,6 +169,7 @@ exports.getProcessResult = async function (req, res) {
 
     // myCalendar에서 데이터 조회
     const totalData = await processProvider.getTotalData(userId, todayDate)
+
     // 운동 횟수 조회
     const countHealth = await processProvider.getHealthCount(userId)
     if(!countHealth || !totalData) return res.send(response(baseResponse.PROCESS_EXERCISE_NOT_EXIST))
