@@ -133,12 +133,16 @@ exports.getProcessResult = async function (req, res) {
     const originRoutineIdx = req.query.routineIdx
     if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
-    // 오늘 날짜 정보 가져오기 (서버 시간에 9시간 추가)
+    // 현재 시간을 UTC로 가져오기
     const currentDate = new Date();
-    currentDate.setHours(currentDate.getHours() + 9);
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
-    const day = String(currentDate.getDate()).padStart(2, '0');
+    const utcDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() * 60000));
+
+    // 9시간 추가하여 한국 시간대로 변환
+    const koreanDate = new Date(utcDate.getTime() + (9 * 3600000)); // 9시간 * 60분 * 60초 * 1000밀리초
+
+    const year = koreanDate.getFullYear();
+    const month = String(koreanDate.getMonth() + 1).padStart(2, '0');
+    const day = String(koreanDate.getDate()).padStart(2, '0');
 
     const todayDate = `${year}-${month}-${day}`;
 
