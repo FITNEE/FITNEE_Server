@@ -170,27 +170,54 @@ tags:
             schema:
               type: object
               properties:
-                'mon':
-                  type: string
-                  example: ""
-                'tue':
-                  type: string
-                  example: "가슴"
-                'wed':
-                  type: string
-                  example: ""
-                'thu':
-                  type: string
-                  example: "등"
-                'fri':
-                  type: string
-                  example: ""
-                'sat':
-                  type: string
-                  example: "하체"
-                'sun':
-                  type: string
-                  example: ""
+                'routineIdx':
+                  type: object
+                  properties:
+                    'mon':
+                      type: integer
+                      example: 0
+                    'tue':
+                      type: integer
+                      example: 844
+                    'wed':
+                      type: integer
+                      example: 0
+                    'thu':
+                      type: integer
+                      example: 845
+                    'fri':
+                      type: integer
+                      example: 0
+                    'sat':
+                      type: integer
+                      example: 846
+                    'sun':
+                      type: integer
+                      example: 0
+                'parts':
+                  type: object
+                  properties:
+                    'mon':
+                      type: string
+                      example: ""
+                    'tue':
+                      type: string
+                      example: "가슴"
+                    'wed':
+                      type: string
+                      example: ""
+                    'thu':
+                      type: string
+                      example: "등"
+                    'fri':
+                      type: string
+                      example: ""
+                    'sat':
+                      type: string
+                      example: "하체"
+                    'sun':
+                      type: string
+                      example: ""
 
 /app/routine/{routineIdx}:
   get:
