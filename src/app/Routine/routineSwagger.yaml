@@ -170,7 +170,7 @@ tags:
             schema:
               type: object
               properties:
-                  'isSuccess':
+                'isSuccess':
                   type: boolean
                   example: true
                 'code':
