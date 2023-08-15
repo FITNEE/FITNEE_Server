@@ -74,7 +74,7 @@ exports.postMycalendar = async function (req, res) {
      */
     // 시간은 초 단위로 받기
     const userId = req.decoded.userId
-    const originRoutineIdx = req.body.routineIdx
+    const originRoutineIdx = req.body.originRoutineIdx
     const totalExerciseTime = req.body.totalExerciseTime
     const routineContent = req.body.routineDetails
 
@@ -96,17 +96,18 @@ exports.postMycalendar = async function (req, res) {
     // 새로 만들어진 routineIdx(업데이트 될 수도 있기 때문)
     const routineIdx = await processService.insertRoutineIdx(routineContent)
 
-
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
-    const totalWeight = await processProvider.getTotalWeight(routineIdx)
+    const weight = await processProvider.getTotalWeight(routineIdx)
 
-    const parsedTotalWeight = parseInt(totalWeight[0].totalWeight);
+    const totalWeight = weight[0].totalWeight
     const totalCalories = await processProvider.getTotalCalories(routineIdx)
     const totalDist = await processProvider.getTotalDist(routineIdx)
 
+    if(!totalCalories) return res.send(response(baseResponse.PROCESS_CALORIES_NOT_EXIST))
+
     // myCalendar에 데이터 저장
-    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, parsedTotalWeight, totalCalories, totalDist)
+    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, totalCalories, totalDist)
 
     return res.send(response(baseResponse.SUCCESS, routineContent))
 }

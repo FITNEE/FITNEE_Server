@@ -363,3 +363,5 @@ tags:
         description: 마이 캘린더에 추천받은 routineIdx가 존재하지 않습니다.
       '808':
         description: 해당 날짜에 routineIdx가 존재하지 않습니다.
+      '809':
+        description: 총 칼로리는 0보다 커야 합니다.
