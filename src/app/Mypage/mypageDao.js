@@ -13,7 +13,7 @@ async function selectMyCalendar(connection, userIdFromJWT, month) {
 // userId로 info 반환
 async function selectUserInfo(connection, userIdFromJWT) {
     const selectUserInfoQuery = `
-                SELECT userNickname, birthYear, userId
+                SELECT userNickname, birthYear, userId, gender
                 FROM User
                 WHERE userId = ?;
                 `;
