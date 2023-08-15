@@ -321,53 +321,23 @@ tags:
         description: 오늘 루틴 리스트들을 가지고 있는 routineIdx를 입력해주세요.
         schema:
           type: integer
-          example: 233
     responses:
       '1000':
         description: 성공적으로 결과 데이터를 조회한 경우
         content:
           application/json:
             example:
-              isSuccess: true
-              code: 1000
-              message: 성공
-              result:
-                updateRoutine:
-                  dayOfWeek: wed
-                  routineIdx: 3
-                  routineDetails:
-                    - order: 1
-                      exerciseInfo:
-                        healthCategoryIdx: 14
-                        exerciseName: 레그 컬
-                        parts: 하체
-                        muscle: 뒷넓다리근
-                        equipment: 머신
-                        caution: 레그 컬 주의사항
-                        distance: 0
-                      skip: "1"
-                      totalSets: 2
-                      rep: 5
-                      weight: 20
-                      predictTime: 300
-                      predictCalories: 38
-                      exerciseWeight: 40
-                      rest: 30
-                      sets:
-                        - set: 0
-                          rep: 5
-                          weight: 20
-                        - set: 1
-                          rep: 5
-                          weight: 20
-                  totalTime: 439
-                  totalCalories: 124
-                  totalWeight: 114
-                  totalDist: 1000
-                getComparison:
-                  exerciseTimeChange: 10
-                  weightChange: 30
-                countHealth: 6
+                isSuccess: true
+                code: 1000
+                message: 성공
+                result:
+                  todayTotalWeight: 171
+                  todayTotalCalories: 876
+                  todayTotalDist: 0
+                  getComparison:
+                    exerciseTimeChange: 47
+                    weightChange: 0
+                  monthCountHealth: 40
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':

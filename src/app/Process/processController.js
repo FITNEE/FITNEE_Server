@@ -141,8 +141,8 @@ exports.getProcessResult = async function (req, res) {
 
     const todayDate = `${year}-${month}-${day}`;
 
-    // 마이 캘린더에 존재하는 routineIdx인지 검증ㅇ
-    const  checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
+    // 마이 캘린더에 존재하는 routineIdx인지 검증
+    const checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
     if(!checkRoutineIdx) return res.send(response(baseResponse.PROCESS_ROUTINEIDX_NOT_EXIST))
 
     // 무게, 시간 차이 조회
@@ -151,6 +151,7 @@ exports.getProcessResult = async function (req, res) {
 
     // myCalendar에서 데이터 조회
     const totalData = await processProvider.getTotalData(userId, todayDate)
+
     // 운동 횟수 조회
     const countHealth = await processProvider.getHealthCount(userId)
     if(!countHealth || !totalData) return res.send(response(baseResponse.PROCESS_EXERCISE_NOT_EXIST))
