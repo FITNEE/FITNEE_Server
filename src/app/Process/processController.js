@@ -133,8 +133,9 @@ exports.getProcessResult = async function (req, res) {
     const originRoutineIdx = req.query.routineIdx
     if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
-    // // 오늘 날짜 정보 가져오기
+    // 오늘 날짜 정보 가져오기 (서버 시간에 9시간 추가)
     const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 9);
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
     const day = String(currentDate.getDate()).padStart(2, '0');
