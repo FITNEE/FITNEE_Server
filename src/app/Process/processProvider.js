@@ -205,7 +205,6 @@ exports.getReplacementExercises = async function (healthCategoryIdx) {
     const maxRecommendations = 3;
     const replacementRecommendations = await processDao.getReplacementExercisesLimited(connection, healthCategoryIdx, maxRecommendations);
 
-
     connection.release()
 
     return replacementRecommendations;

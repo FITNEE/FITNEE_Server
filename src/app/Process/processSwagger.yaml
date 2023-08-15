@@ -141,10 +141,22 @@ tags:
                         properties:
                           name:
                             type: string
-                            example: 체스트 프레스 머신
+                            example: 레그 프레스
                           healthCategoryIdx:
                             type: integer
-                            example: 3
+                            example: 15
+                          parts:
+                            type: string
+                            example: "하체"
+                          muscle:
+                            type: string
+                            example: 대퇴사두근
+                          equipent:
+                            type: string
+                            example: 머신
+                          caution:
+                            type: string
+                            example: 레그 프레스 주의사항
       '2000':
         description: JWT 토큰을 입력해주세요
       '3000':

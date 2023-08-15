@@ -56,13 +56,20 @@ exports.getReplacementRecommendations = async function (req, res) {
 
     // 동일 parts 내에서 랜덤 추출
     const replacementRecommendations = await processProvider.getReplacementExercises(healthCategoryIdx)
+    if (replacementRecommendations.length === 0) return res.send(response(baseResponse.PROCESS_REPLACEMENT_NOT_EXIST))
 
-    if (replacementRecommendations.length === 0) {
-        console.log("No replacement exercises found")
-        return res.send(response(baseResponse.PROCESS_REPLACEMENT_NOT_EXIST))
-    }
+    const processedRows = replacementRecommendations.map(row => ({
+        name: row.name,
+        healthCategoryIdx: row.healthCategoryIdx,
+        parts: row.parts,
+        muscle: row.muscle,
+        equipment: row.equipment,
+        ...(row.caution1 !== null && { caution1: row.caution1 }), // caution1이 null이 아닌 경우만 caution1 속성 추가
+        ...(row.caution2 !== null && { caution2: row.caution2 }), // caution2가 null이 아닌 경우만 caution2 속성 추가
+        ...(row.caution3 !== null && { caution3: row.caution3 }), // caution3이 null이 아닌 경우만 caution3 속성 추가
+    }));
 
-    return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))
+    return res.send(response(baseResponse.SUCCESS, processedRows))
 
 }
 

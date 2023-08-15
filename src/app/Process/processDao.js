@@ -638,7 +638,7 @@ async function getReplacementExercisesLimited(connection, healthCategoryIdx, max
 
     // 대체 운동 추천 (중복 없이)
     const getReplacementExercisesQuery = `
-        SELECT name, healthCategoryIdx, parts, muscle, equipment
+        SELECT name, healthCategoryIdx, parts, muscle, equipment, caution1, caution2, caution3
         FROM healthCategory
         WHERE parts = ? AND healthCategoryIdx <> ?
         ORDER BY RAND()
