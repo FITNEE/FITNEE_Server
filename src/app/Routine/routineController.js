@@ -77,6 +77,22 @@ exports.putRoutineCalendar = async function (req, res) {
 };
 
 /**
+ * API Name : 루틴 부위 조회 API
+ * [GET] /app/routine/calendar/parts
+ */
+exports.getRoutineParts = async function (req, res) {
+    /**
+     * Decoded : userId
+     */
+    const userId = req.decoded.userId;
+
+    const routineParts = await routineProvider.retrieveRoutineParts(userId);
+
+    if (!routineParts) return res.send(errResponse(baseResponse.TRANSACTION_ERROR));
+    else return res.send(response(baseResponse.SUCCESS, routineParts));
+}
+
+/**
  * API Name : 당일 루틴 조회 API
  * [GET] /app/routine/today
  */

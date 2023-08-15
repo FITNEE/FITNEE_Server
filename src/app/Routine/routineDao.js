@@ -197,8 +197,38 @@ async function selectRoutineCalendar(connection, userId) {
                   WHERE status = 0 AND userId = ?;
                   `;
     const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+
     return routineCalendar;
 };
+
+async function selectRoutineParts(connection, userId) {
+    const weekEn = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const parts = {};
+    const selectRoutineCalendarQuery = `
+                  SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
+                  FROM routineCalendar
+                  WHERE status = 0 AND userId = ?;
+                  `;
+    const selectRoutinePartsQuery = `
+                  SELECT parts
+                  FROM routine
+                  WHERE routineIdx = ?
+                  `;
+    const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+
+    for (var i=0; i<7; i++) {
+        const curIdx = routineCalendar[`${weekEn[i]}RoutineIdx`];
+        if (!curIdx) {
+            parts[`${weekEn[i]}`] = '';
+        } else {
+            const [[routineParts]] = await connection.query(selectRoutinePartsQuery, curIdx);
+            parts[`${weekEn[i]}`] = routineParts.parts;
+        };
+    };
+
+    return parts;
+};
+
 
 // 루틴 조회
 async function selectRoutine(connection, routineIdx) {
@@ -272,11 +302,16 @@ async function updateRoutineCalendar(connection, userId, routineCalendar) {
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
-    const originContent = selectRoutine(connection, routineIdx);
-
+    const isChange = false;
+    const originRoutine = await selectRoutine(connection, routineIdx);
     const updateRoutine =  {
-        parts : originContent.parts,
+        parts : originRoutine.parts,
     };
+
+    const checkChange = new Set();
+    originRoutine.routineDetails.forEach(element => checkChange.add(element.healthCategoryIdx));
+    routineContent.forEach(element => checkChange.add(element.healthCategoryIdx));
+    const diff = originRoutine.routineDetails.length-checkChange.size;
 
     for (var i=0; i<routineContent.length; i++) {
         var updateRoutineDetail = {
@@ -299,30 +334,39 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
     };
 
-    const updateRoutineQuery = `
-                          INSERT INTO routine
-                          SET ?;
-                          SELECT LAST_INSERT_ID();
-                          `;
-    const [responseUpdateR] = await connection.query(updateRoutineQuery, updateRoutine);
-    const updateRIdx = responseUpdateR[1][0]['LAST_INSERT_ID()'];
+    if (diff>=-1 && diff<=1) {
+        if (i<10) updateRoutine["detailIdx"+String(i)] = 0;
+        const updateRoutineQuery = `
+                            UPDATE routine
+                            SET ?
+                            WHERE routineIdx = ?`;
+        await connection.query(updateRoutineQuery, [updateRoutine, routineIdx]);
+    } else {
+        const updateRoutineQuery = `
+                            INSERT INTO routine
+                            SET ?;
+                            SELECT LAST_INSERT_ID();
+                            `;
+        const [responseUpdateRoutine] = await connection.query(updateRoutineQuery, updateRoutine);
+        const updateRoutineIdx = responseUpdateRoutine[1][0]['LAST_INSERT_ID()'];
 
-    const updateRoutineCalendarQuery = `
-                      SELECT @routineIdx := ?;
-                      SELECT @changeIdx := ?;
+        const updateRoutineCalendarQuery = `
+                        SELECT @routineIdx := ?;
+                        SELECT @changeIdx := ?;
 
-                      UPDATE routineCalendar
-                      SET 
-                        monRoutineIdx = IF(@routineIdx = monRoutineIdx, @changeIdx, monRoutineIdx),
-                        tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, @changeIdx, tueRoutineIdx),
-                        wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, @changeIdx, wedRoutineIdx),
-                        thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, @changeIdx, thuRoutineIdx),
-                        friRoutineIdx = IF(@routineIdx = friRoutineIdx, @changeIdx, friRoutineIdx),
-                        satRoutineIdx = IF(@routineIdx = satRoutineIdx, @changeIdx, satRoutineIdx),
-                        sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
-                      WHERE userId = ?;
-                    `;
-    await connection.query(updateRoutineCalendarQuery, [routineIdx, updateRIdx, userId]);
+                        UPDATE routineCalendar 
+                        SET 
+                            monRoutineIdx = IF(@routineIdx = monRoutineIdx, @changeIdx, monRoutineIdx),
+                            tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, @changeIdx, tueRoutineIdx),
+                            wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, @changeIdx, wedRoutineIdx),
+                            thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, @changeIdx, thuRoutineIdx),
+                            friRoutineIdx = IF(@routineIdx = friRoutineIdx, @changeIdx, friRoutineIdx),
+                            satRoutineIdx = IF(@routineIdx = satRoutineIdx, @changeIdx, satRoutineIdx),
+                            sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
+                        WHERE userId = ?;
+                        `;
+        await connection.query(updateRoutineCalendarQuery, [routineIdx, updateRoutineIdx, userId]);
+    };
 
     return ;
 };
@@ -381,6 +425,7 @@ module.exports = {
     insertRoutineCalendar,
     selectRoutineCalendar,
     updateRoutineCalendar,
+    selectRoutineParts,
     selectTodayRoutine,
     selectRoutine,
     updateRoutine,

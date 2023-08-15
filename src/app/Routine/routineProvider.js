@@ -12,6 +12,14 @@ exports.retrieveRoutineCalendar = async function (userId) {
     return routineCalendar;
 };
 
+exports.retrieveRoutineParts = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const routineCalendar = await routineDao.selectRoutineParts(connection, userId);
+    connection.release();
+
+    return routineCalendar;
+}
+
 exports.retrieveTodayRoutine = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const todayRoutine = await routineDao.selectTodayRoutine(connection, userId);
