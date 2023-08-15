@@ -145,15 +145,15 @@ async function selectTodayRoutine(connection, userId) {
     const weekEn = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const weekKo = ['일', '월', '화', '수', '목', '금', '토'];
     const leftPad = (value) => (value<10) ? `0${value}` : value;
-    const toStringByMyFormatting = (source) => {
+    const toMyString = (source) => {
         const yyyy = source.getFullYear();
         const mm = leftPad(source.getMonth()+1);
         const dd = leftPad(source.getDate());
-        return [yyyy, mm, dd].join('. ')+` (${weekKo[source.getDay()]})`
+        return [yyyy, mm, dd].join('. ')+` (${weekKo[source.getDay()]})`;
     };
 
     const responseToday = {
-        todayStrKo : toStringByMyFormatting(exerciseDay),
+        todayStrKo : toMyString(exerciseDay),
         userNickName : responseUserNickname.userNickname,
         exerciseCount : 0,
         isToday: true,
@@ -168,7 +168,7 @@ async function selectTodayRoutine(connection, userId) {
         var offset = 1;
         while (!(existRoutineIdx = existRoutineCalendar[`${weekEn[(exerciseDay.getDay()+offset)%7]}RoutineIdx`])) offset += 1;
         exerciseDay.setDate(exerciseDay.getDate()+offset);
-        responseToday.todayStrKo = toStringByMyFormatting(exerciseDay);
+        responseToday.todayStrKo = toMyString(exerciseDay);
     };
 
     var responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
@@ -233,7 +233,6 @@ async function selectRoutineParts(connection, userId) {
 
     return responseRoutineParts;
 };
-
 
 // 루틴 조회
 async function selectRoutine(connection, routineIdx) {
@@ -339,7 +338,7 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
     };
 
-    if (diff>=-1 && diff<=1) {
+    if (!diff) {
         if (i<10) updateRoutine["detailIdx"+String(i)] = 0;
         const updateRoutineQuery = `
                             UPDATE routine
@@ -425,7 +424,51 @@ async function deleteRoutine(connection, userId, routineIdx) {
 };
 
 async function endProcess(connection, userId) {
-    return ;
+    const leftPad = (value) => (value<10) ? `0${value}` : value;
+    const toMyString = (date, offset=0) => {
+        const source = new Date(date.setDate(date.getDate()+offset));
+        const yyyy = source.getFullYear();
+        const mm = leftPad(source.getMonth()+1);
+        const dd = leftPad(source.getDate());
+        return [yyyy, mm, dd].join('-');
+    };
+
+    const today = new Date();
+    // today.setTime(today.getTime()+9*60*60*1000);
+
+    const todayProcessQuery = `
+                      SELECT routineIdx, originRoutineIdx, totalExerciseTime
+                      FROM myCalendar
+                      WHERE healthDate = ?
+                      AND userId = ?
+                      ORDER BY updatedAt DESC
+                      LIMIT 1
+                      `;
+    const [todayProcess] = await connection.query(todayProcessQuery, [toMyString(today), userId]);
+    if (!todayProcess.length) return ;
+
+    const lastProcessQuery = `
+                      SELECT routineIdx, totalExerciseTime
+                      FROM myCalendar
+                      WHERE healthDate BETWEEN ? and ?
+                      AND originRoutineIdx = ?
+                      AND userId = ?
+                      ORDER BY updatedAt DESC
+                      LIMIT 1
+                      `;
+    const [lastProcess] = await connection.query(lastProcessQuery, [toMyString(today, -7-today.getDay()), toMyString(today, 6), responseTodayProcess[0].originRoutineIdx, userId]);
+    if (!lastProcess.length) return ;
+
+    const todayRoutine = await selectRoutine(connection, responseTodayProcess[0].routineIdx);
+    const lastRoutine = await selectRoutine(connection, lastProcess[0].routineIdx);
+
+    const diffPerTime = (todayProcess[0].totalExerciseTime-lastProcess[0].totalExerciseTime)/todayProcess[0].totalExerciseTime;
+    console.log(todayProcess);
+    console.log(lastRoutine);
+    console.log(diffPerTime);
+
+
+    return [diffPerTime, todayRoutine, lastRoutine];
 };
 
 

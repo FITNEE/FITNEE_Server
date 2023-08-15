@@ -160,7 +160,7 @@ exports.deleteRoutine = async function (req, res) {
 
 /**
  * API Name : 운동 과정 상세 내용 API
- * [GET] /app/routine/detail
+ * [GET] /app/routine/end/detail
  */
 exports.endProcess = async function (req, res) {
     /**
@@ -170,6 +170,6 @@ exports.endProcess = async function (req, res) {
 
     const responseEndProcess = await routineProvider.endProcess(userId);
 
-    if (!responseEndProcess) res.send(errResponse(baseResponse.TRANSACTION_ERROR));
-    return res.send(resposne(baseResponse.SUCCESS, responseEndProcess));
+    if (!responseEndProcess) return res.send(errResponse(baseResponse.COMPARE_ROUTINE_UNDEFINED));
+    else return res.send(response(baseResponse.SUCCESS, responseEndProcess));
 };
