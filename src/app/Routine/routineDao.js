@@ -456,19 +456,106 @@ async function endProcess(connection, userId) {
                       ORDER BY updatedAt DESC
                       LIMIT 1
                       `;
-    const [lastProcess] = await connection.query(lastProcessQuery, [toMyString(today, -7-today.getDay()), toMyString(today, 6), responseTodayProcess[0].originRoutineIdx, userId]);
+    const [lastProcess] = await connection.query(lastProcessQuery, [toMyString(today, -7-today.getDay()), toMyString(today, 6), todayProcess[0].originRoutineIdx, userId]);
     if (!lastProcess.length) return ;
-
-    const todayRoutine = await selectRoutine(connection, responseTodayProcess[0].routineIdx);
-    const lastRoutine = await selectRoutine(connection, lastProcess[0].routineIdx);
-
+    
     const diffPerTime = (todayProcess[0].totalExerciseTime-lastProcess[0].totalExerciseTime)/todayProcess[0].totalExerciseTime;
-    console.log(todayProcess);
-    console.log(lastRoutine);
-    console.log(diffPerTime);
 
+    const todayRoutineContent = await selectRoutine(connection, todayProcess[0].routineIdx);
+    const lastRoutineContent = await selectRoutine(connection, lastProcess[0].routineIdx);
+    const todayRoutine = todayRoutineContent.routineDetails;
+    const lastRoutine = lastRoutineContent.routineDetails;
+    const responseRoutineContent = [];
 
-    return [diffPerTime, todayRoutine, lastRoutine];
+    for (var i=0; i<todayRoutine.length; i++) {
+        for (var j=0; j<lastRoutine.length; j++)
+            if (lastRoutine[j].healthCategoryIdx === todayRoutine[i].healthCategoryIdx) break;
+        const responseRoutine = {
+            healthCategoryIdx : todayRoutine[i].healthCategoryIdx,
+            exerciseName : todayRoutine[i].exerciseName,
+            exerciseParts : todayRoutine[i].exerciseParts,
+            plusSet : 0,
+            content : [],
+        };
+
+        const isExistWeight = (!todayRoutine[i].content[0].weight) ? true : false;
+        var todayCurReps = 0;
+        var lastCurReps = 0;
+        var todayCurWeights = 0;
+        var lastCurWeights = 0;
+        todayRoutine[i].content.forEach(element => {todayCurReps+=element.rep; if (isExistWeight) todayCurWeights+=element.weight;});
+        lastRoutine[j].content.forEach(element => {lastCurReps+=element.rep; if (isExistWeight) lastCurWeights+=element.weight;});
+
+        const diffPerRep = (todayCurReps-lastCurReps)/todayCurReps;
+        const diffPerWeight = isExistWeight ? (todayCurWeights-lastCurWeights)/todayCurWeights : 0;
+        const offset = diffPerRep+diffPerWeight-diffPerTime;
+        const flag = (offset>=0) ? 1 : -1;
+
+        const offsetRep = (todayRoutine[i].content[0].rep<=20) ? 2 : 5;
+        const offsetWeight = isExistWeight ? (todayRoutine[i].content[0].weight<=20) ? 2 : 5 : 0;
+        const flagRWP = (diffPerWeight < diffPerRep-diffPerTime);
+
+        if (offset>0.35 || offset<-0.35) {
+            todayRoutine[i].content.forEach(element => {
+                tempRoutineDetail = {
+                    rep : element.rep+offsetRep*2*flag,
+                    plusRep : offsetRep*2*flag,
+                };
+                if (isExistWeight) {
+                    tempRoutineDetail.weight = element.weight+offsetWeight*flag;
+                    tempRoutineDetail.plusWeight = offsetWeight*flag;
+                };
+                if (offsetRep === 2) {
+                    tempRoutineDetail.rep += 1;
+                    tempRoutineDetail.plusRep += 1;
+                }
+                responseRoutine.content.push(tempRoutineDetail);
+            });
+
+        } else if (offset>0.25) {
+            responseRoutine.content = todayRoutine[i].content;
+            responseRoutine.plusSet = 1;
+            tempTodayContent = todayRoutine[i].content;
+            tempRoutineDetail = {
+                rep : tempTodayContent[0].rep,
+            };
+
+            if (isExistWeight) tempRoutineDetail.weight = (tempTodayContent.length>1) ? 2*tempTodayContent[0].weight-tempTodayContent[1].weight : tempTodayContent[0].weight;
+
+            responseRoutine.content.unshift(tempRoutineDetail);
+            responseRoutine.content.forEach(element => {element.plusRep=0; element.plusWeight=0;});
+
+        } else if (offset<-0.25 && todayRoutine[i].content.length>2) {
+            responseRoutine.content = todayRoutine[i].content;
+            responseRoutine.plusSet = -1;
+            responseRoutine.content.sihft();
+            responseRoutine.content.forEach(element => {element.plusRep=0; element.plusWeight=0;});
+
+        } else if (offset>0.15 || offset<-0.25) {
+            todayRoutine[i].content.forEach(element => {
+                tempRoutineDetail = {};
+                if (isExistWeight) {
+                    tempRoutineDetail.rep = flagRWP ? element.rep : element.rep+offsetRep*flag;
+                    tempRoutineDetail.weight = flagRWP ? element.weight+offsetWeight*flag : element.weight;
+                    tempRoutineDetail.plusRep = flagRWP ? 0 : offsetRep*flag;
+                    tempRoutineDetail.plusWeight = flagRWP ? offsetWeight*flag : 0;
+                } else {
+                    tempRoutineDetail.rep = flagRWP ? element.rep : element.rep+offsetRep*flag;
+                    tempRoutineDetail.plusRep = flagRWP ? 0 : offsetRep*flag;
+                };
+                responseRoutine.content.push(tempRoutineDetail);
+            });
+        } else {
+            responseRoutine.content = todayRoutine[i].content;
+            responseRoutine.content.forEach(element => {element.plusRep=0; if (isExistWeight) element.plusWeight=0;});
+        };
+
+        responseRoutineContent.push(responseRoutine);
+    };
+
+    await updateRoutine(connection, userId, todayProcess[0].originRoutineIdx, responseRoutineContent);
+
+    return responseRoutineContent;
 };
 
 

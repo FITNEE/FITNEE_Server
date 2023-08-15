@@ -365,6 +365,33 @@ tags:
       '3000':
         description: JWT 토큰 검증 실패
 
+/app/routine/end/update:
+  get:
+    tags:
+      - Routine
+    summary: 운동 후 루틴 업데이트 API
+    description: 운동 과정이 끝난 후 업데이트될 루틴 내용을 반환하는 API
+    responses:
+      '1000':
+        description: 성공 - 완료한 운동에 대해 업데이트 되는 내용들을 보여줍니다.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'isSuccess':
+                  type: boolean
+                  example: true
+                'code':
+                  type: integer
+                  example: 1000
+                'message':
+                  type: string
+                  example: '성공'
+                'Result':
+                  $ref: '#/components/schemas/RoutineUpdate'
+
+
 components:
   schemas:
     RoutineCalendar:
@@ -397,6 +424,11 @@ components:
       items:
         $ref: '#/components/schemas/RoutineDetail'
 
+    RoutineUpdate:
+      type: array
+      items:
+        $ref: '#/components/schemas/RoutineUpdateDetail'
+
     RoutineDetail:
       type: object
       properties:
@@ -413,8 +445,29 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/RoutineContentA'
-              - $ref: '#/components/schemas/RoutineContentB'
+              - $ref: '#/components/schemas/RoutineUpdateContentA'
+              - $ref: '#/components/schemas/RoutineUpdateContentB'
+
+    RoutineUpdateDetail:
+      type: object
+      properties:
+        'healthCategoryIdx':
+          type: integer
+          example: 2
+        'exerciseName':
+          type: string
+          example: 인클라인 덤벨프레스
+        'exerciseParts':
+          type: string
+          example: 어깨
+        'plusSet':
+          type: integer
+          example: 1
+        'content':
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/RoutineUpdateContent'
       
     RoutineContentA:
       type: object
@@ -432,6 +485,22 @@ components:
         'rep':
           type: integer
           example: 50
+
+    RoutineUpdateContent:
+      type: object
+      properties:
+        'rep':
+          type: integer
+          example: 10
+        'weight':
+          type: integer
+          example: 70
+        'plusRep':
+          type: integer
+          example: 2
+        'plusWeight':
+          type: integer
+          example: 5
 
     RecRoutineCalendar:
       type: object

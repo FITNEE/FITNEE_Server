@@ -160,7 +160,7 @@ exports.deleteRoutine = async function (req, res) {
 
 /**
  * API Name : 운동 과정 상세 내용 API
- * [GET] /app/routine/end/detail
+ * [GET] /app/routine/end/update
  */
 exports.endProcess = async function (req, res) {
     /**
