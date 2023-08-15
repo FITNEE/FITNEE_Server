@@ -767,19 +767,19 @@ async function getHealthCount(connection, userId) {
 }
 
 // myCalendar에 routineIdx 및 날짜 검증
-async function getValidRoutineIdx(connection, originRoutineIdx, date) {
+async function getValidRoutineIdx(connection, originRoutineIdx, todayDate) {
 
-    const checkMyCalendarQuery = `
-        SELECT EXISTS ( 
+    const checkRoutineIdxQuery = `
+        SELECT CASE WHEN EXISTS (
             SELECT 1
             FROM myCalendar
             WHERE originRoutineIdx = ? AND healthDate = ?
-        ) AS \`exists\`;
+        ) THEN 1 ELSE 0 END AS \`exists\`;
     `;
-    const [rows] = await connection.query(checkMyCalendarQuery, [originRoutineIdx, date])
-    const exists = rows[0].exists === 1
+    const [rows] = await connection.query(checkRoutineIdxQuery, [originRoutineIdx, todayDate]);
+    const exists = rows[0].exists === 1;
 
-    return exists
+    return exists;
 }
 
 // myCalendar에서 운동 시간, 무게, 칼로리 조회
