@@ -4,6 +4,12 @@ const { logger } = require("../../../config/winston");
 const processDao = require("./processDao");
 
 // Provider: Read 비즈니스 로직 처리
+exports.getCheckRoutineCalendar = async function(dayOfWeek, userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const routineCheck = await processDao.getRoutineIdxCheck(connection, dayOfWeek, userId)
+    connection.release()
+    return routineCheck
+}
 
 exports.validateUser = async function (userId, originRoutineIdx) {
     const connection = await pool.getConnection(async (conn) => conn);

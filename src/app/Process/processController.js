@@ -16,15 +16,18 @@ exports.getProcess = async function (req, res) {
 
     // 날짜 및 아이디
     const { dayOfWeek } = req.query;
+    const userId = req.decoded.userId
 
     // dayOfWeek 유효성 검증
     if (!['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(dayOfWeek)) {
         return res.status(400).send(response(baseResponse.INVALID_DAY_OF_WEEK, 'Invalid dayOfWeek'));
     }
     
-    const userId = req.decoded.userId
+    // 해당 요일에 루틴이 존재하는지 체크
+    const checkRoutineIdx = await processProvider.getCheckRoutineCalendar(dayOfWeek, userId)
+    if(checkRoutineIdx === 0) return res.send(response(baseResponse.PROCESS_DAYOFWEEK_NOT_EXIST))
 
-    // TODO : userId 유효성 검증
+
     const routine = await processProvider.getRoutineDetails(dayOfWeek, userId);
 
     return res.send(response(baseResponse.SUCCESS, {
@@ -56,7 +59,7 @@ exports.getReplacementRecommendations = async function (req, res) {
 
     if (replacementRecommendations.length === 0) {
         console.log("No replacement exercises found")
-        return res.send(response(baseResponse.REPLACEMENT_EXERCISES_NOT_FOUND))
+        return res.send(response(baseResponse.PROCESS_REPLACEMENT_NOT_EXIST))
     }
 
     return res.send(response(baseResponse.SUCCESS, { replacementRecommendations }))

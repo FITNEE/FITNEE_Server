@@ -1,5 +1,17 @@
 const sqlstring = require('sqlstring');
 
+async function getRoutineIdxCheck(connection, dayOfWeek, userId) {
+    const checkRoutineIdxQuery = `
+        SELECT ${dayOfWeek}RoutineIdx
+        FROM routineCalendar
+        WHERE userId = ?;
+    `;
+
+    const checkRoutineIdx = await connection.query(checkRoutineIdxQuery, userId)
+    
+    return checkRoutineIdx[0][0][`${dayOfWeek}RoutineIdx`]
+}
+
 async function getCheckUserId(connection, userId) {
     const isValidUserQuery = `
         SELECT EXISTS (
@@ -794,6 +806,7 @@ async function getRealTotal(connection, userId, date) {
 }
 
 module.exports = {
+    getRoutineIdxCheck,
     selectProcessData,
     insertRoutineIdx,
     selectTotalDist,

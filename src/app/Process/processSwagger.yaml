@@ -94,6 +94,11 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+      '801':
+        description: 요일을 입력해주세요
+      '810':
+        description: 해당 요일에 루틴이 존재하지 않습니다.
+      
 
 /app/process/replace:
   get:
@@ -144,6 +149,8 @@ tags:
         description: JWT 토큰을 입력해주세요
       '3000':
         description: JWT 토큰 검증 실패
+      '811':
+        description: 해당 운동과 관련된 다른 운동이 존재하지 않습니다.
 
 /app/process/end:
   post:
