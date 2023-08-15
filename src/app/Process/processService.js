@@ -42,10 +42,10 @@ exports.insertRoutineIdx = async function (routineContent) {
 }
 
 // 캘린더 추가
-exports.postMyCalendar = async function (userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, totalCalories, totalDist) {
+exports.postMyCalendar = async function (userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, currentDate, totalCalories, totalDist) {
     const connection = await pool.getConnection(async (conn) => conn) 
 
-    const calendarData = await processDao.insertMyCalendar(connection, userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, totalCalories, totalDist)
+    const calendarData = await processDao.insertMyCalendar(connection, userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, currentDate, totalCalories, totalDist)
     connection.release()
     return calendarData
 }

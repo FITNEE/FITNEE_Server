@@ -104,6 +104,10 @@ exports.postMycalendar = async function (req, res) {
     // 새로 만들어진 routineIdx(업데이트 될 수도 있기 때문)
     const routineIdx = await processService.insertRoutineIdx(routineContent)
 
+    // 현재 서버 시간 가져오기 (한국 시간대로 변환)
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 9); // UTC + 9
+
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
     const weight = await processProvider.getTotalWeight(routineIdx)
@@ -115,7 +119,7 @@ exports.postMycalendar = async function (req, res) {
     if(!totalCalories) return res.send(response(baseResponse.PROCESS_CALORIES_NOT_EXIST))
 
     // myCalendar에 데이터 저장
-    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, totalCalories, totalDist)
+    const postMyCalendar = await processService.postMyCalendar(userIdx, userId, routineIdx, originRoutineIdx, totalExerciseTime, totalWeight, currentDate, totalCalories, totalDist)
 
     return res.send(response(baseResponse.SUCCESS, routineContent))
 }
