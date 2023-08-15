@@ -23,8 +23,14 @@ router.get('/calendar', routine.getRoutineCalendar);
 // 루틴 일정 수정 API
 router.put('/calendar', routine.putRoutineCalendar);
 
+// 루틴 부위 조회 API
+router.get('/calendar/parts', routine.getRoutineParts)
+
 // 당일 루틴 조회 API
 router.get('/today', routine.getTodayRoutine);
+
+// 운동 과정 업데이트 API
+router.get('/end/detail', routine.endProcess);
 
 // 루틴 조회 API
 router.get('/:routineIdx', routine.getRoutine);

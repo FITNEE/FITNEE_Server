@@ -77,6 +77,22 @@ exports.putRoutineCalendar = async function (req, res) {
 };
 
 /**
+ * API Name : 루틴 부위 조회 API
+ * [GET] /app/routine/calendar/parts
+ */
+exports.getRoutineParts = async function (req, res) {
+    /**
+     * Decoded : userId
+     */
+    const userId = req.decoded.userId;
+
+    const routineParts = await routineProvider.retrieveRoutineParts(userId);
+
+    if (!routineParts) return res.send(errResponse(baseResponse.TRANSACTION_ERROR));
+    else return res.send(response(baseResponse.SUCCESS, routineParts));
+}
+
+/**
  * API Name : 당일 루틴 조회 API
  * [GET] /app/routine/today
  */
@@ -134,10 +150,26 @@ exports.deleteRoutine = async function (req, res) {
      * Decoded : userId
      * Path Variable : routineIdx
      */
-    const userId = req.body.userId;
+    const userId = req.decoded.userId;
     const routineIdx = req.params.routineIdx;
 
     const resposneDeleteRoutine = await routineService.deleteRoutine(userId, routineIdx);
 
     return res.send(resposneDeleteRoutine);
+};
+
+/**
+ * API Name : 운동 과정 상세 내용 API
+ * [GET] /app/routine/end/detail
+ */
+exports.endProcess = async function (req, res) {
+    /**
+     * Decoded : userId
+     */
+    const userId = req.decoded.userId;
+
+    const responseEndProcess = await routineProvider.endProcess(userId);
+
+    if (!responseEndProcess) return res.send(errResponse(baseResponse.COMPARE_ROUTINE_UNDEFINED));
+    else return res.send(response(baseResponse.SUCCESS, responseEndProcess));
 };

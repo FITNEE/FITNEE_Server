@@ -42,7 +42,6 @@ async function insertRoutine(connection, userId, info, gpt) {
                           `;
     const [exerciseList] = await connection.query(selectExerciseListQuery);
 
-    //
     const responseRoutines = [];
     for (var i=0; i<3; i++) {
         const responseKeys = Object.keys(responseContent[i]);
@@ -146,15 +145,15 @@ async function selectTodayRoutine(connection, userId) {
     const weekEn = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const weekKo = ['일', '월', '화', '수', '목', '금', '토'];
     const leftPad = (value) => (value<10) ? `0${value}` : value;
-    const toStringByMyFormatting = (source) => {
+    const toMyString = (source) => {
         const yyyy = source.getFullYear();
         const mm = leftPad(source.getMonth()+1);
         const dd = leftPad(source.getDate());
-        return [yyyy, mm, dd].join('. ')+` (${weekKo[source.getDay()]})`
+        return [yyyy, mm, dd].join('. ')+` (${weekKo[source.getDay()]})`;
     };
 
     const responseToday = {
-        todayStrKo : toStringByMyFormatting(exerciseDay),
+        todayStrKo : toMyString(exerciseDay),
         userNickName : responseUserNickname.userNickname,
         exerciseCount : 0,
         isToday: true,
@@ -169,7 +168,7 @@ async function selectTodayRoutine(connection, userId) {
         var offset = 1;
         while (!(existRoutineIdx = existRoutineCalendar[`${weekEn[(exerciseDay.getDay()+offset)%7]}RoutineIdx`])) offset += 1;
         exerciseDay.setDate(exerciseDay.getDate()+offset);
-        responseToday.todayStrKo = toStringByMyFormatting(exerciseDay);
+        responseToday.todayStrKo = toMyString(exerciseDay);
     };
 
     var responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
@@ -197,7 +196,42 @@ async function selectRoutineCalendar(connection, userId) {
                   WHERE status = 0 AND userId = ?;
                   `;
     const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+
     return routineCalendar;
+};
+
+async function selectRoutineParts(connection, userId) {
+    const weekEn = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const responseRoutineParts = {
+        routineIdx: {},
+        parts: {},
+    };
+
+    const selectRoutineCalendarQuery = `
+                  SELECT monRoutineIdx, tueRoutineIdx, wedRoutineIdx, thuRoutineIdx, friRoutineIdx, satRoutineIdx, sunRoutineIdx
+                  FROM routineCalendar
+                  WHERE status = 0 AND userId = ?;
+                  `;
+    const selectRoutinePartsQuery = `
+                  SELECT parts
+                  FROM routine
+                  WHERE routineIdx = ?
+                  `;
+    const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+
+    for (var i=0; i<7; i++) {
+        const curIdx = routineCalendar[`${weekEn[i]}RoutineIdx`];
+        responseRoutineParts.routineIdx[`${weekEn[i]}`] = curIdx;
+
+        if (!curIdx) {
+            responseRoutineParts.parts[`${weekEn[i]}`] = '';
+        } else {
+            const [[routineParts]] = await connection.query(selectRoutinePartsQuery, curIdx);
+            responseRoutineParts.parts[`${weekEn[i]}`] = routineParts.parts;
+        };
+    };
+
+    return responseRoutineParts;
 };
 
 // 루틴 조회
@@ -272,11 +306,16 @@ async function updateRoutineCalendar(connection, userId, routineCalendar) {
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
-    const originContent = selectRoutine(connection, routineIdx);
-
+    const isChange = false;
+    const originRoutine = await selectRoutine(connection, routineIdx);
     const updateRoutine =  {
-        parts : originContent.parts,
+        parts : originRoutine.parts,
     };
+
+    const checkChange = new Set();
+    originRoutine.routineDetails.forEach(element => checkChange.add(element.healthCategoryIdx));
+    routineContent.forEach(element => checkChange.add(element.healthCategoryIdx));
+    const diff = originRoutine.routineDetails.length-checkChange.size;
 
     for (var i=0; i<routineContent.length; i++) {
         var updateRoutineDetail = {
@@ -299,30 +338,39 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
     };
 
-    const updateRoutineQuery = `
-                          INSERT INTO routine
-                          SET ?;
-                          SELECT LAST_INSERT_ID();
-                          `;
-    const [responseUpdateR] = await connection.query(updateRoutineQuery, updateRoutine);
-    const updateRIdx = responseUpdateR[1][0]['LAST_INSERT_ID()'];
+    if (!diff) {
+        if (i<10) updateRoutine["detailIdx"+String(i)] = 0;
+        const updateRoutineQuery = `
+                            UPDATE routine
+                            SET ?
+                            WHERE routineIdx = ?`;
+        await connection.query(updateRoutineQuery, [updateRoutine, routineIdx]);
+    } else {
+        const updateRoutineQuery = `
+                            INSERT INTO routine
+                            SET ?;
+                            SELECT LAST_INSERT_ID();
+                            `;
+        const [responseUpdateRoutine] = await connection.query(updateRoutineQuery, updateRoutine);
+        const updateRoutineIdx = responseUpdateRoutine[1][0]['LAST_INSERT_ID()'];
 
-    const updateRoutineCalendarQuery = `
-                      SELECT @routineIdx := ?;
-                      SELECT @changeIdx := ?;
+        const updateRoutineCalendarQuery = `
+                        SELECT @routineIdx := ?;
+                        SELECT @changeIdx := ?;
 
-                      UPDATE routineCalendar
-                      SET 
-                        monRoutineIdx = IF(@routineIdx = monRoutineIdx, @changeIdx, monRoutineIdx),
-                        tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, @changeIdx, tueRoutineIdx),
-                        wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, @changeIdx, wedRoutineIdx),
-                        thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, @changeIdx, thuRoutineIdx),
-                        friRoutineIdx = IF(@routineIdx = friRoutineIdx, @changeIdx, friRoutineIdx),
-                        satRoutineIdx = IF(@routineIdx = satRoutineIdx, @changeIdx, satRoutineIdx),
-                        sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
-                      WHERE userId = ?;
-                    `;
-    await connection.query(updateRoutineCalendarQuery, [routineIdx, updateRIdx, userId]);
+                        UPDATE routineCalendar 
+                        SET 
+                            monRoutineIdx = IF(@routineIdx = monRoutineIdx, @changeIdx, monRoutineIdx),
+                            tueRoutineIdx = IF(@routineIdx = tueRoutineIdx, @changeIdx, tueRoutineIdx),
+                            wedRoutineIdx = IF(@routineIdx = wedRoutineIdx, @changeIdx, wedRoutineIdx),
+                            thuRoutineIdx = IF(@routineIdx = thuRoutineIdx, @changeIdx, thuRoutineIdx),
+                            friRoutineIdx = IF(@routineIdx = friRoutineIdx, @changeIdx, friRoutineIdx),
+                            satRoutineIdx = IF(@routineIdx = satRoutineIdx, @changeIdx, satRoutineIdx),
+                            sunRoutineIdx = IF(@routineIdx = sunRoutineIdx, @changeIdx, sunRoutineIdx)
+                        WHERE userId = ?;
+                        `;
+        await connection.query(updateRoutineCalendarQuery, [routineIdx, updateRoutineIdx, userId]);
+    };
 
     return ;
 };
@@ -375,14 +423,64 @@ async function deleteRoutine(connection, userId, routineIdx) {
     return ;
 };
 
+async function endProcess(connection, userId) {
+    const leftPad = (value) => (value<10) ? `0${value}` : value;
+    const toMyString = (date, offset=0) => {
+        const source = new Date(date.setDate(date.getDate()+offset));
+        const yyyy = source.getFullYear();
+        const mm = leftPad(source.getMonth()+1);
+        const dd = leftPad(source.getDate());
+        return [yyyy, mm, dd].join('-');
+    };
+
+    const today = new Date();
+    // today.setTime(today.getTime()+9*60*60*1000);
+
+    const todayProcessQuery = `
+                      SELECT routineIdx, originRoutineIdx, totalExerciseTime
+                      FROM myCalendar
+                      WHERE healthDate = ?
+                      AND userId = ?
+                      ORDER BY updatedAt DESC
+                      LIMIT 1
+                      `;
+    const [todayProcess] = await connection.query(todayProcessQuery, [toMyString(today), userId]);
+    if (!todayProcess.length) return ;
+
+    const lastProcessQuery = `
+                      SELECT routineIdx, totalExerciseTime
+                      FROM myCalendar
+                      WHERE healthDate BETWEEN ? and ?
+                      AND originRoutineIdx = ?
+                      AND userId = ?
+                      ORDER BY updatedAt DESC
+                      LIMIT 1
+                      `;
+    const [lastProcess] = await connection.query(lastProcessQuery, [toMyString(today, -7-today.getDay()), toMyString(today, 6), responseTodayProcess[0].originRoutineIdx, userId]);
+    if (!lastProcess.length) return ;
+
+    const todayRoutine = await selectRoutine(connection, responseTodayProcess[0].routineIdx);
+    const lastRoutine = await selectRoutine(connection, lastProcess[0].routineIdx);
+
+    const diffPerTime = (todayProcess[0].totalExerciseTime-lastProcess[0].totalExerciseTime)/todayProcess[0].totalExerciseTime;
+    console.log(todayProcess);
+    console.log(lastRoutine);
+    console.log(diffPerTime);
+
+
+    return [diffPerTime, todayRoutine, lastRoutine];
+};
+
 
 module.exports = {
     insertRoutine,
     insertRoutineCalendar,
     selectRoutineCalendar,
     updateRoutineCalendar,
+    selectRoutineParts,
     selectTodayRoutine,
     selectRoutine,
     updateRoutine,
     deleteRoutine,
+    endProcess
 };
