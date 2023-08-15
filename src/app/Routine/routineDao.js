@@ -42,7 +42,6 @@ async function insertRoutine(connection, userId, info, gpt) {
                           `;
     const [exerciseList] = await connection.query(selectExerciseListQuery);
 
-    //
     const responseRoutines = [];
     for (var i=0; i<3; i++) {
         const responseKeys = Object.keys(responseContent[i]);
@@ -425,6 +424,10 @@ async function deleteRoutine(connection, userId, routineIdx) {
     return ;
 };
 
+async function endProcess(connection, userId) {
+    return ;
+};
+
 
 module.exports = {
     insertRoutine,
@@ -436,4 +439,5 @@ module.exports = {
     selectRoutine,
     updateRoutine,
     deleteRoutine,
+    endProcess
 };

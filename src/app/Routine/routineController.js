@@ -150,10 +150,26 @@ exports.deleteRoutine = async function (req, res) {
      * Decoded : userId
      * Path Variable : routineIdx
      */
-    const userId = req.body.userId;
+    const userId = req.decoded.userId;
     const routineIdx = req.params.routineIdx;
 
     const resposneDeleteRoutine = await routineService.deleteRoutine(userId, routineIdx);
 
     return res.send(resposneDeleteRoutine);
+};
+
+/**
+ * API Name : 운동 과정 상세 내용 API
+ * [GET] /app/routine/detail
+ */
+exports.endProcess = async function (req, res) {
+    /**
+     * Decoded : userId
+     */
+    const userId = req.decoded.userId;
+
+    const responseEndProcess = await routineProvider.endProcess(userId);
+
+    if (!responseEndProcess) res.send(errResponse(baseResponse.TRANSACTION_ERROR));
+    return res.send(resposne(baseResponse.SUCCESS, responseEndProcess));
 };

@@ -34,16 +34,15 @@ const gptMiddleware = async function (req, res, next)  {
                 13-Seated Row,
                 14-Leg Curl,
                 15-Leg Press,
-                16-Bench Fly,
-                17-Hip Thrust,
-                18-Hip Raise,
-                19-Chest Dips,
-                20-Pull Up,
-                21-Push Up,
-                22-Front Plank-(1sec),
-                23-Side Plank-(1sec),
-                24-Running-(100m),
-                25-Cycling-(100m)
+                16-Hip Thrust,
+                17-Hip Raise,
+                18-Chest Dips,
+                19-Pull Up,
+                20-Push Up,
+                21-Front Plank-(1sec),
+                22-Side Plank-(1sec),
+                23-Running-(100m),
+                24-Cycling-(100m)
                 Create a routine with these exercises
                 `
                 },
