@@ -184,7 +184,7 @@ async function selectMyRecord(connection, userId) {
         FROM myCalendar
         WHERE userId = ?
         GROUP BY weekNumber
-        ORDER BY MONTH(healthDate) ASC, WEEK(healthDate, 1);
+        ORDER BY MONTH(healthDate) ASC, YEARWEEK(healthDate, 1);
     `;
 
     const [myRecordRows] = await connection.query(selectMyRecordQuery, [userId]);
@@ -237,6 +237,33 @@ async function selectMyRecord(connection, userId) {
         lastWeek: parseInt(lastWeek)
     });
 
+    // function getWeekNumber(date) {
+    //     const onejan = new Date(date.getFullYear(), 0, 1);
+    //     return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+    // }
+    // const today = new Date();
+    // const todayWeekNumber = `${today.getMonth() + 1}월 ${getWeekNumber(today)}째 주`;
+
+    function getWeekNumber(date) {
+        const yearStart = new Date(date.getFullYear(), 0, 1);
+        const daysPassed = Math.floor((date - yearStart) / 86400000) + 1;
+        const weekNumber = Math.ceil(daysPassed / 7);
+        
+        const jan1Weekday = yearStart.getDay();
+        let adjustedWeekNumber = weekNumber;
+        if (jan1Weekday > 4) {
+            adjustedWeekNumber -= 1;
+        }
+    
+        return adjustedWeekNumber;
+    }
+    
+    const today = new Date();
+    const todayWeekNumber = `${today.getMonth() + 1}월 ${getWeekNumber(today)}째 주`;
+    
+    console.log(todayWeekNumber);
+    
+    
 
     // Create a set to keep track of the existing week numbers
     const existingWeeks = new Set();
@@ -280,7 +307,7 @@ async function selectMyRecord(connection, userId) {
         }
     }
 
-    return {startAndEndExercise, formattedRows};
+    return {startAndEndExercise, todayWeekNumber, formattedRows};
 }
 
 
