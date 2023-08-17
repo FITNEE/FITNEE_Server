@@ -60,6 +60,14 @@ exports.postUsers = async function (req, res) {
             
             if (signInResponse.isSuccess) {
                 const accessToken = signInResponse.result.accessToken
+
+                 // '토큰-> 쿠키' 설정
+                res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict',
+                expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 쿠키 만료 시간 : 1년
+                })
                 // 로그인 성공 응답
                 return res.send(response(baseResponse.SUCCESS, {
                     userId: userId,
