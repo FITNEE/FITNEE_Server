@@ -75,6 +75,7 @@ exports.getReplacementRecommendations = async function (req, res) {
  * 3 API Name : myCalendar 추가 API
  * [POST] /app/process/end
  */
+// TODO : 휴식시간 조절 & 서버 시간이랑 맞추기(새벽 시간에 하면 날짜가 안맞음)
 exports.postMycalendar = async function (req, res) {
     /**
      * Decoded : userId
