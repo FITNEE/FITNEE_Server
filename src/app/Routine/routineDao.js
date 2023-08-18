@@ -220,6 +220,7 @@ async function selectRoutineParts(connection, userId) {
                   WHERE routineIdx = ?
                   `;
     const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+    if (!routineCalendar) return;
 
     for (var i=0; i<7; i++) {
         const curIdx = routineCalendar[`${weekEn[i]}RoutineIdx`];

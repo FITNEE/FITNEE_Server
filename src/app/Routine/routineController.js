@@ -88,7 +88,7 @@ exports.getRoutineParts = async function (req, res) {
 
     const routineParts = await routineProvider.retrieveRoutineParts(userId);
 
-    if (!routineParts) return res.send(errResponse(baseResponse.TRANSACTION_ERROR));
+    if (!routineParts) return res.send(errResponse(baseResponse.ROUTINE_UNDEFINED));
     else return res.send(response(baseResponse.SUCCESS, routineParts));
 }
 
