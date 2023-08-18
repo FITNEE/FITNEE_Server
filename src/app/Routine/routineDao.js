@@ -116,6 +116,8 @@ async function insertRoutineCalendar(connection, userId, routineCalendar) {
 
     const [[responseExistCheck]] = await connection.query(existCheckQuery, userId);
 
+    console.log(routineCalendar);
+
     if (responseExistCheck) {
         updateRoutineCalendar(connection, userId, routineCalendar);
     } else {
@@ -218,6 +220,7 @@ async function selectRoutineParts(connection, userId) {
                   WHERE routineIdx = ?
                   `;
     const [[routineCalendar]] = await connection.query(selectRoutineCalendarQuery, userId);
+    if (!routineCalendar) return;
 
     for (var i=0; i<7; i++) {
         const curIdx = routineCalendar[`${weekEn[i]}RoutineIdx`];
