@@ -116,6 +116,8 @@ async function insertRoutineCalendar(connection, userId, routineCalendar) {
 
     const [[responseExistCheck]] = await connection.query(existCheckQuery, userId);
 
+    console.log(routineCalendar);
+
     if (responseExistCheck) {
         updateRoutineCalendar(connection, userId, routineCalendar);
     } else {
