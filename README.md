@@ -1,23 +1,23 @@
 ### Folder Structure
 - `src`: 메인 로직 
-  `src`에는 도메인 별로 패키지를 구성하도록 했다. **도메인**이란 회원(User), 게시글(Post), 댓글(Comment), 주문(Order) 등 소프트웨어에 대한 요구사항 혹은 문제 영역이라고 생각하면 된다. 각자 설계할 APP을 분석하고 필요한 도메인을 도출하여 `src` 폴더를 구성하자.
+  `src`에는 도메인 별로 패키지를 구성하도록 했다. **도메인**이란 회원(User), 운동사전(Dictionary), 마이페이지(Mypage), 루틴(Routine) 등 소프트웨어에 대한 요구사항 혹은 문제 영역이라고 생각하면 된다. 각자 설계할 APP을 분석하고 필요한 도메인을 도출하여 `src` 폴더를 구성하자.
 - `config` 및 `util` 폴더: 메인 로직은 아니지만 `src` 에서 필요한 부차적인 파일들을 모아놓은 폴더
+
 - 도메인 폴더 구조
-> Route - Controller - Provider/Service - DAO
+> *Route - *Controller - *Provider/*Service - *DAO
   
 - Route: Request에서 보낸 라우팅 처리
-- Controller: Request를 처리하고 Response 해주는 곳. (Provider/Service에 넘겨주고 다시 받아온 결과값을 형식화), 형식적 Validation
+- Controller: Request를 처리하고 Response 해주는 곳. (Provider/Service에 넘겨주고 다시 받아온       결과값을 형식화), 형식적 Validation
 - Provider/Service: 비즈니스 로직 처리, 의미적 Validation
 - DAO: Data Access Object의 줄임말. Query가 작성되어 있는 곳. 
 
-- 메소드 네이밍룰
-  이 템플릿에서는 사용되는 메소드 명명 규칙은 User 도메인을 참고하자. 항상 이 규칙을 따라야 하는 것은 아니지만, 네이밍은 통일성 있게 해주는 게 좋다.
+- 메소드 네이밍룰:
+  메소드 명명 규칙은 User 도메인을 참고하자. 항상 이 규칙을 따라야 하는 것은 아니지만, 네이밍은 통일성 있게 해주는 게 좋다.
   
 
 ### Comparison
-3개 템플릿 모두 다음과 같이 Request에 대해 DB 단까지 거친 뒤, 다시 Controller로 돌아와 Response 해주는 구조를 갖는다. 구조를 먼저 이해하고 템플릿을 사용하자.
+다음과 같이 Request에 대해 DB 단까지 거친 뒤, 다시 Controller로 돌아와 Response 해주는 구조를 갖는다.
 > `Request` -> Route -> Controller -> Service/Provider -> DAO -> DB
-
 > DB -> DAO -> Service/Provider -> Controller -> Route -> `Response`
 
 #### Node.js (패키지매니저 = npm)
@@ -42,20 +42,52 @@ DB에서 검증해야 하는 의미적 Validation은 Provider 혹은 Service에�
 ├── * node_modules                    	# 외부 라이브러리 폴더 (package.json 의 dependencies)
 ├── src                     			 # 
 │   ├── app              			      # 앱에 대한 코드 작성
-│ 	│   ├── User            		    	# User 도메인 폴더
-│   │ 	│   ├── userRoute.js          # route 처리
-│   │ 	│   ├── userDao.js          	# User 관련 데이터베이스
-│ 	│ 	│   ├── userController.js 		# req, res 처리
-│ 	│ 	│   ├── userProvider.js   		# R에 해당하는 서버 로직 처리
-│ 	│ 	│   ├── userService.js   		  # CUD에 해당하는 서버 로직 처리   
+│ 	│   ├── User            		      	# User 도메인 폴더
+│   │ 	│   ├── userRoute.js            # route 처리
+│   │ 	│   ├── userDao.js            	# User 관련 데이터베이스
+│ 	│ 	│   ├── userController.js 	  	# req, res 처리
+│ 	│ 	│   ├── userProvider.js   	  	# R(Read)에 해당하는 서버 로직 처리
+│ 	│ 	│   ├── userService.js   		    # CUD(Create, Update, Delete)에 해당하는 서버 로직처리  
+│ 	│   ├── Routine            		  # Routine 도메인 폴더
+│   │ 	│   ├── routineRoute.js         # route 처리
+│   │ 	│   ├── routineDao.js        	  # Routine 관련 데이터베이스
+│ 	│ 	│   ├── routineController.js  	# req, res 처리
+│ 	│ 	│   ├── routineProvider.js   		# R에 해당하는 서버 로직 처리
+│ 	│ 	│   ├── routineService.js   		# CUD에 해당하는 서버 로직 처리  
+│ 	│   ├── Process            		  # Process 도메인 폴더
+│   │ 	│   ├── processRoute.js         # route 처리
+│   │ 	│   ├── processDao.js          	# Process 관련 데이터베이스
+│ 	│ 	│   ├── processController.js 		# req, res 처리
+│ 	│ 	│   ├── processProvider.js   		# R에 해당하는 서버 로직 처리
+│ 	│ 	│   ├── processService.js   		# CUD에 해당하는 서버 로직 처리  
+│ 	│   ├── Mypage            		  # Mypage 도메인 폴더
+│   │ 	│   ├── mypageRoute.js          # route 처리
+│   │ 	│   ├── mypageDao.js          	# Mypage 관련 데이터베이스
+│ 	│ 	│   ├── mypageController.js 		# req, res 처리
+│ 	│ 	│   ├── mypageProvider.js   		# R에 해당하는 서버 로직 처리
+│ 	│ 	│   ├── mypageService.js   		  # CUD에 해당하는 서버 로직 처리  
+│ 	│   ├── Dictionary              # UDictionaryser 도메인 폴더
+│   │ 	│   ├── dictionaryRoute.js        # route 처리
+│   │ 	│   ├── dictionaryDao.js      	  # Dictionary 관련 데이터베이스
+│ 	│ 	│   ├── dictionaryController.js   # req, res 처리
+│ 	│ 	│   ├── dictionaryProvider.js   	# R에 해당하는 서버 로직 처리
+│ 	│ 	│   ├── dictionaryService.js   	  # CUD에 해당하는 서버 로직 처리   
+│   ├── dev              			      # 
+│ 	│ 	│   ├── log.js   	               # R에 해당하는 서버 로직 처리
+│ 	│ 	│   ├── serverExpress.js   	     # CUD에 해당하는 서버 로직 처리 
+│   ├── middleware              		# 
+│ 	│ 	│   ├── gptMiddleware.js       	# R에 해당하는 서버 로직 처리
+│ 	│ 	│   ├── jwtMiddleware.js     	  # CUD에 해당하는 서버 로직 처리 
 ├── .gitignore                     		# git 에 포함되지 않아야 하는 폴더, 파일들을 작성 해놓는 곳
-├── index.js                          # 포트 설정 및 시작 파일                     		
+├── index.js                          # 포트 설정 및 시작 파일    
+├── dev.index.js                      # 포트 설정 및 시작 파일    
+├── gpt_test.js                       #     
 ├── * package-lock.json              	 
-├── package.json                        # 프로그램 이름, 버전, 필요한 모듈 등 노드 프로그램의 정보를 기술
+├── package.json                      # 프로그램 이름, 버전, 필요한 모듈 등 노드 프로그램의 정보 기술
 └── README.md
 ```
 ## Description
-본 템플릿은 `Node.js`와 `Express` (`Node.js`의 웹 프레임워크)를 기반으로 구성되었다. 
+`Node.js`와 `Express` (`Node.js`의 웹 프레임워크)를 기반으로 구성되었다. 
 
 ### [Node.js]
 -  `node index.js` 를 통해서 js 파일을 실행한다.
@@ -86,7 +118,7 @@ Log는 winston, winston-daily-rotate-file 라이브러리를 사용해 구성했
 1. config > database.js에서 본인의 DB 정보를 입력한다.
 2. DB에 TEST를 위한 간단한 테이블을 하나 만든다.   
 3. userRoute.js, userController.js, userProvider.js, userDao.js를 구성하여 해당 테이블의 값들을 불러오는 로직을 만든다.
-4. node index.js를 통해 로컬 서버를 구동시키고 포스트맨을 통해 본인이 만든 API 테스트가 잘 되는지 확인한다.
+4. node index.js 명령을 통해 로컬 서버를 구동시키고 포스트맨을 통해 본인이 만든 API 테스트가 잘 되는지 확인한다.
 
 ### [PM2](https://pm2.keymetrics.io/)
 무중단 서비스를 위해 PM2를 사용한다. (JavaScript 런타임 Node.js의 프로세스 관리자)
