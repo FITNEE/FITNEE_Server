@@ -45,7 +45,6 @@ exports.getProcess = async function (req, res) {
  *  2 API Name : 운동 루틴 대체 추천 API
  * [GET] /app/process/replace
  */
-// TODO : 운동 주의사항도 반환해주기
 exports.getReplacementRecommendations = async function (req, res) {
     /**
      * Query Parameter : healthCateogryIdx
@@ -75,7 +74,6 @@ exports.getReplacementRecommendations = async function (req, res) {
  * 3 API Name : myCalendar 추가 API
  * [POST] /app/process/end
  */
-// TODO : 휴식시간 조절 & 서버 시간이랑 맞추기(새벽 시간에 하면 날짜가 안맞음)
 exports.postMycalendar = async function (req, res) {
     /**
      * Decoded : userId
@@ -106,18 +104,8 @@ exports.postMycalendar = async function (req, res) {
     const routineIdx = await processService.insertRoutineIdx(routineContent)
 
     // 현재 시간을 UTC로 가져오기
-    const currentDate = new Date();
-    const utcDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() * 60000));
-
-    // 9시간 추가하여 한국 시간대로 변환
-    const koreanDate = new Date(utcDate.getTime() + (9 * 3600000)); // 9시간 * 60분 * 60초 * 1000밀리초
-
-    const year = koreanDate.getFullYear();
-    const month = String(koreanDate.getMonth() + 1).padStart(2, '0');
-    const day = String(koreanDate.getDate()).padStart(2, '0');
-
-    const todayDate = `${year}-${month}-${day}`;
-
+    const utcTimestamp = new Date()
+    const todayDate = utcTimestamp.toISOString().slice(0, 10).replace(/-/g, '')
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
     const weight = await processProvider.getTotalWeight(routineIdx)
@@ -148,18 +136,8 @@ exports.getProcessResult = async function (req, res) {
     if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
     // 현재 시간을 UTC로 가져오기
-    const currentDate = new Date();
-    const utcDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() * 60000));
-
-    // 9시간 추가하여 한국 시간대로 변환
-    const koreanDate = new Date(utcDate.getTime() + (9 * 3600000)); // 9시간 * 60분 * 60초 * 1000밀리초
-
-    const year = koreanDate.getFullYear();
-    const month = String(koreanDate.getMonth() + 1).padStart(2, '0');
-    const day = String(koreanDate.getDate()).padStart(2, '0');
-
-    const todayDate = `${year}-${month}-${day}`;
-
+    const utcTimestamp = new Date()
+    const todayDate = utcTimestamp.toISOString().slice(0, 10).replace(/-/g, '')
     // 마이 캘린더에 존재하는 routineIdx인지 검증
     const checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
     if(!checkRoutineIdx) return res.send(response(baseResponse.PROCESS_ROUTINEIDX_NOT_EXIST))

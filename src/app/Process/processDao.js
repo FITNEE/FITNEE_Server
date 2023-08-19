@@ -186,8 +186,7 @@ async function selectTotalWeight(connection, routineIdx) {
     const selectDetailRows = `
     SELECT SUM(${caseClauses.join(" + ")}) AS totalWeight
     FROM routineDetail
-    WHERE routineDetailIdx IN (${routineDetailIdxList})
-    AND (${caseClauses.join(" + ")}) > 0;
+    WHERE routineDetailIdx IN (${routineDetailIdxList});
     `;
 
     const [TotalWeight] = await connection.query(selectDetailRows)
