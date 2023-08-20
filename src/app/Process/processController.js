@@ -157,7 +157,6 @@ exports.getProcessResult = async function (req, res) {
     const day = String(koreaTime.getDate()).padStart(2, '0');
     const todayDate = `${year}-${month}-${day}`;
 
-    console.log("todayDate:", todayDate)
     // 마이 캘린더에 존재하는 routineIdx인지 검증
     const checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
     if(!checkRoutineIdx) return res.send(response(baseResponse.PROCESS_ROUTINEIDX_NOT_EXIST))
