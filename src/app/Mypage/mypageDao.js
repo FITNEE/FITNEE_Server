@@ -169,7 +169,7 @@ async function selectUserNickname(connection, userNickName) {
 //     }
 
 //     return formattedRows;
-// }
+    // }
 
 
 async function selectMyRecord(connection, userId) {
@@ -233,7 +233,7 @@ async function selectMyRecord(connection, userId) {
     startAndEndExercise.push({
         firstMonth: parseInt(firstMonth),
         firstWeek: parseInt(firstWeek),
-        lastMonth: lastMonth,
+        lastMonth: parseInt(lastMonth),
         lastWeek: parseInt(lastWeek)
     });
 
