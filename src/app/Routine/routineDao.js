@@ -437,7 +437,7 @@ async function endProcess(connection, userId) {
     };
 
     const today = new Date();
-    // today.setTime(today.getTime()+9*60*60*1000);
+    today.setTime(today.getTime()+9*60*60*1000);
 
     const todayProcessQuery = `
                       SELECT routineIdx, originRoutineIdx, totalExerciseTime
@@ -470,6 +470,13 @@ async function endProcess(connection, userId) {
     const lastRoutine = lastRoutineContent.routineDetails;
     const responseRoutineContent = [];
 
+    console.log("End Process - todayProcess");
+    console.log(todayProcess);
+    console.log(JSON.stringify(todayRoutine));
+    console.log("End Process - lastProcess");
+    console.log(lastProcess);
+    console.log(JSON.stringify(lastRoutine));
+
     for (var i=0; i<todayRoutine.length; i++) {
         for (var j=0; j<lastRoutine.length; j++)
             if (lastRoutine[j].healthCategoryIdx === todayRoutine[i].healthCategoryIdx) break;
@@ -477,20 +484,23 @@ async function endProcess(connection, userId) {
             healthCategoryIdx : todayRoutine[i].healthCategoryIdx,
             exerciseName : todayRoutine[i].exerciseName,
             exerciseParts : todayRoutine[i].exerciseParts,
+            plusRep : 0,
+            plusWeight : 0,
             plusSet : 0,
             content : [],
         };
 
-        const isExistWeight = (!todayRoutine[i].content[0].weight) ? true : false;
-        var todayCurReps = 0;
-        var lastCurReps = 0;
-        var todayCurWeights = 0;
-        var lastCurWeights = 0;
-        todayRoutine[i].content.forEach(element => {todayCurReps+=element.rep; if (isExistWeight) todayCurWeights+=element.weight;});
-        lastRoutine[j].content.forEach(element => {lastCurReps+=element.rep; if (isExistWeight) lastCurWeights+=element.weight;});
+        const isExistWeight = (todayRoutine[i].content[0].weight) ? true : false;
 
-        const diffPerRep = (todayCurReps-lastCurReps)/todayCurReps;
-        const diffPerWeight = isExistWeight ? (todayCurWeights-lastCurWeights)/todayCurWeights : 0;
+        var todayTotalReps = 0;
+        var lastTotalReps = 0;
+        var todayTotalWeights = 0;
+        var lastTotalWeights = 0;
+        todayRoutine[i].content.forEach(element => {todayTotalReps+=element.rep; if (isExistWeight) todayTotalWeights+=element.weight;});
+        lastRoutine[j].content.forEach(element => {lastTotalReps+=element.rep; if (isExistWeight) lastTotalWeights+=element.weight;});
+
+        const diffPerRep = (todayTotalReps-lastTotalReps)/todayTotalReps;
+        const diffPerWeight = isExistWeight ? (todayTotalWeights-lastTotalWeights)/todayTotalWeights : 0;
         const offset = diffPerRep+diffPerWeight-diffPerTime;
         const flag = (offset>=0) ? 1 : -1;
 
@@ -499,58 +509,43 @@ async function endProcess(connection, userId) {
         const flagRWP = (diffPerWeight < diffPerRep-diffPerTime);
 
         if (offset>0.35 || offset<-0.35) {
-            todayRoutine[i].content.forEach(element => {
-                tempRoutineDetail = {
-                    rep : element.rep+offsetRep*2*flag,
-                    plusRep : offsetRep*2*flag,
-                };
-                if (isExistWeight) {
-                    tempRoutineDetail.weight = element.weight+offsetWeight*flag;
-                    tempRoutineDetail.plusWeight = offsetWeight*flag;
-                };
-                if (offsetRep === 2) {
-                    tempRoutineDetail.rep += 1;
-                    tempRoutineDetail.plusRep += 1;
-                }
-                responseRoutine.content.push(tempRoutineDetail);
+            responseRoutine.plusRep = offsetRep*flag;
+            responseRoutine.plusWeight = offsetWeight*flag;
+            responseRoutine.content = todayRoutine[i].content;
+
+            responseRoutine.content.forEach(element => {
+                element.rep += offsetRep*flag
+                if (isExistWeight) element.weight += offsetWeight*flag;
             });
 
         } else if (offset>0.25) {
-            responseRoutine.content = todayRoutine[i].content;
             responseRoutine.plusSet = 1;
+
             tempTodayContent = todayRoutine[i].content;
-            tempRoutineDetail = {
-                rep : tempTodayContent[0].rep,
-            };
-
+            tempRoutineDetail = { rep : tempTodayContent[0].rep };
             if (isExistWeight) tempRoutineDetail.weight = (tempTodayContent.length>1) ? 2*tempTodayContent[0].weight-tempTodayContent[1].weight : tempTodayContent[0].weight;
+            tempTodayContent.unshift(tempRoutineDetail);
 
-            responseRoutine.content.unshift(tempRoutineDetail);
-            responseRoutine.content.forEach(element => {element.plusRep=0; element.plusWeight=0;});
+            responseRoutine.content = tempTodayContent;
 
         } else if (offset<-0.25 && todayRoutine[i].content.length>2) {
-            responseRoutine.content = todayRoutine[i].content;
             responseRoutine.plusSet = -1;
+
+            responseRoutine.content = todayRoutine[i].content;
             responseRoutine.content.sihft();
-            responseRoutine.content.forEach(element => {element.plusRep=0; element.plusWeight=0;});
 
         } else if (offset>0.15 || offset<-0.25) {
-            todayRoutine[i].content.forEach(element => {
-                tempRoutineDetail = {};
-                if (isExistWeight) {
-                    tempRoutineDetail.rep = flagRWP ? element.rep : element.rep+offsetRep*flag;
-                    tempRoutineDetail.weight = flagRWP ? element.weight+offsetWeight*flag : element.weight;
-                    tempRoutineDetail.plusRep = flagRWP ? 0 : offsetRep*flag;
-                    tempRoutineDetail.plusWeight = flagRWP ? offsetWeight*flag : 0;
-                } else {
-                    tempRoutineDetail.rep = flagRWP ? element.rep : element.rep+offsetRep*flag;
-                    tempRoutineDetail.plusRep = flagRWP ? 0 : offsetRep*flag;
-                };
-                responseRoutine.content.push(tempRoutineDetail);
+            responseRoutine.plusRep = offsetRep*flag;
+            responseRoutine.plusWeight = offsetWeight*flag;
+            responseRoutine.content = todayRoutine[i].content;
+
+            responseRoutine.content.forEach(element => {
+                element.rep += (flagRWP&&isExistWeight) ? 0 : offsetRep*flag
+                if (isExistWeight) element.weight += flagRWP ? offsetWeight*flag : 0;
             });
+
         } else {
             responseRoutine.content = todayRoutine[i].content;
-            responseRoutine.content.forEach(element => {element.plusRep=0; if (isExistWeight) element.plusWeight=0;});
         };
 
         responseRoutineContent.push(responseRoutine);

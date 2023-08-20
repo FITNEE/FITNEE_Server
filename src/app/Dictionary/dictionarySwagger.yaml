@@ -216,14 +216,11 @@ tags:
               properties:
                 name:
                   type: string
-                userNickname:
-                  type: string
                 text:
                   type: string
 
               required:
                 - name
-                - userNickname
                 - text
     responses:
       '1000':
