@@ -783,7 +783,10 @@ async function getValidRoutineIdx(connection, originRoutineIdx, todayDate) {
 // myCalendar에서 운동 시간, 무게, 칼로리 조회
 async function getRealTotal(connection, userId, date) {
     const selectRealTotalQuery = `
-        SELECT totalExerciseTime, totalWeight, totalCalories, totalDist
+        SELECT SUM(totalExerciseTime) as totalExerciseTime,
+               SUM(totalWeight) as totalWeight,
+               SUM(totalCalories) as totalCalories,
+               SUM(totalDist) as totalDist
         FROM myCalendar
         WHERE userId = ? AND healthDate = ?;
     `;
