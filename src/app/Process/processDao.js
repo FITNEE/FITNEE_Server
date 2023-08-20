@@ -43,9 +43,6 @@ async function selectProcessData(connection, date, userId) {
     // 길이가 0일 때
     if(routineIdxRow.length === 0) return 0;
 
-    // 길이가 2 이상일 때
-    if(routineIdxRow.length >= 2) return 2;
-
     const routineIdx = routineIdxRow[0].routineIdx
 
     // routine row 긁어오기
