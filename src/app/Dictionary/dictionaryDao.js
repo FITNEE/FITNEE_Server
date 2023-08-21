@@ -204,7 +204,7 @@ async function readResult(connection, userIdFromJWT, name) {
         SELECT CASE WHEN EXISTS (
             SELECT 1
             FROM healthChatting
-            WHERE healthCategoryName = ? 
+            WHERE healthCategoryName = ? AND status = 0
             LIMIT 1
         ) THEN TRUE ELSE FALSE END AS chatExists;
     `;
