@@ -43,9 +43,6 @@ async function selectProcessData(connection, date, userId) {
     // 길이가 0일 때
     if(routineIdxRow.length === 0) return 0;
 
-    // 길이가 2 이상일 때
-    if(routineIdxRow.length >= 2) return 2;
-
     const routineIdx = routineIdxRow[0].routineIdx
 
     // routine row 긁어오기
@@ -783,7 +780,10 @@ async function getValidRoutineIdx(connection, originRoutineIdx, todayDate) {
 // myCalendar에서 운동 시간, 무게, 칼로리 조회
 async function getRealTotal(connection, userId, date) {
     const selectRealTotalQuery = `
-        SELECT totalExerciseTime, totalWeight, totalCalories, totalDist
+        SELECT SUM(totalExerciseTime) as totalExerciseTime,
+               SUM(totalWeight) as totalWeight,
+               SUM(totalCalories) as totalCalories,
+               SUM(totalDist) as totalDist
         FROM myCalendar
         WHERE userId = ? AND healthDate = ?;
     `;

@@ -51,8 +51,6 @@ exports.getExerciseInfo = async function (req, res) {
 
     // 운동 기록이 하나도 없을 경우
     if(exerciseName === 0) return res.send(response(baseResponse.MYPAGE_EXERCISE_NOT_EXIST))
-    // 운동 기록이 두 개 이상 있을 경우
-    if(exerciseName >= 2) return res.send(response(baseResponse.MYPAGE_EXERCISE_INVALID))
 
     // 마이캘린더에서 조회
     const realTotal = await processProvider.getRealTotal(userId, date)

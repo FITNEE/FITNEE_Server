@@ -103,9 +103,18 @@ exports.postMycalendar = async function (req, res) {
     // 새로 만들어진 routineIdx(업데이트 될 수도 있기 때문)
     const routineIdx = await processService.insertRoutineIdx(routineContent)
 
-    // 현재 시간을 UTC로 가져오기
-    const utcTimestamp = new Date()
-    const todayDate = utcTimestamp.toISOString().slice(0, 10).replace(/-/g, '')
+    // 현재 날짜와 시간을 생성
+    const currentDate = new Date();
+
+    // 한국 시간대로 변환 (UTC+9)
+    const koreaTimeOffset = 9 * 60 * 60 * 1000; // 9 hours in milliseconds
+    const koreaTime = new Date(currentDate.getTime() + koreaTimeOffset);
+    // 날짜를 YYYY-MM-DD 형식으로 포맷
+    const year = koreaTime.getFullYear();
+    const month = String(koreaTime.getMonth() + 1).padStart(2, '0');
+    const day = String(koreaTime.getDate()).padStart(2, '0');
+    const todayDate = `${year}-${month}-${day}`;
+
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
     const weight = await processProvider.getTotalWeight(routineIdx)
@@ -135,9 +144,19 @@ exports.getProcessResult = async function (req, res) {
     const originRoutineIdx = req.query.routineIdx
     if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
-    // 현재 시간을 UTC로 가져오기
-    const utcTimestamp = new Date()
-    const todayDate = utcTimestamp.toISOString().slice(0, 10).replace(/-/g, '')
+    // 현재 날짜와 시간을 생성
+    const currentDate = new Date();
+
+    // 한국 시간대로 변환 (UTC+9)
+    const koreaTimeOffset = 9 * 60 * 60 * 1000; // 9 hours in milliseconds
+    const koreaTime = new Date(currentDate.getTime() + koreaTimeOffset);
+
+    // 날짜를 YYYY-MM-DD 형식으로 포맷
+    const year = koreaTime.getFullYear();
+    const month = String(koreaTime.getMonth() + 1).padStart(2, '0');
+    const day = String(koreaTime.getDate()).padStart(2, '0');
+    const todayDate = `${year}-${month}-${day}`;
+
     // 마이 캘린더에 존재하는 routineIdx인지 검증
     const checkRoutineIdx = await processProvider.getCheckMyCalendar(originRoutineIdx, todayDate)
     if(!checkRoutineIdx) return res.send(response(baseResponse.PROCESS_ROUTINEIDX_NOT_EXIST))
