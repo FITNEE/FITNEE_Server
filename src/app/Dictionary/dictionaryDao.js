@@ -97,8 +97,7 @@ async function selectExerciseMethod(connection, name) {
     `;
     const [exerciseinfo] = await connection.query(selectExerciseInformationQuery, [name]);
     const [exercisecaution] = await connection.query(selectExerciseCautionQuery, [name]);
-    
-    const cautionArray = [exercisecaution[0].caution1, exercisecaution[0].caution2, exercisecaution[0].caution3].filter(caution => caution !== null);
+    const cautionArray = [exercisecaution[0].caution1, exercisecaution[0].caution2, exercisecaution[0].caution3].filter(caution => caution !== null && caution !== "");
     
     const exerciseCaution = [];
     exerciseCaution.push({
