@@ -159,8 +159,7 @@ async function selectTodayRoutine(connection, userId) {
         userNickName : responseUserNickname.userNickname,
         exerciseCount : 0,
         isToday : true,
-        healthCategoryIdxs: [],
-        exerciseNames : [],
+        exercises : [],
     };
 
     const existRoutineCalendar = await selectRoutineCalendar(connection, userId);
@@ -181,8 +180,11 @@ async function selectTodayRoutine(connection, userId) {
     const exercisePartSets = new Set();
 
     responseTodayRoutine.forEach(element => {
-        responseToday.healthCategoryIdxs.push(element.healthCategoryIdx);
-        responseToday.exerciseNames.push(element.exerciseName);
+        curExercise = {};
+        curExercise.idx = element.healthCategoryIdx;
+        curExercise.name = element.exerciseName;
+        responseToday.exercises.push(curExercise);
+        
         exercisePartSets.add(element.exerciseParts);
     });
 
