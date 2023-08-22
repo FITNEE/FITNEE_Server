@@ -176,13 +176,15 @@ async function selectTodayRoutine(connection, userId) {
     var responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
     responseTodayRoutine = responseTodayRoutine.routineDetails;
 
+    const healthCategoryIdxs = new Array();
     const exerciseNames = new Array();
     const exercisePartSets = new Set();
 
-    for (var i=0; i<responseTodayRoutine.length; i++) {
-        exerciseNames.push(responseTodayRoutine[i].exerciseName);
-        exercisePartSets.add(responseTodayRoutine[i].exerciseParts);
-    };
+    responseToday.forEach(element => {
+        healthCategoryIdxs.push(element.healthCategoryIdx);
+        exerciseNames.push(element.exerciseName);
+        exercisePartSets.add(element.exerciseParts);
+    });
 
     responseToday.exerciseCount = responseTodayRoutine.length;
     responseToday.exerciseNames = exerciseNames;
