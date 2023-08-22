@@ -203,7 +203,7 @@ tags:
 /app/dictionary/chatting:
   post:
     summary: API NO.7 - 운동 name, userNickname, text post API
-    description: 운동 name, userNickname, text post해서 db에 넣기
+    description: 운동 name, text post해서 db에 넣기
     tags:
       - Dictionary
     operationId: postChatting
