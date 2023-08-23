@@ -435,8 +435,8 @@ async function selectRoutine(connection, routineIdx) {
         
             if (routineDetailRow) {
                 const exerciseInfo = exerciseList.find(exercise => exercise.healthCategoryIdx === routineDetailRow.healthCategoryIdx);
-                // caution 배열 생성 시 null 값은 제외
-                const cautionArray = [exerciseInfo.caution1, exerciseInfo.caution2, exerciseInfo.caution3].filter(caution => caution !== null);
+                // caution 배열 생성 시 null 값, 공백은 제외
+                const cautionArray = [exerciseInfo.caution1, exerciseInfo.caution2, exerciseInfo.caution3].filter(caution => caution !== null && caution.trim() !== '');
                 routineContent.push({
                     exerciseInfo: {
                         healthCategoryIdx: exerciseInfo.healthCategoryIdx,
