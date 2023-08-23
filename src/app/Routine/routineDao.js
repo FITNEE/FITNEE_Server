@@ -616,6 +616,10 @@ async function insertLastProcess(connection, userId, date) {
         originRoutineIdx : responseTodayInfo.routineIdx,
         healthDate : date
     };
+
+    console.log('insertLastProcess - ', updateRoutine);
+    console.log('insertLastProcess - ', lastProcess);
+
     const lastProcessQuery = `
                       INSERT INTO myCalendar
                       SET ?
