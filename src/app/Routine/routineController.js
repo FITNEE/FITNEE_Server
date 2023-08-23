@@ -184,10 +184,10 @@ exports.genLastProcess = async function (req, res) {
      */
     const userId = req.body.userId;
     const date = req.body.date;
-    const content = req.body.content;
     const originIdx = req.body.originRoutineIdx;
+    const info = req.body.info;
 
-    const responsePostRoutine = await routineService.insertLastProcess(userId, date, originIdx, content);
+    const responsePostRoutine = await routineService.insertLastProcess(userId, date, originIdx, info);
 
     return res.send(responsePostRoutine);
 };

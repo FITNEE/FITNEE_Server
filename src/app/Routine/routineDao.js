@@ -572,7 +572,7 @@ async function insertLastProcess(connection, userId, date, originIdx, content) {
 
     const responseRoutine = await selectRoutine(connection, originIdx);
     const updateRoutine =  {
-        parts : routineToday.parts,
+        parts : responseRoutine.parts,
     };
     for (var i=0; i<content.length; i++) {
         var updateRoutineDetail = {
@@ -581,7 +581,7 @@ async function insertLastProcess(connection, userId, date, originIdx, content) {
 
         curContent = content[i].content;
         for (var j=0; j<curContent.length; j++) {
-            updateRoutineDetail["rep"+String(j)] = curContent[j].rep-2;
+            updateRoutineDetail["rep"+String(j)] = curContent[j].rep;
             if (curContent[j].weight)
                 updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
         };
