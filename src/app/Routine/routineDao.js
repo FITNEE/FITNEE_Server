@@ -572,11 +572,13 @@ async function insertLastProcess(connection, userId, date) {
 
     const responseTodayInfo = await selectTodayRoutine(connection, userId);
 
-    const routineContent = await selectRoutine(connection, responseTodayInfo.routineIdx);
+    const routineToday = await selectRoutine(connection, responseTodayInfo.routineIdx);
 
     const updateRoutine =  {
-        parts : routineContent.parts,
+        parts : routineToday.parts,
     };
+
+    const routineContent = routineToday.routineDetails;
 
     for (var i=0; i<routineContent.length; i++) {
         var updateRoutineDetail = {
