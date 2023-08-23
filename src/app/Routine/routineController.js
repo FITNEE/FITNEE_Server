@@ -173,3 +173,21 @@ exports.endProcess = async function (req, res) {
     if (!responseEndProcess) return res.send(errResponse(baseResponse.COMPARE_ROUTINE_UNDEFINED));
     else return res.send(response(baseResponse.SUCCESS, responseEndProcess));
 };
+
+/**
+ * API Name : 지난주 운동 기록 생성 API
+ * [POST] /app/routine/gen/last-process
+ */
+exports.genLastProcess = async function (req, res) {
+    /**
+     * Body : userId, date, content;
+     */
+    const userId = req.body.userId;
+    const date = req.body.date;
+    const originIdx = req.body.originRoutineIdx;
+    const info = req.body.info;
+
+    const responsePostRoutine = await routineService.insertLastProcess(userId, date, originIdx, info);
+
+    return res.send(responsePostRoutine);
+};

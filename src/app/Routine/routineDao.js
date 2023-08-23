@@ -158,7 +158,9 @@ async function selectTodayRoutine(connection, userId) {
         todayStrKo : toMyString(exerciseDay),
         userNickName : responseUserNickname.userNickname,
         exerciseCount : 0,
-        isToday: true,
+        isToday : true,
+        routineIdx : 0,
+        exercises : [],
     };
 
     const existRoutineCalendar = await selectRoutineCalendar(connection, userId);
@@ -173,19 +175,22 @@ async function selectTodayRoutine(connection, userId) {
         responseToday.todayStrKo = toMyString(exerciseDay);
     };
 
+    responseToday.routineIdx = existRoutineIdx;
     var responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
     responseTodayRoutine = responseTodayRoutine.routineDetails;
 
-    const exerciseNames = new Array();
     const exercisePartSets = new Set();
 
-    for (var i=0; i<responseTodayRoutine.length; i++) {
-        exerciseNames.push(responseTodayRoutine[i].exerciseName);
-        exercisePartSets.add(responseTodayRoutine[i].exerciseParts);
-    };
+    responseTodayRoutine.forEach(element => {
+        curExercise = {};
+        curExercise.idx = element.healthCategoryIdx;
+        curExercise.name = element.exerciseName;
+        responseToday.exercises.push(curExercise);
+        
+        exercisePartSets.add(element.exerciseParts);
+    });
 
     responseToday.exerciseCount = responseTodayRoutine.length;
-    responseToday.exerciseNames = exerciseNames;
     responseToday.exerciseParts = Array.from(exercisePartSets).join(', ');
     return responseToday;
 };
@@ -556,6 +561,125 @@ async function endProcess(connection, userId) {
     return responseRoutineContent;
 };
 
+// 루틴 일정 수정
+async function insertLastProcess(connection, userId, date, originIdx, content) {
+    const userInfoQuery = `
+                  SELECT userIdx
+                  FROM User
+                  WHERE userId = ?
+                  `;
+    const [[responseUserInfo]] = await connection.query(userInfoQuery, userId);
+
+    const responseRoutine = await selectRoutine(connection, originIdx);
+    const updateRoutine =  {
+        parts : responseRoutine.parts,
+    };
+    for (var i=0; i<content.length; i++) {
+        var updateRoutineDetail = {
+            healthCategoryIdx : content[i].healthCategoryIdx,
+        };
+
+        curContent = content[i].content;
+        for (var j=0; j<curContent.length; j++) {
+            updateRoutineDetail["rep"+String(j)] = curContent[j].rep;
+            if (curContent[j].weight)
+                updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
+        };
+
+        const updateRoutineDetailQuery = `
+                              INSERT INTO routineDetail
+                              SET ?;
+                              SELECT LAST_INSERT_ID();
+                              `;
+        const [responseUpdateRD] = await connection.query(updateRoutineDetailQuery, updateRoutineDetail);
+        updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
+    };
+
+    const updateRoutineQuery = `
+                        INSERT INTO routine
+                        SET ?;
+                        SELECT LAST_INSERT_ID();
+                        `;
+    const [responseUpdateRoutine] = await connection.query(updateRoutineQuery, updateRoutine);
+    const updateRoutineIdx = responseUpdateRoutine[1][0]['LAST_INSERT_ID()'];
+
+    const lastProcess = {
+        userIdx : responseUserInfo.userIdx,
+        userId : userId,
+        routineIdx : updateRoutineIdx,
+        originRoutineIdx : originIdx,
+        healthDate : date
+    };
+
+    console.log('insertLastProcess - ', updateRoutine);
+    console.log('insertLastProcess - ', lastProcess);
+
+    const lastProcessQuery = `
+                      INSERT INTO myCalendar
+                      SET ?
+                      `;
+
+    await connection.query(lastProcessQuery, lastProcess);
+
+    return ;
+
+    // const responseTodayInfo = await selectTodayRoutine(connection, userId);
+    // const routineToday = await selectRoutine(connection, responseTodayInfo.routineIdx);
+    // const updateRoutine =  {
+    //     parts : routineToday.parts,
+    // };
+
+    // const routineContent = routineToday.routineDetails;
+
+    // for (var i=0; i<routineContent.length; i++) {
+    //     var updateRoutineDetail = {
+    //         healthCategoryIdx : routineContent[i].healthCategoryIdx,
+    //     };
+
+    //     curContent = routineContent[i].content;
+    //     for (var j=0; j<curContent.length; j++) {
+    //         updateRoutineDetail["rep"+String(j)] = curContent[j].rep-2;
+    //         if (curContent[j].weight)
+    //             updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
+    //     };
+
+    //     const updateRoutineDetailQuery = `
+    //                           INSERT INTO routineDetail
+    //                           SET ?;
+    //                           SELECT LAST_INSERT_ID();
+    //                           `;
+    //     const [responseUpdateRD] = await connection.query(updateRoutineDetailQuery, updateRoutineDetail);
+    //     updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
+    // };
+
+    // const updateRoutineQuery = `
+    //                     INSERT INTO routine
+    //                     SET ?;
+    //                     SELECT LAST_INSERT_ID();
+    //                     `;
+    // const [responseUpdateRoutine] = await connection.query(updateRoutineQuery, updateRoutine);
+    // const updateRoutineIdx = responseUpdateRoutine[1][0]['LAST_INSERT_ID()'];
+
+    // const lastProcess = {
+    //     userIdx : responseUserInfo.userIdx,
+    //     userId : userId,
+    //     routineIdx : updateRoutineIdx,
+    //     originRoutineIdx : responseTodayInfo.routineIdx,
+    //     healthDate : date
+    // };
+
+    // console.log('insertLastProcess - ', updateRoutine);
+    // console.log('insertLastProcess - ', lastProcess);
+
+    // const lastProcessQuery = `
+    //                   INSERT INTO myCalendar
+    //                   SET ?
+    //                   `;
+
+    // await connection.query(lastProcessQuery, lastProcess);
+
+    // return ;
+};
 
 module.exports = {
     insertRoutine,
@@ -567,5 +691,6 @@ module.exports = {
     selectRoutine,
     updateRoutine,
     deleteRoutine,
-    endProcess
+    endProcess,
+    insertLastProcess
 };

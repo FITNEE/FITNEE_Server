@@ -92,13 +92,17 @@ tags:
                     'exerciseNames':
                       type: array
                       items:
-                        type: string
-                        example: 푸쉬업
+                        type: object
+                        properties:
+                          'name':
+                            type: string
+                            example: 푸쉬업
+                          'idx':
+                            type: integer
+                            example: 23
                     'exerciseParts':
-                      type: array
-                      items:
-                        type: string
-                        example: 유산소
+                      type: string
+                      example: 유산소
 
 /app/routine/calendar:
   post:

@@ -9,6 +9,9 @@ const routine = require('./routineController');
  * /app/routine
  */
 
+// 개발용 지난주 운동 기록 생성 API
+router.post('/gen/last-process', routine.genLastProcess);
+
 router.use(jwtMiddleware);
 
 // 루틴 예시 생성 API
