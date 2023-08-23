@@ -69,10 +69,10 @@ exports.deleteRoutine = async function (userId, routineIdx) {
     }
 };
 
-exports.insertLastProcess = async function (userId, date) {
+exports.insertLastProcess = async function (userId, date, originIdx, content) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const updateRoutineCalendar = await routineDao.insertLastProcess(connection, userId, date);
+        const updateRoutineCalendar = await routineDao.insertLastProcess(connection, userId, date, originIdx, content);
         connection.release();
     
         return response(baseResponse.SUCCESS, updateRoutineCalendar);

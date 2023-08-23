@@ -180,12 +180,14 @@ exports.endProcess = async function (req, res) {
  */
 exports.genLastProcess = async function (req, res) {
     /**
-     * Body : userId, date
+     * Body : userId, date, content;
      */
     const userId = req.body.userId;
     const date = req.body.date;
+    const content = req.body.content;
+    const originIdx = req.body.originRoutineIdx;
 
-    const responsePostRoutine = await routineService.insertLastProcess(userId, date);
+    const responsePostRoutine = await routineService.insertLastProcess(userId, date, originIdx, content);
 
     return res.send(responsePostRoutine);
 };
