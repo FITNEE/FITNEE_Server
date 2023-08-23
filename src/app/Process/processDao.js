@@ -707,15 +707,17 @@ async function insertMyCalendar(connection, userIdx, userId, routineIdx, originR
 
 // 마이캘린더에서 데이터 조회
 async function selectTotalData(connection, userId, todayDate) {
-    const totalDataQuery = `
-        SELECT totalExerciseTime, totalWeight, totalCalories, totalDist
+    const latestDataQuery = `
+        SELECT totalExerciseTime, totalWeight, totalCalories, totalDist, myCalenderIdx
         FROM myCalendar
-        WHERE userId = ? AND healthDate = ?;
+        WHERE userId = ? AND healthDate = ?
+        ORDER BY healthDate DESC
+        LIMIT 1;
     `;
 
-    const [totalDataRows] = await connection.query(totalDataQuery, [userId, todayDate])
+    const [latestDataRow] = await connection.query(latestDataQuery, [userId, todayDate]);
     
-    return totalDataRows[0]
+    return latestDataRow[0];
 }
 
 // routineIdx 기준으로 마지막 데이터 2개 합차 조회(-1 인덱스와 -2 인덱스 차이)

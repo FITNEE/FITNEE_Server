@@ -103,12 +103,9 @@ exports.postMycalendar = async function (req, res) {
     // 새로 만들어진 routineIdx(업데이트 될 수도 있기 때문)
     const routineIdx = await processService.insertRoutineIdx(routineContent)
 
-    // 현재 날짜와 시간을 생성
-    const currentDate = new Date();
+    // 현재 시간을 한국 시간대로 가져옴
+    const koreaTime = new Date();
 
-    // 한국 시간대로 변환 (UTC+9)
-    const koreaTimeOffset = 9 * 60 * 60 * 1000; // 9 hours in milliseconds
-    const koreaTime = new Date(currentDate.getTime() + koreaTimeOffset);
     // 날짜를 YYYY-MM-DD 형식으로 포맷
     const year = koreaTime.getFullYear();
     const month = String(koreaTime.getMonth() + 1).padStart(2, '0');
@@ -144,12 +141,8 @@ exports.getProcessResult = async function (req, res) {
     const originRoutineIdx = req.query.routineIdx
     if(!originRoutineIdx) return res.send(response(baseResponse.PROCESS_ORIGINROUTINEIDX_INVALID))
 
-    // 현재 날짜와 시간을 생성
-    const currentDate = new Date();
-
-    // 한국 시간대로 변환 (UTC+9)
-    const koreaTimeOffset = 9 * 60 * 60 * 1000; // 9 hours in milliseconds
-    const koreaTime = new Date(currentDate.getTime() + koreaTimeOffset);
+    // 현재 시간을 한국 시간대로 가져옴
+    const koreaTime = new Date();
 
     // 날짜를 YYYY-MM-DD 형식으로 포맷
     const year = koreaTime.getFullYear();
@@ -167,7 +160,7 @@ exports.getProcessResult = async function (req, res) {
 
     // myCalendar에서 데이터 조회
     const totalData = await processProvider.getTotalData(userId, todayDate)
-
+    console.log("totalData:", totalData)
     // 운동 횟수 조회
     const countHealth = await processProvider.getHealthCount(userId)
     if(!countHealth || !totalData) return res.send(response(baseResponse.PROCESS_EXERCISE_NOT_EXIST))
