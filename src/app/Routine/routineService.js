@@ -68,3 +68,16 @@ exports.deleteRoutine = async function (userId, routineIdx) {
         return errResponse(baseResponse.TRANSACTION_ERROR);
     }
 };
+
+exports.insertLastProcess = async function (userId, date) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const updateRoutineCalendar = await routineDao.insertLastProcess(connection, userId, date);
+        connection.release();
+    
+        return response(baseResponse.SUCCESS, updateRoutineCalendar);
+    } catch (err) {
+        logger.error(`App - insertLastProcess Service error\n: ${err.message}`);
+        return errResponse(baseResponse.TRANSACTION_ERROR);
+    }
+}

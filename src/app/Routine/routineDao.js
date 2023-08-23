@@ -159,6 +159,7 @@ async function selectTodayRoutine(connection, userId) {
         userNickName : responseUserNickname.userNickname,
         exerciseCount : 0,
         isToday : true,
+        routineIdx : 0,
         exercises : [],
     };
 
@@ -174,6 +175,7 @@ async function selectTodayRoutine(connection, userId) {
         responseToday.todayStrKo = toMyString(exerciseDay);
     };
 
+    responseToday.routineIdx = existRoutineIdx;
     var responseTodayRoutine = await selectRoutine(connection, existRoutineIdx);
     responseTodayRoutine = responseTodayRoutine.routineDetails;
 
@@ -559,6 +561,68 @@ async function endProcess(connection, userId) {
     return responseRoutineContent;
 };
 
+// 루틴 일정 수정
+async function insertLastProcess(connection, userId, date) {
+    const userInfoQuery = `
+                  SELECT userIdx
+                  FROM User
+                  WHERE userId = ?
+                  `;
+    const [[responseUserInfo]] = await connection.query(userInfoQuery, userId);
+
+    const responseTodayInfo = await selectTodayRoutine(connection, userId);
+
+    const routineContent = await selectRoutine(connection, responseTodayInfo.routineIdx);
+
+    const updateRoutine =  {
+        parts : routineContent.parts,
+    };
+
+    for (var i=0; i<routineContent.length; i++) {
+        var updateRoutineDetail = {
+            healthCategoryIdx : routineContent[i].healthCategoryIdx,
+        };
+
+        curContent = routineContent[i].content;
+        for (var j=0; j<curContent.length; j++) {
+            updateRoutineDetail["rep"+String(j)] = curContent[j].rep-2;
+            if (curContent[j].weight)
+                updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
+        };
+
+        const updateRoutineDetailQuery = `
+                              INSERT INTO routineDetail
+                              SET ?;
+                              SELECT LAST_INSERT_ID();
+                              `;
+        const [responseUpdateRD] = await connection.query(updateRoutineDetailQuery, updateRoutineDetail);
+        updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
+    };
+
+    const updateRoutineQuery = `
+                        INSERT INTO routine
+                        SET ?;
+                        SELECT LAST_INSERT_ID();
+                        `;
+    const [responseUpdateRoutine] = await connection.query(updateRoutineQuery, updateRoutine);
+    const updateRoutineIdx = responseUpdateRoutine[1][0]['LAST_INSERT_ID()'];
+
+    const lastProcess = {
+        userIdx : responseUserInfo.userIdx,
+        userId : userId,
+        routineIdx : updateRoutineIdx,
+        originRoutineIdx : responseTodayInfo.routineIdx,
+        healthDate : date
+    };
+    const lastProcessQuery = `
+                      INSERT INTO myCalendar
+                      SET ?
+                      `;
+
+    await connection.query(lastProcessQuery, lastProcess);
+
+    return ;
+};
 
 module.exports = {
     insertRoutine,
@@ -570,5 +634,6 @@ module.exports = {
     selectRoutine,
     updateRoutine,
     deleteRoutine,
-    endProcess
+    endProcess,
+    insertLastProcess
 };
