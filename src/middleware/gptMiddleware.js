@@ -58,9 +58,9 @@ const gptMiddleware = async function (req, res, next)  {
         Say only JSON Object format like
         [
             {
-                'Title': thisRoutineTitle(Only Korean)
+                'Title': thisRoutineTitle
                 'dayOfWeek'(day of week name): {
-                    'target': targetArea(Only Korean),
+                    'target': targetArea,
                     'content': [
                         {
                             'exerciseId': exerciseId,

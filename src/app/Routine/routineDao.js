@@ -1,6 +1,8 @@
 const { response } = require('express');
-const lodash = require('lodash');
 const { exceptions } = require('winston');
+const lodash = require('lodash');
+const deepl = require('deepl-node');
+const secret = require('../../../config/secret');
 
 async function insertRoutine(connection, userId, info, gpt) {
     const selectUserInfo = `
@@ -34,7 +36,24 @@ async function insertRoutine(connection, userId, info, gpt) {
     const responseCompletion = await openai.createChatCompletion(completion);
     console.log("---------- gpt completion ----------");
     const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content.replaceAll('\'', '"').replaceAll('`', '"'));
-    console.log(responseContent);
+
+    // const trnaslator = new deepl.Translator(secret.deepLKey);
+
+    // translator
+    //     .translateText('', 'en', 'ko')
+    //     .then((result) => { console.log(result.text); })
+    //     .catch((error) => { console.error(error); })
+
+    // const responseContentKeys = [];
+    // responseContent.forEach(element => {
+    //     responseContentKeys.push(Object.keys(element));
+    //     translateText.push(element.Title)
+    //     element.content.forEach()
+    // });
+
+    console.log(JSON.stringify(responseContent, null, 2));
+
+    // console.log(responseContent);
 
     const selectExerciseListQuery = `
                           SELECT name
