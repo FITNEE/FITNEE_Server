@@ -38,43 +38,39 @@ async function selectProcessData(connection, date, userId) {
         FROM myCalendar
         WHERE healthDate = ? AND userId = ?
     `;
-    const [routineIdxRow] = await connection.query(myCalendarProcessQuery, [formattedDate, userId])
+    const [routineIdxRows] = await connection.query(myCalendarProcessQuery, [formattedDate, userId]);
 
-    // 길이가 0일 때
-    if(routineIdxRow.length === 0) return 0;
+    if (routineIdxRows.length === 0) {
+        return 0
+    }
 
-    const routineIdx = routineIdxRow[0].routineIdx
+    const routineIdxList = routineIdxRows.map(row => row.routineIdx);
 
-    // routine row 긁어오기
     const selectRoutineQuery = `
         SELECT detailIdx0, detailIdx1, detailIdx2, detailIdx3, detailIdx4, detailIdx5, detailIdx6, detailIdx7, detailIdx8, detailIdx9
         FROM routine
-        WHERE routineIdx = ?;
+        WHERE routineIdx IN (?);
     `;
-    const [[routineRow]] = await connection.query(selectRoutineQuery, routineIdx);
-    
-    const routine = routineRow
-    
-    const routine_list = [];
-    // detailIdx가 0보다 큰 숫자들만 긁어오기
-    for (let i = 0; i < 10; i++) {
-        const detailIdxValue = routine[`detailIdx${i}`];
-        if (detailIdxValue !== null && detailIdxValue > 0) {
-            routine_list.push(detailIdxValue);
+    const [routineRows] = await connection.query(selectRoutineQuery, [routineIdxList]);
+    const healthCategoryIdxs = [];
+
+    for (const routineRow of routineRows) {
+        for (let i = 0; i < 10; i++) {
+            const detailIdxValue = routineRow[`detailIdx${i}`];
+            if (detailIdxValue !== null && detailIdxValue > 0) {
+                healthCategoryIdxs.push(detailIdxValue);
+            }
         }
     }
 
-    // healthCategoryIdx 받아오기
     const selectHealthCategoryIdxQuery = `
         SELECT healthCategoryIdx
         FROM routineDetail
         WHERE routineDetailIdx IN (?);
     `;
-    const [healthCategoryIdxRows] = await connection.query(selectHealthCategoryIdxQuery, [routine_list])
-    const healthCategoryIdxList = healthCategoryIdxRows.map(row => row.healthCategoryIdx)
+    const [healthCategoryIdxRows] = await connection.query(selectHealthCategoryIdxQuery, [healthCategoryIdxs]);
+    const healthCategoryIdxList = healthCategoryIdxRows.map(row => row.healthCategoryIdx);
 
-
-    // healthCategory name 받아오기
     const selectHealthNameQuery = `
         SELECT name
         FROM healthCategory
