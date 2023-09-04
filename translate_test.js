@@ -1,484 +1,540 @@
-// const deepl = require('deepl-node');
-// const secret = require('./config/secret');
-
-// const translator = new deepl.Translator(secret.deepLKey);
-
-// async function translateText() {
-//   translator
-//     .translateText(['full body strength training,shoulder,cardio,back,back'], 'en', 'ko')
-//     .then((result) => { console.log(result); })
-//     .catch((error) => { console.error(error); })
-// }
-
-// translateText();
+const deepl = require('deepl-node');
+const secret = require('./config/secret');
 
 const responseContent = 
 [
   {
-      'Title': "전신 근력 운동",
-      'Monday': {
-          'target': '등',
-          'content': [
-              {
-                  'exerciseId': 13,
-                  'exerciseName': 'Seated Row',
-                  'sets': 3,
-                  'reps': 12,
-                  "weights": [20, 25, 30]
-              },
-              {
-                  "exerciseId": 5,
-                  "exerciseName": "Lat Pull down",
-                  "sets": 3,
-                  "reps": 10,
-                  "weights": [30, 40, 50]
-              },
-              {
-                  "exerciseId": 1,
-                  "exerciseName": "Bench Press",
-                  "sets": 3,
-                  "reps": 10,
-                  "weights": [50, 55, 60]
-              },
-              {
-                  "exerciseId": 3,
-                  "exerciseName": "Chest Press Machine",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [30, 35, 40]
-              },
+    "Title": "Beginner Full Body Workout",
+    "Monday": {
+      "target": "Chest",
+      "content": [
+        {
+          "exerciseId": 1,
+          "exerciseName": "Bench Press",
+          "sets": 3,
+          "reps": 10,
+          "weights": [
+            40,
+            40,
+            40
           ]
-      },
-      'Tuesday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 9,
+          "exerciseName": "Dumbbell Fly",
+          "sets": 3,
+          "reps": 12,
+          "weights": [
+            8,
+            8,
+            8
           ]
-      },
-      'Wednesday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Tuesday": {
+      "target": "Back",
+      "content": [
+        {
+          "exerciseId": 6,
+          "exerciseName": "Barbell Row",
+          "sets": 3,
+          "reps": 10,
+          "weights": [
+            30,
+            30,
+            30
           ]
-      },
-      'Thursday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 8,
+          "exerciseName": "Dumbbell Row",
+          "sets": 3,
+          "reps": 12,
+          "weights": [
+            10,
+            10,
+            10
           ]
-      },
-      'Friday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Wednesday": {
+      "target": "Shoulders",
+      "content": [
+        {
+          "exerciseId": 10,
+          "exerciseName": "Shoulder Press",
+          "sets": 3,
+          "reps": 10,
+          "weights": [
+            20,
+            20,
+            20
           ]
-      },
-      'Saturday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 11,
+          "exerciseName": "Side Lateral Raise",
+          "sets": 3,
+          "reps": 12,
+          "weights": [
+            5,
+            5,
+            5
           ]
-      },
-      'Sunday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Thursday": {
+      "target": "Arms",
+      "content": [
+        {
+          "exerciseId": 2,
+          "exerciseName": "Incline Dumbbell Press",
+          "sets": 3,
+          "reps": 10,
+          "weights": [
+            15,
+            15,
+            15
           ]
-      }
+        },
+        {
+          "exerciseId": 19,
+          "exerciseName": "Chest Dips",
+          "sets": 3,
+          "reps": 12
+        }
+      ]
+    },
+    "Friday": {
+      "target": "Core",
+      "content": [
+        {
+          "exerciseId": 22,
+          "exerciseName": "Front Plank",
+          "sets": 3,
+          "reps": 10
+        },
+        {
+          "exerciseId": 23,
+          "exerciseName": "Side Plank",
+          "sets": 3,
+          "reps": 10
+        }
+      ]
+    },
+    "Saturday": {
+      "target": "Lower Body",
+      "content": [
+        {
+          "exerciseId": 16,
+          "exerciseName": "Leg Press",
+          "sets": 3,
+          "reps": 10,
+          "weights": [
+            80,
+            80,
+            80
+          ]
+        },
+        {
+          "exerciseId": 15,
+          "exerciseName": "Leg Curl",
+          "sets": 3,
+          "reps": 12,
+          "weights": [
+            20,
+            20,
+            20
+          ]
+        }
+      ]
+    },
+    "Sunday": {
+      "target": "Cardio",
+      "content": [
+        {
+          "exerciseId": 24,
+          "exerciseName": "Running",
+          "sets": 1,
+          "reps": 5
+        },
+        {
+          "exerciseId": 25,
+          "exerciseName": "Cycling",
+          "sets": 1,
+          "reps": 5
+        }
+      ]
+    }
   },
   {
-      'Title': "기초 체력 운동",
-      'Monday': {
-          'target': '등',
-          'content': [
-              {
-                  'exerciseId': 13,
-                  'exerciseName': 'Seated Row',
-                  'sets': 3,
-                  'reps': 12,
-                  "weights": [20, 25, 30]
-              },
-              {
-                  "exerciseId": 5,
-                  "exerciseName": "Lat Pull down",
-                  "sets": 3,
-                  "reps": 10,
-                  "weights": [30, 40, 50]
-              },
-              {
-                  "exerciseId": 1,
-                  "exerciseName": "Bench Press",
-                  "sets": 3,
-                  "reps": 10,
-                  "weights": [50, 55, 60]
-              },
-              {
-                  "exerciseId": 3,
-                  "exerciseName": "Chest Press Machine",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [30, 35, 40]
-              },
+    "Title": "Advanced Upper Body Workout",
+    "Monday": {
+      "target": "Chest",
+      "content": [
+        {
+          "exerciseId": 1,
+          "exerciseName": "Bench Press",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            50,
+            60,
+            70,
+            80
           ]
-      },
-      'Tuesday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 3,
+          "exerciseName": "Chest Press Machine",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            40,
+            50,
+            60,
+            70
           ]
-      },
-      'Wednesday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Tuesday": {
+      "target": "Back",
+      "content": [
+        {
+          "exerciseId": 6,
+          "exerciseName": "Barbell Row",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            40,
+            50,
+            60,
+            70
           ]
-      },
-      'Thursday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 5,
+          "exerciseName": "Lat Pulldown",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            40,
+            50,
+            60,
+            70
           ]
-      },
-      'Friday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Wednesday": {
+      "target": "Shoulders",
+      "content": [
+        {
+          "exerciseId": 10,
+          "exerciseName": "Shoulder Press",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            30,
+            40,
+            50,
+            60
           ]
-      },
-      'Saturday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 12,
+          "exerciseName": "Front Dumbbell Raise",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            10,
+            15,
+            20,
+            25
           ]
-      },
-      'Sunday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Thursday": {
+      "target": "Arms",
+      "content": [
+        {
+          "exerciseId": 19,
+          "exerciseName": "Chest Dips",
+          "sets": 4,
+          "reps": 8
+        },
+        {
+          "exerciseId": 20,
+          "exerciseName": "Pull Ups",
+          "sets": 4,
+          "reps": 10
+        }
+      ]
+    },
+    "Friday": {
+      "target": "Core",
+      "content": [
+        {
+          "exerciseId": 22,
+          "exerciseName": "Front Plank",
+          "sets": 4,
+          "reps": 20
+        },
+        {
+          "exerciseId": 23,
+          "exerciseName": "Side Plank",
+          "sets": 4,
+          "reps": 20
+        }
+      ]
+    },
+    "Saturday": {
+      "target": "Lower Body",
+      "content": [
+        {
+          "exerciseId": 16,
+          "exerciseName": "Leg Press",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            100,
+            120,
+            140,
+            160
           ]
-      }
+        },
+        {
+          "exerciseId": 17,
+          "exerciseName": "Hip Thrust",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            40,
+            60,
+            80,
+            100
+          ]
+        }
+      ]
+    },
+    "Sunday": {
+    "target": "Cardio",
+    "content": [
+        {
+          "exerciseId": 24,
+          "exerciseName": "Running",
+          "sets": 1,
+          "reps": 6
+        },
+        {
+          "exerciseId": 25,
+          "exerciseName": "Cycling",
+          "sets": 1,
+          "reps": 6
+        }
+      ]
+    }
   },
   {
-      'Title': "기초 체력 운동",
-      'Monday': {
-          'target': '등',
-          'content': [
-              {
-                  'exerciseId': 13,
-                  'exerciseName': 'Seated Row',
-                  'sets': 3,
-                  'reps': 12,
-                  "weights": [20, 25, 30]
-              },
-              {
-                  "exerciseId": 5,
-                  "exerciseName": "Lat Pull down",
-                  "sets": 3,
-                  "reps": 10,
-                  "weights": [30, 40, 50]
-              },
-              {
-                  "exerciseId": 1,
-                  "exerciseName": "Bench Press",
-                  "sets": 3,
-                  "reps": 10,
-                  "weights": [50, 55, 60]
-              },
-              {
-                  "exerciseId": 3,
-                  "exerciseName": "Chest Press Machine",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [30, 35, 40]
-              },
+    "Title": "Advanced Full Body Workout",
+    "Monday": {
+      "target": "Chest",
+      "content": [
+        {
+          "exerciseId": 1,
+          "exerciseName": "Bench Press",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            50,
+            60,
+            70,
+            80
           ]
-      },
-      'Tuesday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 3,
+          "exerciseName": "Chest Press Machine",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            40,
+            50,
+            60,
+            70
           ]
-      },
-      'Wednesday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Tuesday": {
+      "target": "Back",
+      "content": [
+        {
+          "exerciseId": 6,
+          "exerciseName": "Barbell Row",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            40,
+            50,
+            60,
+            70
           ]
-      },
-      'Thursday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 5,
+          "exerciseName": "Lat Pulldown",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            40,
+            50,
+            60,
+            70
           ]
-      },
-      'Friday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Wednesday": {
+      "target": "Shoulders",
+      "content": [
+        {
+          "exerciseId": 10,
+          "exerciseName": "Shoulder Press",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            30,
+            40,
+            50,
+            60
           ]
-      },
-      'Saturday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        },
+        {
+          "exerciseId": 12,
+          "exerciseName": "Front Dumbbell Raise",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            10,
+            15,
+            20,
+            25
           ]
-      },
-      'Sunday': {
-          'target': '하체',
-          'content': [
-              {
-                  "exerciseId": 4,
-                  "exerciseName": "Leg Extension",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                },
-                {
-                  "exerciseId": 14,
-                  "exerciseName": "Leg Curl",
-                  "sets": 3,
-                  "reps": 12,
-                  "weights": [20, 25, 30]
-                }
+        }
+      ]
+    },
+    "Thursday": {
+      "target": "Arms",
+      "content": [
+        {
+          "exerciseId": 19,
+          "exerciseName": "Chest Dips",
+          "sets": 4,
+          "reps": 8
+        },
+        {
+          "exerciseId": 20,
+          "exerciseName": "Pull Ups",
+          "sets": 4,
+          "reps": 10
+        }
+      ]
+    },
+    "Friday": {
+      "target": "Core",
+      "content": [
+        {
+          "exerciseId": 22,
+          "exerciseName": "Front Plank",
+          "sets": 4,
+          "reps": 20
+        },
+        {
+          "exerciseId": 23,
+          "exerciseName": "Side Plank",
+          "sets": 4,
+          "reps": 20
+        }
+      ]
+    },
+    "Saturday": {
+      "target": "Lower Body",
+      "content": [
+        {
+          "exerciseId": 16,
+          "exerciseName": "Leg Press",
+          "sets": 4,
+          "reps": 8,
+          "weights": [
+            100,
+            120,
+            140,
+            160
           ]
-      }
+        },
+        {
+          "exerciseId": 17,
+          "exerciseName": "Hip Thrust",
+          "sets": 4,
+          "reps": 10,
+          "weights": [
+            40,
+            60,
+            80,
+            100
+          ]
+        }
+      ]
+    },
+    "Sunday": {
+      "target": "Cardio",
+      "content": [
+        {
+          "exerciseId": 24,
+          "exerciseName": "Running",
+          "sets": 1,
+          "reps": 6
+        },
+        {
+          "exerciseId": 25,
+          "exerciseName": "Cycling",
+          "sets": 1,
+          "reps": 6
+        }
+      ]
+    }
   }
 ]
 ;
 
-const responseContentKeys = [];
-const responseContentValues = [];
-responseContent.forEach(element => {
-  const keys = Object.keys(element)
-  responseContentKeys.push(keys);
-  keys.forEach(key => {
-    if (key==='Title') {
-      responseContentValues.push(element[key]);
-    } else {
-      responseContentValues.push(element[key].target);
-    }
-  })
-})
+const translator = new deepl.Translator(secret.deepLKey);
 
-console.log(responseContentValues);
+async function temp() {
+  for (let i=0; i<responseContent.length; i++) {
+    const keys = Object.keys(responseContent[i]);
+    const values = [];
+    keys.forEach(key => {
+      if (key==='Title') values.push(responseContent[i]['Title']);
+      else values.push(responseContent[i][key].target);
+    });
+
+    const translateTexts = await translator.translateText(values.join(','), 'en', 'ko');
+    const translateValues = translateTexts.text.split(',').map(item => item.trim());
+
+    for (let j=0; j<keys.length; j++) {
+      if (keys[j]==='Title') responseContent[i]['Title'] = translateValues[j];
+      else if (translateValues[j]==='유산소 운동') responseContent[i][keys[j]].target = '유산소';
+      else responseContent[i][keys[j]].target = translateValues[j];
+    };
+  };
+
+  console.log(responseContent);
+}
+
+temp();
