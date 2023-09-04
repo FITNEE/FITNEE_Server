@@ -154,17 +154,12 @@ async function selectTotalWeight(connection, routineIdx) {
         WHERE routineIdx = ?
     `;
     const [routineRows] = await connection.query(selectRoutineQuery, routineIdx)
-
+    
 
     const caseClauses = [];
     for (let i = 0; i < 10; i++) {
-        caseClauses.push(`CASE WHEN weight${i} > 0 THEN weight${i} * rep${i} ELSE 0 END`);
+        caseClauses.push(`CASE WHEN weight${i} > 0 THEN weight${i} ELSE 0 END`);
     }
-
-    // const caseClauses = [];
-    // for (let i = 0; i < 10; i++) {
-    //     caseClauses.push(`CASE WHEN weight${i} > 0 THEN weight${i} ELSE 0 END`);
-    // }
 
     const routineDetailIdxList = routineRows.map(row => row.detailIdx0)
         .concat(routineRows.map(row => row.detailIdx1))
