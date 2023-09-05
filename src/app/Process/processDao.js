@@ -154,37 +154,50 @@ async function selectTotalWeight(connection, routineIdx) {
         WHERE routineIdx = ?
     `;
     const [routineRows] = await connection.query(selectRoutineQuery, routineIdx)
-    
 
-    const caseClauses = [];
-    for (let i = 0; i < 10; i++) {
-        caseClauses.push(`CASE WHEN weight${i} > 0 THEN weight${i} ELSE 0 END`);
+    // 빈 배열을 만들어서 0보다 큰 값을 저장할 배열을 초기화합니다.
+    const routineDetailIdxList = [];
+
+    // 각 열을 순회하면서 0보다 큰 값을 찾아 배열에 추가합니다.
+    for (const row of routineRows) {
+        for (let i = 0; i <= 9; i++) {
+            const detailIdx = row[`detailIdx${i}`];
+            if (detailIdx > 0) {
+                routineDetailIdxList.push(detailIdx);
+            }
+        }
     }
-
-    const routineDetailIdxList = routineRows.map(row => row.detailIdx0)
-        .concat(routineRows.map(row => row.detailIdx1))
-        .concat(routineRows.map(row => row.detailIdx2))
-        .concat(routineRows.map(row => row.detailIdx3))
-        .concat(routineRows.map(row => row.detailIdx4))
-        .concat(routineRows.map(row => row.detailIdx5))
-        .concat(routineRows.map(row => row.detailIdx6))
-        .concat(routineRows.map(row => row.detailIdx7))
-        .concat(routineRows.map(row => row.detailIdx8))
-        .concat(routineRows.map(row => row.detailIdx9))
-        .filter(detailIdx => detailIdx !== 0)
-        .join(", ");
-
-
-    // 스킵일 때는 total에 포함시키지 않음
-    const selectDetailRows = `
-    SELECT SUM(${caseClauses.join(" + ")}) AS totalWeight
-    FROM routineDetail
-    WHERE routineDetailIdx IN (${routineDetailIdxList});
-    `;
-
-    const [TotalWeight] = await connection.query(selectDetailRows)
-
-    return TotalWeight
+    
+    let totalWeight = 0;
+    
+    for (const routineDetailIdx of routineDetailIdxList) {
+        const getTotalWeightQuery = `
+        SELECT SUM(
+            COALESCE(NULLIF(rep0, 0), 0) * COALESCE(NULLIF(weight0, 0), 0) +
+            COALESCE(NULLIF(rep1, 0), 0) * COALESCE(NULLIF(weight1, 0), 0) +
+            COALESCE(NULLIF(rep2, 0), 0) * COALESCE(NULLIF(weight2, 0), 0) +
+            COALESCE(NULLIF(rep3, 0), 0) * COALESCE(NULLIF(weight3, 0), 0) +
+            COALESCE(NULLIF(rep4, 0), 0) * COALESCE(NULLIF(weight4, 0), 0) +
+            COALESCE(NULLIF(rep5, 0), 0) * COALESCE(NULLIF(weight5, 0), 0) +
+            COALESCE(NULLIF(rep6, 0), 0) * COALESCE(NULLIF(weight6, 0), 0) +
+            COALESCE(NULLIF(rep7, 0), 0) * COALESCE(NULLIF(weight7, 0), 0) +
+            COALESCE(NULLIF(rep8, 0), 0) * COALESCE(NULLIF(weight8, 0), 0) +
+            COALESCE(NULLIF(rep9, 0), 0) * COALESCE(NULLIF(weight9, 0), 0)
+        ) AS totalWeight
+        FROM routineDetail
+        WHERE routineDetailIdx = ?
+        `;
+    
+        const [totalWeightRows] = await connection.query(getTotalWeightQuery, routineDetailIdx);
+        // totalWeightRows[0].totalWeight는 문자열로 반환되므로 정수로 변환합니다.
+        const totalWeightForDetailIdx = parseInt(totalWeightRows[0].totalWeight, 10);
+        
+        // 현재 detailIdx에 대한 totalWeight를 누적
+        totalWeight += totalWeightForDetailIdx;
+    }
+    
+    // 루프가 끝난 후에 누적된 totalWeight 값을 반환
+    return totalWeight;
 }
 
 async function selectRoutineIdx(connection, dayOfWeek, userId) {

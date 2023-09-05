@@ -114,9 +114,7 @@ exports.postMycalendar = async function (req, res) {
 
     // 추가 정보
     const userIdx = await processProvider.getUserIdx(userId)
-    const weight = await processProvider.getTotalWeight(routineIdx)
-
-    const totalWeight = weight[0].totalWeight
+    const totalWeight = await processProvider.getTotalWeight(routineIdx)
     const totalCalories = await processProvider.getTotalCalories(routineIdx)
     const totalDist = await processProvider.getTotalDist(routineIdx)
 
