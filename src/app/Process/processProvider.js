@@ -166,7 +166,16 @@ exports.getRoutineDetails = async function (dayOfWeek, userId) {
     const totalPredictTime = combinedRoutineDetails.reduce((total, detail) => total + detail.predictTime, 0);
     const totalPredictCalories = combinedRoutineDetails.reduce((total, detail) => total + detail.predictCalories, 0);
     const totalPredictDist = combinedRoutineDetails.reduce((total, detail) => total + detail.predictDist, 0);
-    const totalWeight = combinedRoutineDetails.reduce((total, detail) => total + detail.exerciseWeight, 0);
+    const totalWeight = combinedRoutineDetails.reduce((total, detail) => {
+        const repWeightSum = detail.sets.reduce((sum, set) => {
+            if (set.rep !== null && set.rep !== 0 && set.weight !== null) {
+                return sum + (set.rep * set.weight);
+            }
+            return sum;
+        }, 0);
+    
+        return total + repWeightSum;
+    }, 0);
 
     return {
         dayOfWeek: dayOfWeek,
