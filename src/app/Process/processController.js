@@ -167,7 +167,7 @@ exports.getProcessResult = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, {
         todayTotalWeight: totalData.totalWeight,
         todayTotalCalories: totalData.totalCalories,
-        todayTotalTime: totalData.totalTime,
+        todayTotalTime: totalData.totalExerciseTime,
         todayTotalDist: totalData.totalDist,
         getComparison: getComparison,
         monthCountHealth: countHealth,
