@@ -75,10 +75,10 @@ exports.getTotalTime = async function (userId, todayDate) {
     return totalTime
 }
 
-exports.getTotalData = async function (userId, todayDate) {
+exports.getTotalData = async function (userId, todayDate, originRoutineIdx) {
     const connection = await pool.getConnection(async (conn) => conn)
 
-    const totalData = await processDao.selectTotalData(connection, userId, todayDate)
+    const totalData = await processDao.selectTotalData(connection, userId, todayDate, originRoutineIdx)
 
     connection.release()
 
