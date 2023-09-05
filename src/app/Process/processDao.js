@@ -720,8 +720,6 @@ async function getComparison(connection, userId, originRoutineIdx) {
         SELECT totalExerciseTime, totalWeight, healthDate
         FROM myCalendar
         WHERE userId = ? AND originRoutineIdx = ?
-        ORDER BY healthDate DESC
-        LIMIT 2;
     `;
 
     const [lastTwoData] = await connection.query(selectLastTwoDataQuery, [userId, originRoutineIdx]);
@@ -731,8 +729,8 @@ async function getComparison(connection, userId, originRoutineIdx) {
     }
 
     // 마지막 두 개 데이터의 차이를 계산합니다
-    const exerciseTimeChange = lastTwoData[0].totalExerciseTime - lastTwoData[1].totalExerciseTime;
-    const weightChange = lastTwoData[0].totalWeight - lastTwoData[1].totalWeight;
+    const exerciseTimeChange = lastTwoData[lastTwoData.length-1].totalExerciseTime - lastTwoData[lastTwoData.length-2].totalExerciseTime;
+    const weightChange = lastTwoData[lastTwoData.length-1].totalWeight - lastTwoData[lastTwoData.length-2].totalWeight;
 
     return { exerciseTimeChange, weightChange };
 }
