@@ -160,7 +160,6 @@ exports.getProcessResult = async function (req, res) {
 
     // myCalendar에서 데이터 조회
     const totalData = await processProvider.getTotalData(userId, todayDate)
-    console.log("totalData:", totalData)
     // 운동 횟수 조회
     const countHealth = await processProvider.getHealthCount(userId)
     if(!countHealth || !totalData) return res.send(response(baseResponse.PROCESS_EXERCISE_NOT_EXIST))

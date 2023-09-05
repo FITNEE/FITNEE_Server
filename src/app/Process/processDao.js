@@ -707,13 +707,10 @@ async function selectTotalData(connection, userId, todayDate) {
         SELECT totalExerciseTime, totalWeight, totalCalories, totalDist, myCalenderIdx
         FROM myCalendar
         WHERE userId = ? AND healthDate = ?
-        ORDER BY healthDate DESC
-        LIMIT 1;
     `;
 
     const [latestDataRow] = await connection.query(latestDataQuery, [userId, todayDate]);
-    
-    return latestDataRow[0];
+    return latestDataRow[latestDataRow.length-1];
 }
 
 // routineIdx 기준으로 마지막 데이터 2개 합차 조회(-1 인덱스와 -2 인덱스 차이)
