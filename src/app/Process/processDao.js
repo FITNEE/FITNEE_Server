@@ -154,7 +154,7 @@ async function selectTotalWeight(connection, routineIdx) {
         WHERE routineIdx = ?
     `;
     const [routineRows] = await connection.query(selectRoutineQuery, routineIdx)
-
+    
 
     const caseClauses = [];
     for (let i = 0; i < 10; i++) {

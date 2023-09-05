@@ -1,6 +1,8 @@
 const { response } = require('express');
-const lodash = require('lodash');
 const { exceptions } = require('winston');
+const lodash = require('lodash');
+const deepl = require('deepl-node');
+const secret = require('../../../config/secret');
 
 async function insertRoutine(connection, userId, info, gpt) {
     const selectUserInfo = `
@@ -34,6 +36,26 @@ async function insertRoutine(connection, userId, info, gpt) {
     const responseCompletion = await openai.createChatCompletion(completion);
     console.log("---------- gpt completion ----------");
     const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content.replaceAll('\'', '"').replaceAll('`', '"'));
+
+    // Translate
+    const translator = new deepl.Translator(secret.deepLKey);
+    for (let i=0; i<responseContent.length; i++) {
+        const keys = Object.keys(responseContent[i]);
+        const values = [];
+        keys.forEach(key => {
+            if (key==='Title') values.push(responseContent[i]['Title']);
+            else values.push(responseContent[i][key].target);
+        });
+    
+        const translateTexts = await translator.translateText(values.join(','), 'en', 'ko');
+        const translateValues = translateTexts.text.split(',').map(item => item.trim());
+    
+        for (let j=0; j<keys.length; j++) {
+            if (keys[j]==='Title') responseContent[i]['Title'] = translateValues[j];
+            else if (translateValues[j]==='유산소 운동') responseContent[i][keys[j]].target = '유산소';
+            else responseContent[i][keys[j]].target = translateValues[j];
+        };
+    };
     console.log(responseContent);
 
     const selectExerciseListQuery = `
