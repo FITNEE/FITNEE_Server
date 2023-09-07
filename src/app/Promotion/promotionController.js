@@ -11,7 +11,7 @@ exports.postPromotion = async function (req, res) {
     const email = req.body.email;
     const phoneNum = req.body.phoneNum;
 
-    const responsePostPromotion = await promotionService.insertRoutine(email, phoneNum);
+    const responsePostPromotion = await promotionService.insertPromotion(email, phoneNum);
 
     return res.send(responsePostPromotion)
 }
