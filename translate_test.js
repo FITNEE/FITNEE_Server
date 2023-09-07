@@ -513,28 +513,40 @@ const responseContent =
 ]
 ;
 
-const translator = new deepl.Translator(secret.deepLKey);
+// const translator = new deepl.Translator(secret.deepLKey);
 
-async function temp() {
-  for (let i=0; i<responseContent.length; i++) {
-    const keys = Object.keys(responseContent[i]);
-    const values = [];
-    keys.forEach(key => {
-      if (key==='Title') values.push(responseContent[i]['Title']);
-      else values.push(responseContent[i][key].target);
-    });
+// async function temp() {
+//   for (let i=0; i<responseContent.length; i++) {
+//     const keys = Object.keys(responseContent[i]);
+//     const values = [];
+//     keys.forEach(key => {
+//       if (key==='Title') values.push(responseContent[i]['Title']);
+//       else values.push(responseContent[i][key].target);
+//     });
 
-    const translateTexts = await translator.translateText(values.join(','), 'en', 'ko');
-    const translateValues = translateTexts.text.split(',').map(item => item.trim());
+//     const translateTexts = await translator.translateText(values.join(','), 'en', 'ko');
+//     const translateValues = translateTexts.text.split(',').map(item => item.trim());
 
-    for (let j=0; j<keys.length; j++) {
-      if (keys[j]==='Title') responseContent[i]['Title'] = translateValues[j];
-      else if (translateValues[j]==='유산소 운동') responseContent[i][keys[j]].target = '유산소';
-      else responseContent[i][keys[j]].target = translateValues[j];
-    };
-  };
+//     for (let j=0; j<keys.length; j++) {
+//       if (keys[j]==='Title') responseContent[i]['Title'] = translateValues[j];
+//       else if (translateValues[j]==='유산소 운동') responseContent[i][keys[j]].target = '유산소';
+//       else responseContent[i][keys[j]].target = translateValues[j];
+//     };
+//   };
 
-  console.log(responseContent);
+//   console.log(responseContent);
+// }
+
+// temp();
+
+for(let i=2; i<responseContent.length; i++) {
+  const values = Object.values(responseContent[i]);
+  for(let j=0; j<values.length; j++) {
+    if (values[j].content) {
+      values[j] = values[j].content;
+    }
+  }
+  console.log(values)
+  console.log(" ");
+  break;
 }
-
-temp();

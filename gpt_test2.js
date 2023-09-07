@@ -9,173 +9,444 @@ const openai = new OpenAIApi(configuration);
 
 const temp = async function() {
     const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-16k",
         messages: [
             {role: "system", content: "You're a fitness trainer who recommends exercise routines."},
             {role: "system", content: `
-            exerciseId-exerciseName-note(rep of unit),
-            1-Bench Press,
-            2-Incline Dumbbell Press,
-            3-Chest Press Machine,
-            4-Leg Extension,
-            5-Lat Pull down,
-            6-Barbell Row,
-            7-Deadlift,
-            8-Dumbbell Row,
-            9-Shoulder Press,
-            10-Side Lateral Raise,
-            11-Front Dumbbell Raise,
-            12-Bent Over Lateral Raise,
-            13-Seated Row,
-            14-Leg Curl,
-            15-Leg Press,
-            16-Bench Fly,
-            17-Hip Thrust,
-            18-Hip Raise,
-            19-Chest Dips,
-            20-Pull Up,
-            21-Push Up,
-            22-Front Plank-(1sec),
-            23-Side Plank-(1sec),
-            24-Running-(100m),
-            25-Cycling-(100m)
-            Create a routine with these exercises
-            `
-            },
+                exerciseId-exerciseName-note(rep of unit),
+                1-Bench Press, 2-Incline Dumbbell Press, 3-Chest Press Machine, 4-Leg Extension, 5-Lat Pull down, 6-Barbell Row, 7-Deadlift, 8-Dumbbell Row,9-Dumbbell Fly, 10-Shoulder Press, 11-Side Lateral Raise, 12-Front Dumbbell Raise,13-Bent Over Lateral Raise, 14-Seated Row, 15-Leg Curl, 16-Leg Press, 17-Hip Thrust, 18-Hip Raise, 19-Chest Dips, 20-Pull Up, 21-Push Up, 22-Front Plank-(1sec), 23-Side Plank-(1sec), 24-Running-(100m), 25-Cycling-(100m)
+                Create a routine with these exercises
+                `
+                },
             {role: "user", content: `
             I am a male born in 2001, I am 174cm tall and weigh 62kg.
             I think I can lift up to 60kg when I do bench press to the maximum.
-            I will do chest exercises.
-            I did the following routine for my last chest workout and this one.
-            
-            {
-                "Last Chest exercise": {
-                    "target": "Chest",
-                    "content": [
-                        {
-                            "exerciseId": 1,
-                            "exerciseName": "Bench Press",
-                            "sets": 3,
-                            "reps": 10,
-                            "weights": [50, 55, 60]
-                        },
-                        {
-                            "exerciseId": 2,
-                            "exerciseName": "Incline Dumbbell Press",
-                            "sets": 3,
-                            "reps": 12,
-                            "weights": [15, 20, 25]
-                        },
-                        {
-                            "exerciseId": 3,
-                            "exerciseName": "Chest Press Machine",
-                            "sets": 3,
-                            "reps": 12,
-                            "weights": [30, 35, 40]
-                        },
-                        {
-                            "exerciseId": 19,
-                            "exerciseName": "Chest Dips",
-                            "sets": 3,
-                            "reps": 10
-                        }
-                    ]
-                },
-                "Today Chest exercise": {
-                    "target": "Chest",
-                    "content": [
-                        {
-                            "exerciseId": 1,
-                            "exerciseName": "Bench Press",
-                            "sets": 4,
-                            "reps": 8,
-                            "weights": [50, 55, 60, 55]
-                        },
-                        {
-                            "exerciseId": 2,
-                            "exerciseName": "Incline Dumbbell Press",
-                            "sets": 3,
-                            "reps": 12,
-                            "weights": [20, 20, 25]
-                        },
-                        {
-                            "exerciseId": 3,
-                            "exerciseName": "Chest Press Machine",
-                            "sets": 3,
-                            "reps": 12,
-                            "weights": [35, 40, 45]
-                        },
-                        {
-                            "exerciseId": 19,
-                            "exerciseName": "Chest Dips",
-                            "sets": 3,
-                            "reps": 12
-                        }
-                    ]
-                }
-            }
-            please recommend Considering the increase or decrease in sets, reps, and weight for each exercise in the previous workout and today's workout, recommend changes to the sets, reps, and weight I should perform in the following back workouts.
-            
-            Say only JSON Object format like
-            [
-                {
-                    "Next time Chest exercise": {
-                        'target': targetArea,
-                        'content': [
-                            {
-                                'exerciseId': exerciseId,
-                                'exerciseName': exerciseName,
-                                'sets': numsOfSet(Only Int),
-                                'reps': numsOfRep(Only Int),
-                                'weights'(If exerciseId is between 19 and 25, that is, bare body exercise, get rid of this.): numsOfWeight(Only List(Integer as many as numsOfSet))
-                            }
-                        ]
-                    }
-                }
-            ](This array must have three elements that are the number of branches of the routine example.)
-            In the case of planks, if 1 rep performs 1 second, that is, 10 seconds, using note(rep of unit), rep should be 10.
-            In the case of Running and Cycling, if 1 rep performs 100m, that is, 500m, using note(rep of unit), rep should be 5.
+            I will do chest, back, shoulder, arm, core, lower body exercises at gym.
+            I'm going to exercise for a total of 7 days on Sunday and Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+            `},
+            {role: "user", content: 
+        `Please recommend 3 routines in various combinations.
 
-            example
-            {
-                "Next time Chest exercise": {
-                    "target": "Chest",
-                    "content": [
-                        {
-                            "exerciseId": 1,
-                            "exerciseName": "Bench Press",
-                            "sets": 4,
-                            "reps": 8,
-                            "weights": [50, 55, 60, 55]
-                        },
-                        {
-                            "exerciseId": 2,
-                            "exerciseName": "Incline Dumbbell Press",
-                            "sets": 3,
-                            "reps": 12,
-                            "weights": [20, 20, 25]
-                        },
-                        {
-                            "exerciseId": 3,
-                            "exerciseName": "Chest Press Machine",
-                            "sets": 3,
-                            "reps": 12,
-                            "weights": [35, 40, 45]
-                        },
-                        {
-                            "exerciseId": 19,
-                            "exerciseName": "Chest Dips",
-                            "sets": 3,
-                            "reps": 12
-                        }
-                    ]
+        Say only JSON Object format like
+        [
+          {
+            'Title': thisRoutineTitle
+            'dayOfWeek'(day of week name): {
+              'target': targetArea,
+              'content': [
+                {
+                  'exerciseId': exerciseId,
+                  'exerciseName': exerciseName,
+                  'sets': numsOfSet(Only Int),
+                  'reps': numsOfRep(Only Int),
+                  'weights'(If exerciseId is between 19 and 25, that is, bare body exercise, get rid of this.): numsOfWeight(Only List(Integer as many as numsOfSet))
                 }
+              ]
+          }
+        }(This object must include all requested days of the weeks. If the request is Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Then should be seven 'dayOfWeek's).
+        ](This array must have three elements that are the number of branches of the routine example.)
+        In the case of planks, if 1 rep performs 1 second, that is, 10 seconds, using note(rep of unit), rep should be 10.
+        In the case of Running and Cycling, if 1 rep performs 100m, that is, 500m, using note(rep of unit), rep should be 5.
+
+        example
+          [
+            {
+              "Title": "Full Body Workout",
+              "Monday": {
+                "target": "Chest",
+                "content": [
+                  {
+                    "exerciseId": 1,
+                    "exerciseName": "Bench Press",
+                    "sets": 3,
+                    "reps": 10,
+                    "weights": [40, 40, 40]
+                  },
+                  {
+                    "exerciseId": 9,
+                    "exerciseName": "Dumbbell Fly",
+                    "sets": 3,
+                    "reps": 12,
+                    "weights": [8, 8, 8]
+                  }
+                ]
+              },
+              "Tuesday": {
+                "target": "Back",
+                "content": [
+                  {
+                    "exerciseId": 6,
+                    "exerciseName": "Barbell Row",
+                    "sets": 3,
+                    "reps": 10,
+                    "weights": [30, 30, 30]
+                  },
+                  {
+                    "exerciseId": 8,
+                    "exerciseName": "Dumbbell Row",
+                    "sets": 3,
+                    "reps": 12,
+                    "weights": [10, 10, 10]
+                  }
+                ]
+              },
+              "Wednesday": {
+                "target": "Shoulders",
+                "content": [
+                  {
+                    "exerciseId": 10,
+                    "exerciseName": "Shoulder Press",
+                    "sets": 3,
+                    "reps": 10,
+                    "weights": [20, 20, 20]
+                  },
+                  {
+                    "exerciseId": 11,
+                    "exerciseName": "Side Lateral Raise",
+                    "sets": 3,
+                    "reps": 12,
+                    "weights": [5, 5, 5]
+                  }
+                ]
+              },
+              "Thursday": {
+                "target": "Arms",
+                "content": [
+                  {
+                    "exerciseId": 2,
+                    "exerciseName": "Incline Dumbbell Press",
+                    "sets": 3,
+                    "reps": 10,
+                    "weights": [15, 15, 15]
+                  },
+                  {
+                    "exerciseId": 19,
+                    "exerciseName": "Chest Dips",
+                    "sets": 3,
+                    "reps": 12
+                  }
+                ]
+              },
+              "Friday": {
+                "target": "Core",
+                "content": [
+                  {
+                    "exerciseId": 22,
+                    "exerciseName": "Front Plank",
+                    "sets": 3,
+                    "reps": 10
+                  },
+                  {
+                    "exerciseId": 23,
+                    "exerciseName": "Side Plank",
+                    "sets": 3,
+                    "reps": 10
+                  }
+                ]
+              },
+              "Saturday": {
+                "target": "Lower Body",
+                "content": [
+                  {
+                    "exerciseId": 16,
+                    "exerciseName": "Leg Press",
+                    "sets": 3,
+                    "reps": 10,
+                    "weights": [80, 80, 80]
+                  },
+                  {
+                    "exerciseId": 15,
+                    "exerciseName": "Leg Curl",
+                    "sets": 3,
+                    "reps": 12,
+                    "weights": [20, 20, 20]
+                  }
+                ]
+              },
+              "Sunday": {
+                "target": "Cardio",
+                "content": [
+                  {
+                    "exerciseId": 24,
+                    "exerciseName": "Running",
+                    "sets": 1,
+                    "reps": 5
+                  },
+                  {
+                    "exerciseId": 25,
+                    "exerciseName": "Cycling",
+                    "sets": 1,
+                    "reps": 5
+                  }
+                ]
+              }
+            },
+            {
+              "Title": "Advanced Upper Body Workout",
+              "Monday": {
+                "target": "Chest",
+                "content": [
+                  {
+                    "exerciseId": 1,
+                    "exerciseName": "Bench Press",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [50, 60, 70, 80]
+                  },
+                  {
+                    "exerciseId": 3,
+                    "exerciseName": "Chest Press Machine",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [40, 50, 60, 70]
+                  }
+                ]
+              },
+              "Tuesday": {
+                "target": "Back",
+                "content": [
+                  {
+                    "exerciseId": 6,
+                    "exerciseName": "Barbell Row",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [40, 50, 60, 70]
+                  },
+                  {
+                    "exerciseId": 5,
+                    "exerciseName": "Lat Pulldown",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [40, 50, 60, 70]
+                  }
+                ]
+              },
+              "Wednesday": {
+                "target": "Shoulders",
+                "content": [
+                  {
+                    "exerciseId": 10,
+                    "exerciseName": "Shoulder Press",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [30, 40, 50, 60]
+                  },
+                  {
+                    "exerciseId": 12,
+                    "exerciseName": "Front Dumbbell Raise",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [10, 15, 20, 25]
+                  }
+                ]
+              },
+              "Thursday": {
+                "target": "Arms",
+                "content": [
+                  {
+                    "exerciseId": 19,
+                    "exerciseName": "Chest Dips",
+                    "sets": 4,
+                    "reps": 8
+                  },
+                  {
+                    "exerciseId": 20,
+                    "exerciseName": "Pull Ups",
+                    "sets": 4,
+                    "reps": 10
+                  }
+                ]
+              },
+              "Friday": {
+                "target": "Core",
+                "content": [
+                  {
+                    "exerciseId": 22,
+                    "exerciseName": "Front Plank",
+                    "sets": 4,
+                    "reps": 20
+                  },
+                  {
+                    "exerciseId": 23,
+                    "exerciseName": "Side Plank",
+                    "sets": 4,
+                    "reps": 20
+                  }
+                ]
+              },
+              "Saturday": {
+                "target": "Lower Body",
+                "content": [
+                  {
+                    "exerciseId": 16,
+                    "exerciseName": "Leg Press",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [100, 120, 140, 160]
+                  },
+                  {
+                    "exerciseId": 17,
+                    "exerciseName": "Hip Thrust",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [40, 60, 80, 100]
+                  }
+                ]
+              },
+              "Sunday": {
+              "target": "Cardio",
+              "content": [
+                  {
+                    "exerciseId": 24,
+                    "exerciseName": "Running",
+                    "sets": 1,
+                    "reps": 6
+                  },
+                  {
+                    "exerciseId": 25,
+                    "exerciseName": "Cycling",
+                    "sets": 1,
+                    "reps": 6
+                  }
+                ]
+              }
+            },
+            {
+              "Title": "Advanced Full Body Workout",
+              "Monday": {
+                "target": "Chest",
+                "content": [
+                  {
+                    "exerciseId": 1,
+                    "exerciseName": "Bench Press",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [50, 60, 70, 80]
+                  },
+                  {
+                    "exerciseId": 3,
+                    "exerciseName": "Chest Press Machine",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [40, 50, 60, 70]
+                  }
+                ]
+              },
+              "Tuesday": {
+                "target": "Back",
+                "content": [
+                  {
+                    "exerciseId": 6,
+                    "exerciseName": "Barbell Row",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [40, 50, 60, 70]
+                  },
+                  {
+                    "exerciseId": 5,
+                    "exerciseName": "Lat Pulldown",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [40, 50, 60, 70]
+                  }
+                ]
+              },
+              "Wednesday": {
+                "target": "Shoulders",
+                "content": [
+                  {
+                    "exerciseId": 10,
+                    "exerciseName": "Shoulder Press",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [30, 40, 50, 60]
+                  },
+                  {
+                    "exerciseId": 12,
+                    "exerciseName": "Front Dumbbell Raise",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [10, 15, 20, 25]
+                  }
+                ]
+              },
+              "Thursday": {
+                "target": "Arms",
+                "content": [
+                  {
+                    "exerciseId": 19,
+                    "exerciseName": "Chest Dips",
+                    "sets": 4,
+                    "reps": 8
+                  },
+                  {
+                    "exerciseId": 20,
+                    "exerciseName": "Pull Ups",
+                    "sets": 4,
+                    "reps": 10
+                  }
+                ]
+              },
+              "Friday": {
+                "target": "Core",
+                "content": [
+                  {
+                    "exerciseId": 22,
+                    "exerciseName": "Front Plank",
+                    "sets": 4,
+                    "reps": 20
+                  },
+                  {
+                    "exerciseId": 23,
+                    "exerciseName": "Side Plank",
+                    "sets": 4,
+                    "reps": 20
+                  }
+                ]
+              },
+              "Saturday": {
+                "target": "Lower Body",
+                "content": [
+                  {
+                    "exerciseId": 16,
+                    "exerciseName": "Leg Press",
+                    "sets": 4,
+                    "reps": 8,
+                    "weights": [100, 120, 140, 160]
+                  },
+                  {
+                    "exerciseId": 17,
+                    "exerciseName": "Hip Thrust",
+                    "sets": 4,
+                    "reps": 10,
+                    "weights": [40, 60, 80, 100]
+                  }
+                ]
+              },
+              "Sunday": {
+                "target": "Cardio",
+                "content": [
+                  {
+                    "exerciseId": 24,
+                    "exerciseName": "Running",
+                    "sets": 1,
+                    "reps": 6
+                  },
+                  {
+                    "exerciseId": 25,
+                    "exerciseName": "Cycling",
+                    "sets": 1,
+                    "reps": 6
+                  }
+                ]
+              }
             }
-            Never Explain.
-            `}
+          ]
+        Never Explain.
+        `}
         ],
     });
-    console.log(completion.data.choices[0].message.content);
+    console.log(JSON.parse(completion.data.choices[0].message.content));
 };
 
 temp();

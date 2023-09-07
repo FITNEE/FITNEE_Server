@@ -1,34 +1,31 @@
 const {Configuration, OpenAIApi} = require('openai');
-const secret = require('../../config/secret');
-const { errResponse } = require("../../config/response")
-const baseResponse = require("../../config/baseResponseStatus");
+const secret = require("./config/secret");
 
-const gptMiddleware = async function (req, res, next)  {
-    try {
-        req.gpt = {};
+const configuration = new Configuration({
+    organization: secret.openaiOrganization,
+    apiKey: secret.openaiSecret,
+});
+const openai = new OpenAIApi(configuration);
 
-        const configuration = new Configuration ({
-            organization: secret.openaiOrganization,
-            apiKey: secret.openaiSecret,
-        });
-        req.gpt.openai = new OpenAIApi(configuration);
-
-        req.gpt.chatCompletion = {
-            model: "gpt-3.5-turbo",
-            messages: [
-                {role: "system", content: "You're a fitness trainer who recommends exercise routines."},
-                {role: "system", content: `
+const temp = async function() {
+    const completion = await openai.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        messages: [
+            {role: "system", content: "You're a fitness trainer who recommends exercise routines."},
+            {role: "system", content: `
                 exerciseId-exerciseName-note(rep of unit),
                 1-Bench Press, 2-Incline Dumbbell Press, 3-Chest Press Machine, 4-Leg Extension, 5-Lat Pull down, 6-Barbell Row, 7-Deadlift, 8-Dumbbell Row,9-Dumbbell Fly, 10-Shoulder Press, 11-Side Lateral Raise, 12-Front Dumbbell Raise,13-Bent Over Lateral Raise, 14-Seated Row, 15-Leg Curl, 16-Leg Press, 17-Hip Thrust, 18-Hip Raise, 19-Chest Dips, 20-Pull Up, 21-Push Up, 22-Front Plank-(1sec), 23-Side Plank-(1sec), 24-Running-(100m), 25-Cycling-(100m)
                 Create a routine with these exercises
                 `
                 },
-                {role: "user", content: ''}
-            ],
-        };
-
-        req.gpt.chatContent = `
-        Say only JSON Object format like
+            {role: "user", content: `
+            I am a male born in 2001, I am 174cm tall and weigh 62kg.
+            I think I can lift up to 60kg when I do bench press to the maximum.
+            I will do chest, back, shoulder, arm, core, lower body exercises at gym.
+            I'm going to exercise for a total of 7 days on Sunday and Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+            `},
+            {role: "user", content: 
+        `Say only JSON Object format like
         {
           'Title': thisRoutineTitle
           'dayOfWeek'(day of week name): {
@@ -164,14 +161,13 @@ const gptMiddleware = async function (req, res, next)  {
             ]
           }
         }
-
+        
         Examples are just examples, recommend various combinations regardless of the order.
         Never Explain.
-        `;
-        next();
-    } catch (err) {
-        res.send(errResponse(baseResponse.GPT_ERROR));
-    }
+        `}
+        ],
+    });
+    console.log(JSON.parse(completion.data.choices[0].message.content));
 };
 
-module.exports = gptMiddleware;
+temp();

@@ -23,7 +23,7 @@ async function insertRoutine(connection, userId, info, gpt) {
                     I am a ${(responseUserInfo.gender==1) ? "male" : "female"} born in ${responseUserInfo.birthYear},
                     I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.
                     ${rmSentence}
-                    I will do ${info.targets.join(', ')} exercises at ${info.place}.
+                    I will do only ${info.targets.join(', ')} exercises at ${info.place}.
                     ${weeksSentence}
                     `;
 
@@ -33,9 +33,36 @@ async function insertRoutine(connection, userId, info, gpt) {
 
     console.log(infoSentence);
 
-    const responseCompletion = await openai.createChatCompletion(completion);
+    var responseContent = [];
+    try {
+        responseContent = [];
+
+        const [completion1, completion2, completion3] = await Promise.all([
+            openai.createChatCompletion(completion),
+            openai.createChatCompletion(completion),
+            openai.createChatCompletion(completion)
+        ]);
+    
+        responseContent.push(JSON.parse(completion1.data.choices[0].message.content));
+        responseContent.push(JSON.parse(completion2.data.choices[0].message.content));
+        responseContent.push(JSON.parse(completion3.data.choices[0].message.content));
+    } catch (err) {
+        console.error(err);
+
+        responseContent = [];
+
+        const [completion1, completion2, completion3] = await Promise.all([
+            openai.createChatCompletion(completion),
+            openai.createChatCompletion(completion),
+            openai.createChatCompletion(completion)
+        ]);
+    
+        responseContent.push(JSON.parse(completion1.data.choices[0].message.content));
+        responseContent.push(JSON.parse(completion2.data.choices[0].message.content));
+        responseContent.push(JSON.parse(completion3.data.choices[0].message.content));
+    }
+
     console.log("---------- gpt completion ----------");
-    const responseContent = JSON.parse(responseCompletion.data.choices[0].message.content.replaceAll('\'', '"').replaceAll('`', '"'));
 
     // Translate
     const translator = new deepl.Translator(secret.deepLKey);
