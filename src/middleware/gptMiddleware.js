@@ -79,7 +79,7 @@ const gptMiddleware = async function (req, res, next)  {
         example
           [
             {
-              "Title": "Beginner Full Body Workout",
+              "Title": "Full Body Workout",
               "Monday": {
                 "target": "Chest",
                 "content": [
