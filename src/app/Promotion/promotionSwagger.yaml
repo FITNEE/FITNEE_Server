@@ -1,0 +1,42 @@
+tags:
+  name: Promotion
+  description: 프로모션 관련 API
+
+/app/promotion:
+  post:
+    tags:
+      - Promotion
+    summary: 프로모션 생성 API
+    description: 프로모션 사이트의 사전예약 API
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - phoneNum
+            properties:
+              'email':
+                type: string
+                example: "example@gmail.com"
+              'phoneNum':
+                type: string
+                example: "01012345678"
+    responses:
+      '1000':
+        description: 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                'isSuccess':
+                  type: boolean
+                  example: true
+                'code':
+                  type: integer
+                  example: 1000
+                'message':
+                  type: string
+                  example: '성공'
