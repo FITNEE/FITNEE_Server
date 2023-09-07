@@ -79,6 +79,13 @@ module.exports = {
     PROCESS_CALORIES_NOT_EXIST: { "isSuccess": false, "code": 809, "message":"총 칼로리는 0보다 커야 합니다."},
     PROCESS_DAYOFWEEK_NOT_EXIST: { "isSuccess": false, "code": 810, "message":"해당 요일에 루틴이 존재하지 않습니다."},
     PROCESS_REPLACEMENT_NOT_EXIST: { "isSuccess": false, "code": 811, "message":"해당 운동과 관련된 다른 운동이 존재하지 않습니다."},
+    
+    // promotion error
+    PROMOTION_EMAIL_NOT_EXIST: { "isSuccess": false, "code": 901, "message":"이메일을 입력해 주세요."},
+    PROMOTION_PHONENUM_NOT_EXIST: { "isSuccess": false, "code": 902, "message":"전화번호를 입력해 주세요."},
+    PROMOTION_ALREADY_ENTERED: { "isSuccess": false, "code": 903, "message":"이미 사전예약에 참여하셨습니다."},
+
+
     //Request error
 
     //signup(회원가입)

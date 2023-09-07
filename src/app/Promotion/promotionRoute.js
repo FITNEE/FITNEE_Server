@@ -7,7 +7,7 @@ const promotion = require('./promotionController');
  * /app/promotion
  */
 
-
-router.route('/').post(promotion.postPromotion);
+// 1.
+router.post('/', promotion.postPromotion);
 
 module.exports = router;
