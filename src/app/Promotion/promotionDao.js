@@ -11,3 +11,7 @@ async function insertPromotion(connection, email, phoneNum) {
 
     return ;
 }
+
+module.exports = {
+    insertPromotion
+};
