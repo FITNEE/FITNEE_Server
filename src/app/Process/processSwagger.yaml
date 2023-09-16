@@ -1,6 +1,6 @@
 tags:
   - name: Process
-    description: 운동 과정 관련 API - 박준규
+    description: 운동 과정 관련 API
 
 
 /app/process:

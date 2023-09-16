@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
 tags:
   - name: User
-    description: 사용자 관련 API - 박준규
+    description: 사용자 관련 API
 paths:
   /app/user:
     post:
@@ -82,6 +82,15 @@ paths:
                   message:
                     type: string
                     example: 서버 에러
+
+    delete:
+      tags:
+        - User
+      summary: 회원탈퇴 API
+      description: 회원탈퇴하는 API로 바로 회원 탈퇴되니까 주의해서 사용해야함.
+      responses:
+        '1000':
+          description: 성공
 
   /app/user/login:
     post:
