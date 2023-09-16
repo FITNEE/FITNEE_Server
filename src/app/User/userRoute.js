@@ -25,6 +25,9 @@ router.post('/login', user.login);
 // jwtMiddleware 사용 방법은 api params에 써주기. -> 로직 보려면 patchUsers 클릭
 router.patch('/', jwtMiddleware, user.patchUsers);
 
+// 회원탈퇴 API
+router.delete('/', jwtMiddleware, user.deleteUser);
+
 // router.get('/auto-login', jwtMiddleware, user.autoLogin)
 
 module.exports = router;

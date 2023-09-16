@@ -111,6 +111,17 @@ async function selectUserNickname(connection, userNickName) {
   return isNicknameExist;
 }
 
+async function deleteUser(connection, userId) {
+  const deleteUserQuery =  `
+                  DELETE FROM User
+                  WHERE userIdx = ?
+                  `;
+
+  await connection.query(deleteUserQuery, userId);
+
+  return;
+}
+
 module.exports = {
   selectUser,
   selectUserUserId,
@@ -119,5 +130,6 @@ module.exports = {
   getPasswordByUserId,
   selectUserAccount,
   updateUserInfo,
-  selectUserNickname
+  selectUserNickname,
+  deleteUser
 };

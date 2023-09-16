@@ -203,6 +203,24 @@ exports.patchUsers = async function (req, res) {
     return res.send(editUserInfo);
 };
 
+/**
+ * API Name : 회원 탈퇴 API
+ * [DELETE] /app/user
+ * decoded: userId
+ */
+exports.deleteUser = async function (req, res) {
+    const userId = req.decoded.userId;
+
+    try {
+        const deleteUserResponse = await userService.deleteUser(userId);
+
+        return res.send(deleteUserResponse);
+    } catch (err) {
+        logger.error(`회웥 탈퇴 API Error: ${err.message}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
+}
+
 
 
 
