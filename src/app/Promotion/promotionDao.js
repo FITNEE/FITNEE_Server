@@ -32,7 +32,7 @@ async function checkExist(connection, email, phoneNum) {
 async function changePhoneNum(connection, email, phoneNum) {
     const changePromotionQuery = `
         UPDATE promotion
-        SET phoneNumber = ?
+        SET phoneNumber = ?, status = 1
         WHERE email = ?;
     `;
     await connection.query(changePromotionQuery, [phoneNum, email]);
@@ -43,10 +43,10 @@ async function changePhoneNum(connection, email, phoneNum) {
 //동일한 전화번호 있으면 이메일 덮어쓰기
 async function changeEmail(connection, email, phoneNum) {
     const changePromotionQuery = `
-        UPDATE promotion
-        SET email = ?
-        WHERE phoneNumber = ?;
-    `;
+                    UPDATE promotion
+                    SET email = ?, status = 1
+                    WHERE phoneNumber = ?;
+                `;
     await connection.query(changePromotionQuery, [email, phoneNum]);
 
     return ;
@@ -55,9 +55,9 @@ async function changeEmail(connection, email, phoneNum) {
 
 async function insertPromotion(connection, email, phoneNum) {
     const insertPromotionQuery = `
-                      INSERT INTO promotion(email, phoneNumber)
-                      VALUE(?, ?)
-                      `;
+                    INSERT INTO promotion(email, phoneNumber)
+                    VALUE(?, ?)
+                `;
 
     await connection.query(insertPromotionQuery, [email, phoneNum]);
 
