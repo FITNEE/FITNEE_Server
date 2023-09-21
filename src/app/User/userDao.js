@@ -16,7 +16,19 @@ async function selectUserUserId(connection, userId) {
                 WHERE userId = ?;
                 `;
   const [userIdRows] = await connection.query(selectUserUserIdQuery, [userId]);
-  return userIdRows;
+
+  if (userIdRows.length) return userIdRows;
+
+  const selectWithdrawUserIdQuery = `
+                SELECT withdrawUserId, createdAt
+                FROM withdrawUser
+                WHERE withdrawUserId = ? AND DATE(createdAt)>DATE_SUB(NOW(), INTERVAL 30 DAY)
+                `;
+
+  const [withdrawUserIdRows] = await connection.query(selectWithdrawUserIdQuery, [userId]);
+
+  if (withdrawUserIdRows.length) return withdrawUserIdRows;
+  else return undefined;
 }
 
 // userId 회원 조회
@@ -113,11 +125,15 @@ async function selectUserNickname(connection, userNickName) {
 
 async function deleteUser(connection, userId) {
   const deleteUserQuery =  `
+                  INSERT INTO withdrawUser (withdrawUserIdx, withdrawUserId)
+                  SELECT userIdx, userId
+                  FROM User WHERE userId = ?;
+
                   DELETE FROM User
-                  WHERE userId = ?
+                  WHERE userId = ?;
                   `;
 
-  await connection.query(deleteUserQuery, userId);
+  await connection.query(deleteUserQuery, [userId, userId]);
 
   return;
 }

@@ -108,10 +108,11 @@ exports.getUsers = async function (req, res) {
     } else {
         // 유저 검색 조회
         const userListByUserId = await userProvider.retrieveUserList(userId);
-        if (userListByUserId.length === 0) {
+        if (!userListByUserId)
             return res.send(response(baseResponse.SIGNIN_USERID_UNKNOWN));
-        }
-        return res.send(response(baseResponse.SUCCESS, userListByUserId[0]));
+        if (userListByUserId[0].withdrawUserId)
+            return res.send(response(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT));
+        return res.send(response(baseResponse.SUCCESS, userListByUserId));
     }
 };
 
