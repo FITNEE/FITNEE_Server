@@ -13,21 +13,22 @@ async function insertRoutine(connection, userId, info, gpt) {
     const [[responseUserInfo]] = await connection.query(selectUserInfo, userId);
 
     console.log('gpt info: ', info);
-    console.log(info.RM);
 
     const openai = gpt.openai;
     const rmSentence = (info.RM)
                         ? `I think I can lift up to ${info.RM}kg when I do squats to the maximum.`
                         : `I don't even know how many squats I can do at a time.`;
     const weeksSentence = (info.dayOfWeeks.length==1)
-                        ? `I'm going to exercise on ${info.dayOfWeeks} only.`
+                        ? `I only want to work out on ${info.dayOfWeeks}.`
                         : `I'm going to exercise for a total of ${info.dayOfWeeks.length} days on ${info.dayOfWeeks[0]} and ${info.dayOfWeeks.slice(1,).join(', ')}.`;
     const infoSentence = `
                     I am a ${(responseUserInfo.gender==1) ? "male" : "female"} born in ${responseUserInfo.birthYear},
                     I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.
                     ${rmSentence}
                     I will do only ${info.targets.join(', ')} exercises at ${info.place}.
+                    I only want to work out on certain days of the week.
                     ${weeksSentence}
+                    I only want to work out on certain days of the week.
                     `;
 
     const content = infoSentence + gpt.chatContent;
@@ -67,16 +68,6 @@ async function insertRoutine(connection, userId, info, gpt) {
 
     console.log("---------- gpt completion ----------");
 
-    console.log(responseContent);
-    for (let i=0; i<responseContent.length; i++) {
-        const keys = Object.keys(responseContent[i]);
-        keys.forEach(k => {
-            if (k==='Title');
-            else if (!responseContent[i][k].content) delete responseContent[k];
-            else if (responseContent[i][k].content.length===0) delete responseContent[k];
-        })
-    }
-
     // Translate
     const translator = new deepl.Translator(secret.deepLKey);
     for (let i=0; i<responseContent.length; i++) {
@@ -93,6 +84,8 @@ async function insertRoutine(connection, userId, info, gpt) {
         for (let j=0; j<keys.length; j++) {
             if (keys[j]==='Title') responseContent[i]['Title'] = translateValues[j];
             else if (translateValues[j]==='유산소 운동') responseContent[i][keys[j]].target = '유산소';
+            else if (translateValues[j]==='백') responseContent[i][keys[j]].target = '등';
+            else if (translateValues[j]==='뒤') responseContent[i][keys[j]].target = '등';
             else responseContent[i][keys[j]].target = translateValues[j];
         };
     };

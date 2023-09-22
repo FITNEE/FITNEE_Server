@@ -49,6 +49,18 @@ const gptMiddleware = async function (req, res, next)  {
 
         example 1.
         {
+          "Title": "Shoulder Exercises",
+          "Monday": {
+            "target": "Shoulder",
+            "content": [
+              {"exerciseId": 12, "exerciseName": "Front Dumbbell Raise", "sets": 5, "reps": 12, "weights": [3, 3, 3]},
+              {"exerciseId": 11, "exerciseName": "Side Lateral Raise", "sets": 3, "reps": 8, "weights": [7, 7, 7]}
+            ]
+          }
+        }
+
+        example 2.
+        {
           "Title": "Physical Fitness Exercises",
           "Monday": {
             "target": "Back",
@@ -107,7 +119,7 @@ const gptMiddleware = async function (req, res, next)  {
           }
         }
 
-        example 2.
+        example 3.
         {
           "Title": "Full Body Workout",
           "Monday": {
