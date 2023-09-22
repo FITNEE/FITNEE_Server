@@ -13,6 +13,7 @@ async function insertRoutine(connection, userId, info, gpt) {
     const [[responseUserInfo]] = await connection.query(selectUserInfo, userId);
 
     console.log('gpt info: ', info);
+    console.log(info.RM);
 
     const openai = gpt.openai;
     const rmSentence = (info.RM)
@@ -66,14 +67,23 @@ async function insertRoutine(connection, userId, info, gpt) {
 
     console.log("---------- gpt completion ----------");
 
+    for (let i=0; i<responseContent.length; i++) {
+        const keys = Object.keys(responseContent[i]);
+        keys.forEach(k => {
+            if (k==='Title');
+            else if (!responseContent[i][k].content) delete responseContent[k];
+            else if (responseContent[i][k].content.length===0) delete responseContent[k];
+        })
+    }
+
     // Translate
     const translator = new deepl.Translator(secret.deepLKey);
     for (let i=0; i<responseContent.length; i++) {
         const keys = Object.keys(responseContent[i]);
         const values = [];
-        keys.forEach(key => {
-            if (key==='Title') values.push(responseContent[i]['Title']);
-            else values.push(responseContent[i][key].target);
+        keys.forEach(k => {
+            if (k==='Title') values.push(responseContent[i]['Title']);
+            else values.push(responseContent[i][k].target);
         });
     
         const translateTexts = await translator.translateText(values.join(','), 'en', 'ko');
