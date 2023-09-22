@@ -67,6 +67,7 @@ async function insertRoutine(connection, userId, info, gpt) {
 
     console.log("---------- gpt completion ----------");
 
+    console.log(responseContent);
     for (let i=0; i<responseContent.length; i++) {
         const keys = Object.keys(responseContent[i]);
         keys.forEach(k => {
