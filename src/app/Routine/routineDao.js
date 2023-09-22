@@ -12,6 +12,8 @@ async function insertRoutine(connection, userId, info, gpt) {
                   `;
     const [[responseUserInfo]] = await connection.query(selectUserInfo, userId);
 
+    console.log('gpt info: ', info);
+
     const openai = gpt.openai;
     const rmSentence = (info.RM)
                         ? `I think I can lift up to ${info.RM}kg when I do squats to the maximum.`
