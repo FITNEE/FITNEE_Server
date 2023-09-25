@@ -168,7 +168,6 @@ async function insertRoutineCalendar(connection, userId, routineCalendar) {
                       FROM routineCalendar
                       WHERE status = 0 AND userId = ?
                       `;
-
     const [[responseExistCheck]] = await connection.query(existCheckQuery, userId);
 
     console.log(routineCalendar);
@@ -318,12 +317,14 @@ async function selectRoutine(connection, routineIdx) {
         routineDetails: []
     };
     for (var i=0; i<10; i++) {
+        if (!routine['detailIdx'+String(i)]) continue;
         const selectRoutineDetailQuery = `
                       SELECT healthCategoryIdx, rep0, weight0, rep1, weight1, rep2, weight2, rep3, weight3, rep4, weight4, rep5, weight5, rep6, weight6, rep7, weight7, rep8, weight8, rep9, weight9
                       FROM routineDetail
                       WHERE routineDetailIdx = ?
                       `;
         const [[routineDetail]] = await connection.query(selectRoutineDetailQuery, routine['detailIdx'+String(i)]);
+
         
         var routineDetailPickBy = lodash.pickBy(routineDetail);
         var detailContent = {};
@@ -369,17 +370,22 @@ async function updateRoutineCalendar(connection, userId, routineCalendar) {
 
 // 루틴 수정
 async function updateRoutine(connection, userId, routineIdx, routineContent) {
-    const isChange = false;
+    var isChange = false;
     const originRoutine = await selectRoutine(connection, routineIdx);
     const updateRoutine =  {
         parts : originRoutine.parts,
     };
 
-    const checkChange = new Set();
-    originRoutine.routineDetails.forEach(element => checkChange.add(element.healthCategoryIdx));
-    routineContent.forEach(element => checkChange.add(element.healthCategoryIdx));
-    const diff = originRoutine.routineDetails.length-checkChange.size;
+    if (originRoutine.routineDetails.length===routineContent.length) {
+        const originIdxs = originRoutine.routineDetails.map(e => e.healthCategoryIdx).sort();
+        const changeIdxs = routineContent.map(e => e.healthCategoryIdx).sort();
 
+        for(let i=0; i<originIdxs.length; i++)
+            if (originIdxs[i]!==changeIdxs[i])
+                { isChange = true; break; }
+
+    } else isChange = true;
+    
     for (var i=0; i<routineContent.length; i++) {
         var updateRoutineDetail = {
             healthCategoryIdx : routineContent[i].healthCategoryIdx,
@@ -388,21 +394,19 @@ async function updateRoutine(connection, userId, routineIdx, routineContent) {
         curContent = routineContent[i].content;
         for (var j=0; j<curContent.length; j++) {
             updateRoutineDetail["rep"+String(j)] = curContent[j].rep;
-            if (curContent[j].weight)
-                updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
+            if (curContent[j].weight) updateRoutineDetail["weight"+String(j)] = curContent[j].weight;
         };
-
+    
         const updateRoutineDetailQuery = `
-                              INSERT INTO routineDetail
-                              SET ?;
-                              SELECT LAST_INSERT_ID();
-                              `;
+                          INSERT INTO routineDetail
+                          SET ?;
+                          SELECT LAST_INSERT_ID();
+        `;
         const [responseUpdateRD] = await connection.query(updateRoutineDetailQuery, updateRoutineDetail);
         updateRoutine["detailIdx"+String(i)] = responseUpdateRD[1][0]['LAST_INSERT_ID()'];
     };
 
-    if (!diff) {
-        if (i<10) updateRoutine["detailIdx"+String(i)] = 0;
+    if (!isChange) {
         const updateRoutineQuery = `
                             UPDATE routine
                             SET ?
