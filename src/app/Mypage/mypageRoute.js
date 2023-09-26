@@ -32,4 +32,7 @@ router.put('/updatepwd', jwtMiddleware, mypage.updatePassword);
 // 8. 비밀번호 비교
 router.post('/comparepwd', jwtMiddleware, mypage.comparePassword);
 
+// 9. 쿠폰 등록
+router.post('/coupon', jwtMiddleware, mypage.registCode);
+
 module.exports = router;

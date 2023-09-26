@@ -29,3 +29,17 @@ exports.updatePassword = async function (userIdFromJWT, hashedPassword) {
   
     return userPwUpdate;
   };
+
+// 쿠폰 등록 API
+exports.registCode = async function (userId, code) {
+  try {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const updateCouponCode = await mypageDao.updateCouponCode(connection, userId, code);
+    connection.release();
+
+    return updateCouponCode;
+  } catch (err) {
+    console.error(`APP - registCode Service error\n: ${err.message}`);
+    return errResponse(baseResponse.TRANSACTION_ERROR);
+  }
+};

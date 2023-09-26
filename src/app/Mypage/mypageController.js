@@ -206,3 +206,18 @@ exports.comparePassword = async function (req, res) {
         return res.send(errResponse(baseResponse.MYPAGE_USERPW_UNEQUAL));
     }
 }
+
+/**
+ * API No. 9
+ * API Name : 쿠폰 등록 API
+ * [POST] /app/mypage/coupon
+ */
+exports.registCode = async function (req, res) {
+    const userId = req.decoded.userId;
+    const { code } = req.body;
+
+    console.log(userId, "- regist Coupon:", code);
+    const responseRegistCode = await mypageService.registCode(userId, code);
+
+    return res.send(responseRegistCode);
+}

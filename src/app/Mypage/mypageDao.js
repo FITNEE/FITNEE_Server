@@ -1,3 +1,6 @@
+const baseResponse = require("../../../config/baseResponseStatus");
+const {response, errResponse} = require("../../../config/response");
+
 // 특정유저가 n월에 운동한 날짜
 async function selectMyCalendar(connection, userIdFromJWT, month) {
     const selectMyCalendarQuery = `
@@ -310,6 +313,33 @@ async function selectMyRecord(connection, userId) {
     return {startAndEndExercise, todayWeekNumber, formattedRows};
 }
 
+async function updateCouponCode(connection, userId, code) {
+    let current = new Date();
+
+    const validCodeQuery = `
+                  SELECT premiumDate, expireDate, status
+                  FROM coupon
+                  WHERE code = ?
+                  `;
+    const [validCode] = await connection.query(validCodeQuery, code);
+    
+    if (validCode.length===0) return errResponse(baseResponse.COUPON_CODE_ERROR);
+    else if (validCode[0].expireDate < current) return errResponse(baseResponse.COUPON_CODE_EXPIRED);
+    else if (validCode[0].status!=0) return errResponse(baseResponse.COUPON_CODE_USED);
+    
+    const codeUsedQuery = `
+                  UPDATE coupon
+                  SET status=1
+                  WHERE code = ?;
+                  UPDATE User
+                  SET premium=1, premiumAt=NOW(), endAt=DATE_ADD(NOW(),INTERVAL ? DAY), premiumStatus=1
+                  WHERE userId = ?;
+                  `;
+    await connection.query(codeUsedQuery, [code, validCode[0].premiumDate, userId]);
+
+    return response(baseResponse.SUCCESS);
+}
+
 
 
 
@@ -321,4 +351,5 @@ module.exports = {
     updateUserPw,
     selectUserNickname,
     selectMyRecord,
+    updateCouponCode
   };

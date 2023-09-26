@@ -85,6 +85,10 @@ module.exports = {
     PROMOTION_PHONENUM_NOT_EXIST: { "isSuccess": false, "code": 902, "message":"전화번호를 입력해 주세요."},
     PROMOTION_ALREADY_ENTERED: { "isSuccess": false, "code": 903, "message":"이미 사전예약에 참여하셨습니다."},
 
+    COUPON_CODE_ERROR: { "isSuccess": false, "code": 910, "message":"유효하지 않은 쿠폰 코드입니다."},
+    COUPON_CODE_USED: { "isSuccess": false, "code": 911, "message":"이미 사용한 코드입니다."},
+    COUPON_CODE_EXPIRED: { "isSuccess": false, "code": 912, "message":"코드가 기간 만료되었습니다."},
+
 
     //Request error
 
