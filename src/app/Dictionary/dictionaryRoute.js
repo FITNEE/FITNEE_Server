@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwtMiddleware = require('../../middleware/jwtMiddleware');
-const mypage = require('./dictionaryController');
+const dictionary = require('./dictionaryController');
 
 /**
  * Dictionary API
@@ -9,33 +9,33 @@ const mypage = require('./dictionaryController');
  */
 
 // 1. 
-router.get('/', jwtMiddleware, mypage.getKeywordByIdx);
+router.get('/', jwtMiddleware, dictionary.getKeywordByIdx);
 
 // 2. 
-router.post('/usersearch', jwtMiddleware, mypage.postSearchList);
+router.post('/usersearch', jwtMiddleware, dictionary.postSearchList);
 
 // 3.
-router.post('/searchexercise', mypage.postSearchName);
+router.post('/searchexercise', dictionary.postSearchName);
 
 // 4.
-router.get('/exerciseinfo', mypage.getInformationByparts);
+router.get('/exerciseinfo', dictionary.getInformationByparts);
 
 // 5.
-router.get('/exercisemethod', mypage.getMethodByName);
+router.get('/exercisemethod', dictionary.getMethodByName);
 
 // 6.
-router.get('/exercisechat', mypage.getChattingByName);
+router.get('/exercisechat', dictionary.getChattingByName);
 
 // 7.
-router.post('/chatting', jwtMiddleware, mypage.postChatting);
+router.post('/chatting', jwtMiddleware, dictionary.postChatting);
 
 // 8.
-router.patch('/deleteChatt', jwtMiddleware, mypage.deleteChatt)
+router.patch('/deleteChatt', jwtMiddleware, dictionary.deleteChatt)
 
 // 9.
-router.put('/chatRead', jwtMiddleware, mypage.updateChatRead)
+router.put('/chatRead', jwtMiddleware, dictionary.updateChatRead)
 
 // 10.
-router.get('/readInfo', jwtMiddleware, mypage.getReadInfo)
+router.get('/readInfo', jwtMiddleware, dictionary.getReadInfo)
 
 module.exports = router;
