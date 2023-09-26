@@ -1,3 +1,3 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
-const dictionaryDao = require("./freindDao");
+const dictionaryDao = require("./friendDao");

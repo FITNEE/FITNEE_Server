@@ -34,7 +34,7 @@ module.exports = function () {
     app.use('/app/dictionary', dictionaryRoute);
     app.use('/app/process', processRoute);
     app.use('/app/promotion', promotionRoute);
-    app.use('/app/freind', friendRoute);
+    app.use('/app/friend', friendRoute);
     
     const {swaggerUi, specs} = require("./swagger");
     app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
