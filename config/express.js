@@ -19,13 +19,14 @@ module.exports = function () {
     // app.use(express.static(process.cwd() + '/public'));
 
     /* App (Android, iOS) */
-    // TODO: 도메인을 추가할 경우 이곳에 Route를 추가하세요.
+    // TODO: 도메인을 추가할 경우 이곳에 Route를 추가.
     const userRoute = require('../src/app/User/userRoute');
     const routineRoute = require('../src/app/Routine/routineRoute');
     const mypageRoute = require('../src/app/Mypage/mypageRoute');
     const dictionaryRoute = require('../src/app/Dictionary/dictionaryRoute');
     const processRoute = require('../src/app/Process/processRoute');
     const promotionRoute = require('../src/app/Promotion/promotionRoute');
+    const friendRoute = require('../src/app/Friend/friendRoute');
     
     app.use('/app/user', userRoute);
     app.use('/app/routine', routineRoute);
@@ -33,6 +34,7 @@ module.exports = function () {
     app.use('/app/dictionary', dictionaryRoute);
     app.use('/app/process', processRoute);
     app.use('/app/promotion', promotionRoute);
+    app.use('/app/freind', friendRoute);
     
     const {swaggerUi, specs} = require("./swagger");
     app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
