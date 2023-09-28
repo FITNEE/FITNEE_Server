@@ -232,6 +232,33 @@ tags:
       '707':
         description: 입력한 userPw와 기존 userPw가 동일하지 않습니다.(false)
 
+/app/mypage/coupon:
+  post:
+    summary: 쿠폰 코드 등록 api
+    description: 쿠폰 코드를 등록하는 aapi
+    tags:
+      - Mypage
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+    responses:
+      '1000':
+        description: 성공
+      '910':
+        description: 유효하지 않은 쿠폰 코드입니다.
+      '911':
+        description: 이미 사용한 코드입니다.
+      '912':
+        description: 코드가 기간 만료되었습니다.
+      '4002':
+        description: 통신 오류
+
 
 # components:
 #   schemas:
