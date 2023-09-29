@@ -9,6 +9,6 @@ const freind = require('./freindController');
  */
 
 // 1. 
-//router.get('/', jwtMiddleware, freind.getKeywordByIdx);
+router.get('/', jwtMiddleware, freind.getFriendByIdx);
 
 module.exports = router;

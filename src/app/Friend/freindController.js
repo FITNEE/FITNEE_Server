@@ -13,6 +13,19 @@ const {emit} = require("nodemon");
  * API Name : 내 친구목록 불러오기
  * [GET] /app/freind
  */
+exports.getFriendByIdx = async function (req, res) {
+
+    /**
+     * Path Variable: userIdx
+     */
+    const userIdFromJWT = req.decoded.userId;
+
+    if (!userIdFromJWT) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+
+    const friendByUserId = await friendProvider.searchFriendList(userIdFromJWT);
+    return res.send(response(baseResponse.SUCCESS, friendByUserId));
+};
+
 
 
 /**
