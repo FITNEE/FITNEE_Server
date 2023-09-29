@@ -9,4 +9,13 @@ exports.searchFriendList = async function (userIdFromJWT) {
     connection.release();
   
     return friendCheckResult;
-  };
+};
+
+// user 검색
+exports.searchFriend = async function (search) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const userResult = await friendDao.searchUser(connection, search);
+    connection.release();
+  
+    return userResult;
+};

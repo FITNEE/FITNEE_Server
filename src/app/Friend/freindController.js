@@ -27,12 +27,23 @@ exports.getFriendByIdx = async function (req, res) {
 };
 
 
-
 /**
  *  * API No. 2
  * API Name : 유저 검색
- * [GET] /app/freind/search
+ * [POST] /app/friend/searchUser
  */
+exports.searchUser = async function (req, res) {
+    /**
+     * Path Variable: search
+     */
+    const search = req.query.search;
+
+    if (!search) return res.send(errResponse(baseResponse.DICTIONARY_SEARCH_EMPTY));
+
+    const postSearch = await friendProvider.searchFriend(search);
+    return res.send(response(baseResponse.SUCCESS, postSearch));
+};
+
 
 
 /**

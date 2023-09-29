@@ -28,8 +28,18 @@ async function searchFriend(connection, userIdFromJWT) {
     };
 }
 
-
+// search 받아서 healthCategory테이블의 연관 name 반환
+async function searchUser(connection, search) {
+    const searchUserQuery = `
+        SELECT userNickname
+        FROM User
+        WHERE userNickname LIKE CONCAT('%', ?, '%');
+    `;
+    const [searchResultRows] = await connection.query(searchUserQuery, [search]);
+    return searchResultRows;
+}
 
 module.exports = {
     searchFriend,
+    searchUser,
 };
