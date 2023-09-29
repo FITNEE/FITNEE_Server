@@ -14,12 +14,12 @@ async function searchFriend(connection, userIdFromJWT) {
     `;
     const [searchResultRows] = await connection.query(searchFriendQuery, [userIdFromJWT]);
 
-    // null 값을 필터링하여 새로운 배열을 생성합니다.
+    // 새로운 배열 만들어 null 값 필터링
     const filteredFriendList = searchResultRows
         .filter((friend) => friend.friendNickname !== null)
         .map((friend) => ({ friendNickname: friend.friendNickname }));
 
-    // 친구 목록의 갯수는 필터링된 배열의 길이입니다.
+    // 친구 수 == 필터링된 배열의 길이.
     const friendCount = filteredFriendList.length;
 
     return {

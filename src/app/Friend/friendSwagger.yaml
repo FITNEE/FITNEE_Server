@@ -14,7 +14,7 @@ tags:
     #       type: integer
     description: jwt토큰으로 유저의 친구 수와 친구 목록 반환
     tags:
-      - Dictionary
+      - Friend
     responses:
       '1000':
         description: 성공
