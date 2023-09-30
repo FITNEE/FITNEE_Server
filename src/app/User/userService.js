@@ -61,9 +61,7 @@ exports.postSignIn = async function (userId, userPw) {
         const storedPasswordHash = userResult[0].userPw
 
         // 해시 userPw와 비교
-        if (hashedPasswordInput !== storedPasswordHash) {
-            return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG)
-        }
+        if (hashedPasswordInput !== storedPasswordHash) return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG)
 
         // 계정 상태 확인
         const userInfoRows = await userProvider.accountCheck(userId);

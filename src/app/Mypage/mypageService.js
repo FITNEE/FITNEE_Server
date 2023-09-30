@@ -43,3 +43,17 @@ exports.registCode = async function (userId, code) {
     return errResponse(baseResponse.TRANSACTION_ERROR);
   }
 };
+
+// 알람 수신 여부 수정
+exports.putIsAlarm = async function (userId) {
+  try {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const isAlarmInfo = await mypageDao.updateIsAlarm(connection, userId);
+    connection.release();
+
+    return isAlarmInfo;
+  } catch (err) {
+    console.err(`APP - putIsAlarm Service error\n: ${err.message}`);
+    return errResponse(baseResponse.TRANSACTION_ERROR);
+  }
+};

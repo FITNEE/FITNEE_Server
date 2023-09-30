@@ -69,3 +69,12 @@ exports.searchRecord = async function (userId) {
 
   return myRecordResult;
 };
+
+// 알람 수신 여부 조희
+exports.getIsAlarm = async function (userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const isAlarmInfo = await mypageDao.selectIsAlarm(connection, userId);
+  connection.release();
+
+  return isAlarmInfo;
+};

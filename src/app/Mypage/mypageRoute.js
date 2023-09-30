@@ -35,4 +35,10 @@ router.post('/comparepwd', jwtMiddleware, mypage.comparePassword);
 // 9. 쿠폰 등록
 router.post('/coupon', jwtMiddleware, mypage.registCode);
 
+// 10. 알림 수신 여부 확인
+router.get('/alarm', jwtMiddleware, mypage.getIsAlarm);
+
+// 11. 알림 수신 여부 수정
+router.put('/alarm', jwtMiddleware, mypage.putIsAlarm);
+
 module.exports = router;

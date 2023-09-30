@@ -153,9 +153,7 @@ exports.login = async function(req, res) {
     try {
         const signInResponse = await userService.postSignIn(userId, userPw, res);
 
-        if (!signInResponse.isSuccess) {
-            return res.send(signInResponse)
-        }
+        if (!signInResponse.isSuccess) return res.send(signInResponse);
 
         const accessToken = signInResponse.result.accessToken
         // const refreshToken = signInResponse.result.refreshToken

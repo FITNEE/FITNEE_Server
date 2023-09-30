@@ -259,71 +259,44 @@ tags:
       '4002':
         description: 통신 오류
 
-
-# components:
-#   schemas:
-#     User:
-#       type: object
-#       properties:
-#         userIdx:
-#           type: integer
-#           example: 10
-#         userId:
-#           type: string
-#           example: rjh@naver.com
-#         userPw:
-#           type: string
-#           example: 295a7ac9509dec763a28b498525203d06fe5a4d8f2afc7956b110017d8956e00bd9076d4a9c48a6a2b43928d630e6cc0da3f0108bfeb7fbb7cba4f0013138cf7
-#         userName:
-#           type: string
-#           example: 류재혁
-#         birthYear:
-#           type: integer
-#           example: 2001
-#         userNickname:
-#           type: string
-#           example: 초코맛
-#         gender:
-#           type: integer
-#           example: 1
-#         height:
-#           type: string
-#           example: 150
-#         weight:
-#           type: string
-#           example: 70
-#         status:
-#           type: string
-#           example: '1'
-
-
-# components:
-#   schemas:
-#     myCalendar:
-#       type: object
-#       properties:
-#         myCalenderIdx:
-#           type: integer
-#           example: 1
-#         userIdx:
-#           type: integer
-#           example: 10
-#         userId:
-#           type: string
-#           example: rjh@naver.com
-#         routineCalenderIdx:
-#           type: integer
-#           example: 3
-#         totalExerciseTime:
-#           type: integer
-#           example: 0
-#         totalWeight:
-#           type: integer
-#           example: 0
-#         healthDate:
-#           type: string
-#           format: date
-#           example: '2023-07-25'
-#         status:
-#           type: string
-#           example: '0'
+/app/mypage/alarm:
+  get:
+    summary: 알림 수신 여부 확인 api
+    description: 알림 수신 여부를 확인하는 api
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+        content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 1000
+              message:
+                type: string
+                example: 성공
+              result:
+                type: object
+                properties:
+                  isAlarm:
+                    type: boolean
+                    example: true
+      '4002':
+        description: 통신 오류
+  put:
+    summary: 알림 수신 여부 변경 api
+    description: 알림 수신 여부를 변경하는 api (기존의 여부와 반대로 수정됨.)
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        description: 성공
+      '4002':
+        description: 통신 오류

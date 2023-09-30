@@ -340,7 +340,33 @@ async function updateCouponCode(connection, userId, code) {
     return response(baseResponse.SUCCESS);
 }
 
+async function selectIsAlarm(connection, userId) {
+    const selectIsAlarmQuery = `
+                SELECT alertStatus as isAlarm
+                FROM User
+                WHERE userId = ?;
+                `;
+    const [[responseIsAlarm]] = await connection.query(selectIsAlarmQuery, userId);
 
+    responseIsAlarm.isAlarm = (responseIsAlarm.isAlarm==='1') ? true : false;
+
+    return responseIsAlarm;
+}
+
+async function updateIsAlarm(connection, userId) {
+    const responseAlarm = await selectIsAlarm(connection, userId);
+    const isAlarm = responseAlarm.isAlarm ? '0' : '1';
+
+    const updateIsAlarmQuery = `
+                UPDATE User
+                SET alertStatus = ?
+                WHERE userId = ?;
+                `;
+    // const [responseIsAlarm] = await connection.query(updateIsAlarmQuery, [isAlarm, userId]);
+    await connection.query(updateIsAlarmQuery, [isAlarm, userId]);
+
+    return ;
+}
 
 
 module.exports = {
@@ -351,5 +377,7 @@ module.exports = {
     updateUserPw,
     selectUserNickname,
     selectMyRecord,
-    updateCouponCode
+    updateCouponCode,
+    selectIsAlarm,
+    updateIsAlarm
   };

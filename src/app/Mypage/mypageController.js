@@ -103,7 +103,6 @@ exports.getUserData = async function (req, res) {
 
     const dataByUserId = await mypageProvider.searchUserInfo(userIdFromJWT);
     return res.send(response(baseResponse.SUCCESS, dataByUserId));
-    
 }
 
 /**
@@ -208,16 +207,38 @@ exports.comparePassword = async function (req, res) {
 }
 
 /**
- * API No. 9
  * API Name : 쿠폰 등록 API
  * [POST] /app/mypage/coupon
  */
 exports.registCode = async function (req, res) {
     const userId = req.decoded.userId;
     const { code } = req.body;
+    if (!code) return res.send(errResponse());
 
     console.log(userId, "- regist Coupon:", code);
     const responseRegistCode = await mypageService.registCode(userId, code);
 
     return res.send(responseRegistCode);
+}
+
+/**
+ * API Name : 알림 수신 여부 조희 API
+ * [GET] /app/mypage/alarm
+ */
+exports.getIsAlarm = async function (req, res) {
+    const userId = req.decoded.userId;
+
+    const responseIsAlarm = await mypageProvider.getIsAlarm(userId);
+    return res.send(response(baseResponse.SUCCESS, responseIsAlarm));
+}
+
+/**
+ * API Name : 알림 수신 여부 수정 API
+ * [PUT] /app/mypage/alarm
+ */
+exports.putIsAlarm = async function (req, res) {
+    const userId = req.decoded.userId;
+
+    const responseIsAlarm = await mypageService.putIsAlarm(userId);
+    return res.send(response(baseResponse.SUCCESS, responseIsAlarm));
 }
