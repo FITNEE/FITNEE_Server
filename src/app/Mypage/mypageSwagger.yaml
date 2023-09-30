@@ -267,32 +267,31 @@ tags:
       - Mypage
     responses:
       '1000':
-        description: 성공
         content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              isSuccess:
-                type: boolean
-                example: true
-              code:
-                type: integer
-                example: 1000
-              message:
-                type: string
-                example: 성공
-              result:
-                type: object
-                properties:
-                  isAlarm:
-                    type: boolean
-                    example: true
+          application/json:
+            schema:
+              type: object
+              properties:
+                isSuccess:
+                  type: boolean
+                  example: true
+                code:
+                  type: integer
+                  example: 1000
+                message:
+                  type: string
+                  example: 성공
+                result:
+                  type: object
+                  properties:
+                    isAlarm:
+                      type: boolean
+                      example: true
       '4002':
         description: 통신 오류
   put:
     summary: 알림 수신 여부 변경 api
-    description: 알림 수신 여부를 변경하는 api (기존의 여부와 반대로 수정됨.)
+    description: 알림 수신 여부를 변경하는 api (기존의 여부와 반대로 자동 적용)
     tags:
       - Mypage
     responses:
