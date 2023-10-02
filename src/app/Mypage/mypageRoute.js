@@ -36,9 +36,16 @@ router.post('/comparepwd', jwtMiddleware, mypage.comparePassword);
 router.post('/coupon', jwtMiddleware, mypage.registCode);
 
 // 10. 알림 수신 여부 확인
-router.get('/alarm', jwtMiddleware, mypage.getIsAlarm);
+router.get('/isalarm', jwtMiddleware, mypage.getIsAlarm);
 
 // 11. 알림 수신 여부 수정
-router.put('/alarm', jwtMiddleware, mypage.putIsAlarm);
+router.put('/isalarm', jwtMiddleware, mypage.putIsAlarm);
+
+// 12. 알림 내용 저장
+router.post('/alarm', jwtMiddleware, mypage.postAlarm);
+
+// 13. 알림 내역 조회
+router.get('/alarm', jwtMiddleware, mypage.getAlarm);
+
 
 module.exports = router;

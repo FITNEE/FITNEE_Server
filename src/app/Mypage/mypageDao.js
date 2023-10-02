@@ -368,6 +368,34 @@ async function updateIsAlarm(connection, userId) {
     return ;
 }
 
+async function insertAlarm(connection, userIdx, content) {
+    const insertAlarmQuery = `
+                      INSERT INTO alert
+                      SET userIdx=?, alertContent=?
+                      `;
+    await connection.query(insertAlarmQuery, [userIdx, content]);
+
+    return ;
+}
+
+async function selectAlarm(connection, userIdx) {
+    const insertAlarmQuery = `
+                      SELECT alertContent as content, TIMESTAMPDIFF(MINUTE, createdAt, NOW()) as diff
+                      FROM alert
+                      WHERE userIdx = ?
+                      `;
+    const [responseAlarm] = await connection.query(insertAlarmQuery, userIdx);
+
+    responseAlarm.forEach(element => {
+        const tempDiff = element.diff;
+        if (tempDiff < 60) element.diff = tempDiff+"분전";
+        else if (tempDiff < 1440) element.diff = parseInt(tempDiff/60)+"시간전";
+        else if (tempDiff < 10080) element.diff = parseInt(tempDiff/1440)+"일전";
+        else element.diff = parseInt(tempDiff/10080)+"주전";
+    });
+
+    return responseAlarm;
+}
 
 module.exports = {
     selectMyCalendar,
@@ -379,5 +407,7 @@ module.exports = {
     selectMyRecord,
     updateCouponCode,
     selectIsAlarm,
-    updateIsAlarm
+    updateIsAlarm,
+    insertAlarm,
+    selectAlarm
   };

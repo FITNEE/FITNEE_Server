@@ -259,7 +259,7 @@ tags:
       '4002':
         description: 통신 오류
 
-/app/mypage/alarm:
+/app/mypage/isalarm:
   get:
     summary: 알림 수신 여부 확인 api
     description: 알림 수신 여부를 확인하는 api
@@ -297,5 +297,61 @@ tags:
     responses:
       '1000':
         description: 성공
+      '4002':
+        description: 통신 오류
+
+/app/mypage/alarm:
+  post:
+    summary: 알림 내용 저장 api
+    description: 알림을 송신한 내용을 저장하는 api
+    tags:
+      - Mypage
+    requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: "TEST"
+    responses:
+      '1000':
+        description: 성공
+      '4002':
+        description: 통신 오류
+  get:
+    summary: 알림 내역 조회 api
+    description: 알림을 수신한 내역을 조회하는 api
+    tags:
+      - Mypage
+    responses:
+      '1000':
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isSuccess:
+                  type: boolean
+                  example: true
+                code:
+                  type: integer
+                  example: 1000
+                message:
+                  type: string
+                  example: 성공
+                result:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      content:
+                        type: string
+                        example: "TEST"
+                      diff:
+                        type: string
+                        example: "1일전"
       '4002':
         description: 통신 오류

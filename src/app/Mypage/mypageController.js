@@ -223,7 +223,7 @@ exports.registCode = async function (req, res) {
 
 /**
  * API Name : 알림 수신 여부 조희 API
- * [GET] /app/mypage/alarm
+ * [GET] /app/mypage/isalarm
  */
 exports.getIsAlarm = async function (req, res) {
     const userId = req.decoded.userId;
@@ -234,11 +234,35 @@ exports.getIsAlarm = async function (req, res) {
 
 /**
  * API Name : 알림 수신 여부 수정 API
- * [PUT] /app/mypage/alarm
+ * [PUT] /app/mypage/isalarm
  */
 exports.putIsAlarm = async function (req, res) {
     const userId = req.decoded.userId;
 
     const responseIsAlarm = await mypageService.putIsAlarm(userId);
+    return res.send(responseIsAlarm);
+}
+
+/**
+ * API Name : 알림 내용 저장 API
+ * [POST] /app/mypage/alarm
+ */
+exports.postAlarm = async function (req, res) {
+    const userIdx = req.decoded.userIdx;
+    const { content } = req.body;
+    if (!content) return res.send(errResponse(baseResponse.MYPAGE_CONTENT_EMPTY));
+
+    const responsePostAlarm = await mypageService.postAlarm(userIdx, content);
+    return res.send(responsePostAlarm);
+}
+
+/**
+ * API Name : 알림 내역 조회 API
+ * [GET] /app/mypage/alarm
+ */
+exports.getAlarm = async function (req, res) {
+    const userIdx = req.decoded.userIdx;
+
+    const responseIsAlarm = await mypageProvider.getAlarm(userIdx);
     return res.send(response(baseResponse.SUCCESS, responseIsAlarm));
 }

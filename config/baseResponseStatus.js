@@ -66,6 +66,8 @@ module.exports = {
     MYPAGE_EXERCISE_NOT_EXIST: { "isSuccess": false, "code": 709, "message":"운동 기록이 없습니다."},
     MYPAGE_EXERCISE_INVALID: { "isSuccess": false, "code": 710, "message":"운동 기록이 두 개 이상 존재합니다."},
 
+    MYPAGE_CONTENT_EMPTY: { "isSuccess": false, "code": 711, "message":"내용이 존재하지 않습니다."},
+
 
     // process error
     INVALID_DAY_OF_WEEK: { "isSuccess": false, "code":801, "message":"요일을 입력해주세요."},

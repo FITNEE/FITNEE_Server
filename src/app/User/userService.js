@@ -74,7 +74,9 @@ exports.postSignIn = async function (userId, userPw) {
         // let refreshToken = ''
         if (userInfoRows[0].status === '1') {
             const payload = {
+                userIdx: userInfoRows[0].userIdx,
                 userId: userId,
+                isPremium: userInfoRows[0].premium
             }
             try {
                 accessToken = jwt.sign(payload, secret_config.jwtsecret, {

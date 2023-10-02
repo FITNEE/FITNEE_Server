@@ -78,3 +78,12 @@ exports.getIsAlarm = async function (userId) {
 
   return isAlarmInfo;
 };
+
+// 알람 내역 조희
+exports.getAlarm = async function (userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const isAlarmInfo = await mypageDao.selectAlarm(connection, userIdx);
+  connection.release();
+
+  return isAlarmInfo;
+};

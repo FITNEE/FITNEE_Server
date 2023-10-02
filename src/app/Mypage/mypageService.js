@@ -51,9 +51,25 @@ exports.putIsAlarm = async function (userId) {
     const isAlarmInfo = await mypageDao.updateIsAlarm(connection, userId);
     connection.release();
 
-    return isAlarmInfo;
+    return response(baseResponse.SUCCESS, isAlarmInfo);
   } catch (err) {
-    console.err(`APP - putIsAlarm Service error\n: ${err.message}`);
+    console.error(`APP - putIsAlarm Service error\n: ${err.message}`);
+    return errResponse(baseResponse.TRANSACTION_ERROR);
+  }
+};
+
+// 알림 내용 저장
+exports.postAlarm = async function (userIdx, content) {
+  try {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const insertAlarm = await mypageDao.insertAlarm(connection, userIdx, content);
+    connection.release();
+
+    console.log(userIdx, '- alarm:', content);
+
+    return response(baseResponse.SUCCESS, insertAlarm);
+  } catch (err) {
+    console.error(`APP - postAlarm Service error\n: ${err.message}`);
     return errResponse(baseResponse.TRANSACTION_ERROR);
   }
 };
