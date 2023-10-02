@@ -36,9 +36,9 @@ exports.retrieveRoutine = async function (routineIdx) {
     return routine;
 };
 
-exports.endProcess = async function (userId) {
+exports.endProcess = async function (userId, isPremium) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const endProcess = await routineDao.endProcess(connection, userId);
+    const endProcess = await routineDao.endProcess(connection, userId, isPremium);
     connection.release();
 
     return endProcess;

@@ -4,7 +4,7 @@ const lodash = require('lodash');
 const deepl = require('deepl-node');
 const secret = require('../../../config/secret');
 
-async function insertRoutine(connection, userId, info, gpt) {
+async function insertRoutine(connection, userId, isPremium, info, gpt) {
     const selectUserInfo = `
                   SELECT birthYear, gender, height, weight
                   FROM User
@@ -490,7 +490,7 @@ async function deleteRoutine(connection, userId, routineIdx) {
     return ;
 };
 
-async function endProcess(connection, userId) {
+async function endProcess(connection, userId, isPremium) {
     const leftPad = (value) => (value<10) ? `0${value}` : value;
     const toMyString = (date, offset=0) => {
         const source = new Date(date.setDate(date.getDate()+offset));

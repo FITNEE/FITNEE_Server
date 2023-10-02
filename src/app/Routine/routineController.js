@@ -10,16 +10,17 @@ const {response, errResponse} = require("../../../config/response");
  */
 exports.postRoutine = async function (req, res) {
     /**
-     * Decoded : userId
+     * Decoded : userId, isPremium
      * Body : routineCalendar
      */
     const userId = req.decoded.userId;
+    const isPremium = req.decoded.isPremium;
     const info = req.body;
 
     const gpt = req.gpt;
 
     console.log("GPT START : " + Date(0).toString());
-    const responsePostRoutineCalendar = await routineService.insertRoutine(userId, info, gpt);
+    const responsePostRoutineCalendar = await routineService.insertRoutine(userId, isPremium, info, gpt);
     console.log("GPT END : " + Date(0).toString());
 
     return res.send(responsePostRoutineCalendar);
@@ -167,8 +168,9 @@ exports.endProcess = async function (req, res) {
      * Decoded : userId
      */
     const userId = req.decoded.userId;
+    const isPremium = req.decoded.isPremium;
 
-    const responseEndProcess = await routineProvider.endProcess(userId);
+    const responseEndProcess = await routineProvider.endProcess(userId, isPremium);
 
     if (!responseEndProcess) return res.send(errResponse(baseResponse.COMPARE_ROUTINE_UNDEFINED));
     else return res.send(response(baseResponse.SUCCESS, responseEndProcess));

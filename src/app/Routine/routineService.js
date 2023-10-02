@@ -4,10 +4,10 @@ const routineDao = require("./routineDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
-exports.insertRoutine = async function (userId, info, gpt) {
+exports.insertRoutine = async function (userId, isPremium, info, gpt) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const insertRoutine = await routineDao.insertRoutine(connection, userId, info, gpt);
+        const insertRoutine = await routineDao.insertRoutine(connection, userId, isPremium, info, gpt);
         connection.release();
     
         return response(baseResponse.SUCCESS, insertRoutine);
