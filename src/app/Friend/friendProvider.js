@@ -19,3 +19,22 @@ exports.searchFriend = async function (search) {
   
     return userResult;
 };
+
+// 내가 보낸 친구신청 조회
+exports.addFriendList = async function (userIdxFromJWT) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const addResult = await friendDao.searchList(connection, userIdxFromJWT);
+    connection.release();
+  
+    return addResult;
+};
+
+
+// 받은 친구신청 조회
+exports.getReceiveList = async function (userIdxFromJWT) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const addResult = await friendDao.searchReceivedList(connection, userIdxFromJWT);
+    connection.release();
+  
+    return addResult;
+};

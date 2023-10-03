@@ -53,8 +53,47 @@ async function addFriend(connection, insertFriendParams) {
     return insertResultRows;
 }
 
+// 내가 보낸 친구신청 조회
+async function searchList(connection, userIdxFromJWT) {
+    const searchFriendQuery = `
+        SELECT fl.friendListIdx, fl.toUserIdx, u.userNickname
+        FROM friendList AS fl
+        LEFT JOIN User AS u ON fl.toUserIdx = u.userIdx
+        WHERE fl.fromUserIdx = ? AND fl.status = '0';
+    `;
+    const [searchResultRows] = await connection.query(searchFriendQuery, userIdxFromJWT);
+    return searchResultRows;
+}
+
+// 내가 보낸 친구신청 취소
+async function deleteAddFriend(connection, friendListIdx, userIdxFromJWT) {
+    const searchFriendQuery = `
+        DELETE
+        FROM friendList
+        WHERE friendListIdx = ? AND fromUserIdx = ? AND status = '0';
+    `;
+    const [searchResultRows] = await connection.query(searchFriendQuery, [friendListIdx, userIdxFromJWT]);
+    return searchResultRows;
+}
+
+// 내가 받은 친구신청 조회
+async function searchReceivedList(connection, userIdxFromJWT) {
+    const searchFriendQuery = `
+        SELECT fl.friendListIdx, fl.fromUserIdx, u.userNickname
+        FROM friendList AS fl
+        LEFT JOIN User AS u ON fl.fromUserIdx = u.userIdx
+        WHERE fl.toUserIdx = ? AND fl.status = '0';
+    `;
+    const [searchResultRows] = await connection.query(searchFriendQuery, userIdxFromJWT);
+    return searchResultRows;
+}
+
+
 module.exports = {
     searchFriend,
     searchUser,
     addFriend,
+    searchList,
+    deleteAddFriend,
+    searchReceivedList,
 };

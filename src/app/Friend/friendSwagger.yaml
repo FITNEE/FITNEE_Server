@@ -5,6 +5,13 @@ tags:
 /app/friend:
   get:
     summary: API NO.1 - userId 받아서 친구목록 조회 api
+    # parameters:
+    #   - name: userIdx
+    #     in: query
+    #     required: true
+    #     description: userIdx를 입력하세요.
+    #     schema:
+    #       type: integer
     description: jwt토큰으로 유저의 친구 수와 친구 목록 반환
     tags:
       - Friend
@@ -31,8 +38,8 @@ tags:
 
 /app/friend/searchUser:
   post:
-    summary: API NO.2 - 검색 단어와 연관된 닉네임 가진 user 조회 api
-    description: search에 사 단어 넣으면 userNickname에 search 단어 들어간 모든 유저의 userIdx, userNickname return
+    summary: API NO.2 - 검색 단어와 연관된 닉네임 가진 user 조회
+    description: search에 사 단어 넣으면 userNickname에 search 단어 들어간 모든 userNickname return
     tags:
       - Friend
     operationId: searchUser
