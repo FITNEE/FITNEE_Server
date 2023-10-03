@@ -31,7 +31,7 @@ async function searchFriend(connection, userIdFromJWT) {
 // search 받아서 healthCategory테이블의 연관 name 반환
 async function searchUser(connection, search) {
     const searchUserQuery = `
-        SELECT userNickname
+        SELECT userIdx, userNickname
         FROM User
         WHERE userNickname LIKE CONCAT('%', ?, '%');
     `;
@@ -39,7 +39,22 @@ async function searchUser(connection, search) {
     return searchResultRows;
 }
 
+// 친구신청
+async function addFriend(connection, insertFriendParams) {
+    const addFriendQuery = `
+        INSERT INTO friendList (fromUserIdx, toUserIdx, status)
+        VALUES(
+            (SELECT userIdx FROM User WHERE userIdx = ?),
+            (SELECT userIdx FROM User WHERE userIdx = ?),
+            '0'
+        );
+    `;
+    const [insertResultRows] = await connection.query(addFriendQuery, insertFriendParams);
+    return insertResultRows;
+}
+
 module.exports = {
     searchFriend,
     searchUser,
+    addFriend,
 };

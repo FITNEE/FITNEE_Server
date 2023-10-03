@@ -31,8 +31,8 @@ tags:
 
 /app/friend/searchUser:
   post:
-    summary: API NO.2 - 검색 단어와 연관된 닉네임 가진 user 조회
-    description: search에 사 단어 넣으면 userNickname에 search 단어 들어간 모든 userNickname return
+    summary: API NO.2 - 검색 단어와 연관된 닉네임 가진 user 조회 api
+    description: search에 사 단어 넣으면 userNickname에 search 단어 들어간 모든 유저의 userIdx, userNickname return
     tags:
       - Friend
     operationId: searchUser
@@ -48,3 +48,23 @@ tags:
         description: 성공
       '606':
         description: 검색내용을 입력해 주세요.
+
+/app/friend/addFriend:
+  post:
+    summary: API NO.3 - 친구 신청(추가) api
+    description: -  (내 입장에선 보냄 상대 입장에서는 받음)
+    tags:
+      - Friend
+    operationId: addFriend
+    parameters:
+      - name: friendIdx
+        in: body
+        required: true
+        description: 친구신청할 친구의 userIdx
+        schema:
+          type: integer
+    responses:
+      '1000':
+        description: 성공
+      '2013':
+        description: jwt토큰 검증에러.

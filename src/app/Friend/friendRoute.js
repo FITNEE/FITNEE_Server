@@ -14,4 +14,7 @@ router.get('/', jwtMiddleware, freind.getFriendByIdx);
 // 2. 
 router.post('/searchUser', freind.searchUser);
 
+// 3. 
+router.post('/addFriend',jwtMiddleware, freind.addFriend);
+
 module.exports = router;
