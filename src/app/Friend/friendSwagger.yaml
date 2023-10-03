@@ -48,23 +48,3 @@ tags:
         description: 성공
       '606':
         description: 검색내용을 입력해 주세요.
-
-/app/friend/searchUser:
-  post:
-    summary: API NO.2 - 검색 단어와 연관된 닉네임 가진 user 조회 api
-    description: search에 사 단어 넣으면 userNickname에 search 단어 들어간 모든 유저의 userIdx, userNickname return
-    tags:
-      - Friend
-    operationId: searchUser
-    parameters:
-      - name: search
-        in: query
-        required: true
-        description: 검색 내용
-        schema:
-          type: string
-    responses:
-      '1000':
-        description: 성공
-      '606':
-        description: 검색내용을 입력해 주세요.
