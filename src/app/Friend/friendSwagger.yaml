@@ -49,22 +49,22 @@ tags:
       '606':
         description: 검색내용을 입력해 주세요.
 
-/app/friend/addFriend:
-  post:
-    summary: API NO.3 - 친구 신청(추가) api
-    description: 내 입장에선 보냄 상대 입장에서는 받음
-    tags:
-      - Friend
-    operationId: addFriend
-    parameters:
-      - name: friendIdx
-        in: body
-        required: true
-        description: 친구신청할 친구의 userIdx
-        schema:
-          type: integer
-    responses:
-      '1000':
-        description: 성공
-      '2013':
-        description: jwt토큰 검증에러.
+# /app/friend/addFriend:
+#   post:
+#     summary: API NO.3 - 친구 신청(추가) api
+#     description: 내 입장에선 보냄 상대 입장에서는 받음
+#     tags:
+#       - Friend
+#     operationId: addFriend
+#     parameters:
+#       - name: friendIdx
+#         in: body
+#         required: true
+#         description: 친구신청할 친구의 userIdx
+#         schema:
+#           type: integer
+#     responses:
+#       '1000':
+#         description: 성공
+#       '2013':
+#         description: jwt토큰 검증에러.
