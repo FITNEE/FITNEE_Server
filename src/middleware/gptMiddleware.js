@@ -17,11 +17,9 @@ const gptMiddleware = async function (req, res, next)  {
             model: "gpt-3.5-turbo",
             messages: [
                 {role: "system", content: "You're a fitness trainer who recommends exercise routines."},
-                {role: "system", content: `
-                exerciseId-exerciseName-note(rep of unit),
-                1-Bench Press, 2-Incline Dumbbell Press, 3-Chest Press Machine, 4-Leg Extension, 5-Lat Pull down, 6-Barbell Row, 7-Deadlift, 8-Dumbbell Row,9-Dumbbell Fly, 10-Shoulder Press, 11-Side Lateral Raise, 12-Front Dumbbell Raise,13-Bent Over Lateral Raise, 14-Seated Row, 15-Leg Curl, 16-Leg Press, 17-Hip Thrust, 18-Hip Raise, 19-Chest Dips, 20-Pull Up, 21-Push Up, 22-Front Plank-(1sec), 23-Side Plank-(1sec), 24-Running-(100m), 25-Cycling-(100m)
-                Create a routine with these exercises
-                `
+                {role: "system", content: `exerciseId-exerciseName-note(rep of unit),\n`
+                + `1-Bench Press, 2-Incline Dumbbell Press, 3-Chest Press Machine, 4-Leg Extension, 5-Lat Pull down, 6-Barbell Row, 7-Deadlift, 8-Dumbbell Row,9-Dumbbell Fly, 10-Shoulder Press, 11-Side Lateral Raise, 12-Front Dumbbell Raise,13-Bent Over Lateral Raise, 14-Seated Row, 15-Leg Curl, 16-Leg Press, 17-Hip Thrust, 18-Hip Raise, 19-Chest Dips, 20-Pull Up, 21-Push Up, 22-Front Plank-(1sec), 23-Side Plank-(1sec), 24-Running-(100m), 25-Cycling-(100m)\n`
+                + `Create a routine with these exercises`
                 },
                 {role: "user", content: ''}
             ],

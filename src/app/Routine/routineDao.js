@@ -21,15 +21,13 @@ async function insertRoutine(connection, userId, isPremium, info, gpt) {
     const weeksSentence = (info.dayOfWeeks.length==1)
                         ? `I only want to work out on ${info.dayOfWeeks}.`
                         : `I'm going to exercise for a total of ${info.dayOfWeeks.length} days on ${info.dayOfWeeks[0]} and ${info.dayOfWeeks.slice(1,).join(', ')}.`;
-    const infoSentence = `
-                    I am a ${(responseUserInfo.gender==1) ? "male" : "female"} born in ${responseUserInfo.birthYear},
-                    I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.
-                    ${rmSentence}
-                    I will do only ${info.targets.join(', ')} exercises at ${info.place}.
-                    I only want to work out on certain days of the week.
-                    ${weeksSentence}
-                    I only want to work out on certain days of the week.
-                    `;
+    const infoSentence = `I am a ${(responseUserInfo.gender==1) ? "male" : "female"} born in ${responseUserInfo.birthYear}, `
+                        + `I am ${responseUserInfo.height}cm tall and weight ${responseUserInfo.weight}kg.\n`
+                        + `${rmSentence}\n`
+                        + `I will do only ${info.targets.join(', ')} exercises at ${info.place}.\n`
+                        + `I only want to work out on certain days of the week.\n`
+                        + `${weeksSentence}\n`
+                        + `I only want to work out on certain days of the week.\n`;
 
     const content = infoSentence + gpt.chatContent;
     const completion = gpt.chatCompletion;
@@ -37,33 +35,57 @@ async function insertRoutine(connection, userId, isPremium, info, gpt) {
 
     console.log(infoSentence);
 
+    // const chats = async function(openai, completion, isPremium) {
+    //     responseContent = [];
+
+    //     const [completion1, completion2, completion3] = await Promise.all([
+    //         openai.createChatCompletion(completion),
+    //         openai.createChatCompletion(completion),
+    //         openai.createChatCompletion(completion)
+    //     ]);
+    
+    //     responseContent.push(JSON.parse(completion1.data.choices[0].message.content));
+    //     responseContent.push(JSON.parse(completion2.data.choices[0].message.content));
+    //     responseContent.push(JSON.parse(completion3.data.choices[0].message.content));
+
+    //     return responseContent;
+    // }
+
+    const chats = async function(openai, completion, isPremium) {
+        responseContent = [];
+
+        var chatCompletions = [];
+        // if (isPremium === 1) {
+        //     chatCompletions = [
+        //         openai.createChatCompletion(completion),
+        //         openai.createChatCompletion(completion),
+        //         openai.createChatCompletion(completion)
+        //     ]
+        // } else {
+        //     chatCompletions = [
+        //         openai.createChatCompletion(completion)
+        //     ]
+        // }
+        chatCompletions = [
+            openai.createChatCompletion(completion),
+            openai.createChatCompletion(completion),
+            openai.createChatCompletion(completion)
+        ]
+
+        const completions = await Promise.all(chatCompletions);
+        completions.forEach(element => {
+            responseContent.push(JSON.parse(element.data.choices[0].message.content));
+        });
+
+        return responseContent;
+    }
+
     var responseContent = [];
     try {
-        responseContent = [];
-
-        const [completion1, completion2, completion3] = await Promise.all([
-            openai.createChatCompletion(completion),
-            openai.createChatCompletion(completion),
-            openai.createChatCompletion(completion)
-        ]);
-    
-        responseContent.push(JSON.parse(completion1.data.choices[0].message.content));
-        responseContent.push(JSON.parse(completion2.data.choices[0].message.content));
-        responseContent.push(JSON.parse(completion3.data.choices[0].message.content));
+        responseContent = await chats(openai, completion, isPremium);
     } catch (err) {
         console.error(err);
-
-        responseContent = [];
-
-        const [completion1, completion2, completion3] = await Promise.all([
-            openai.createChatCompletion(completion),
-            openai.createChatCompletion(completion),
-            openai.createChatCompletion(completion)
-        ]);
-    
-        responseContent.push(JSON.parse(completion1.data.choices[0].message.content));
-        responseContent.push(JSON.parse(completion2.data.choices[0].message.content));
-        responseContent.push(JSON.parse(completion3.data.choices[0].message.content));
+        responseContent = await chats(openai, completion, isPremium);
     }
 
     console.log("---------- gpt completion ----------");
@@ -98,7 +120,7 @@ async function insertRoutine(connection, userId, isPremium, info, gpt) {
     const [exerciseList] = await connection.query(selectExerciseListQuery);
 
     const responseRoutines = [];
-    for (var i=0; i<3; i++) {
+    for (var i=0; i<responseContent.length; i++) {
         const responseKeys = Object.keys(responseContent[i]);
         const responseValues = Object.values(responseContent[i]);
         const tempRoutineCalendar = {

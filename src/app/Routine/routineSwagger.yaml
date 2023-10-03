@@ -464,6 +464,12 @@ components:
         'exerciseParts':
           type: string
           example: 어깨
+        'plusRep':
+          type: integer
+          example: 2
+        'plusWeight':
+          type: integer
+          example: 5
         'plusSet':
           type: integer
           example: 1
@@ -499,12 +505,6 @@ components:
         'weight':
           type: integer
           example: 70
-        'plusRep':
-          type: integer
-          example: 2
-        'plusWeight':
-          type: integer
-          example: 5
 
     RecRoutineCalendar:
       type: object
