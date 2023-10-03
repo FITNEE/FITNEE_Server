@@ -52,7 +52,7 @@ tags:
 /app/friend/addFriend:
   post:
     summary: API NO.3 - 친구 신청(추가) api
-    description: -  (내 입장에선 보냄 상대 입장에서는 받음)
+    description: 내 입장에선 보냄 상대 입장에서는 받음
     tags:
       - Friend
     operationId: addFriend
