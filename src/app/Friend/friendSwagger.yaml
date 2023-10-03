@@ -42,7 +42,7 @@ tags:
     description: search에 사 단어 넣으면 userNickname에 search 단어 들어간 모든 userNickname return
     tags:
       - Friend
-    operationId: searchUser
+    #operationId: searchUser
     parameters:
       - name: search
         in: query
@@ -62,7 +62,7 @@ tags:
     description: 내 입장에선 보냄 상대 입장에서는 받음 - 나(fromUserIdx), 상대(toUserIdx)
     tags:
       - Friend
-    operationId: addFriend
+    #operationId: addFriend
     parameters:
       - name: friendIdx
         in: path
@@ -82,7 +82,7 @@ tags:
     description: toUserIdx, toUserIdx의 userNickname get
     tags:
       - Friend
-    operationId: addFriendList
+    #operationId: addFriendList
     responses:
       '1000':
         description: 성공
@@ -95,7 +95,7 @@ tags:
     description: api no.3.1에서 불러온 friendListIdx 입력
     tags:
       - Friend
-    operationId: cancelAdd
+    #operationId: cancelAdd
     parameters:
       - name: friendListIdx
         in: query
@@ -115,7 +115,7 @@ tags:
     description: friendListIdx get(뒤에서 씀)
     tags:
       - Friend
-    operationId: getReceiveList
+    #operationId: getReceiveList
     responses:
       '1000':
         description: 성공
