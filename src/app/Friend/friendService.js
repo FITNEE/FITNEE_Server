@@ -1,12 +1,23 @@
 const {logger} = require("../../../config/winston");
 const {pool} = require("../../../config/database");
-const secret_config = require("../../../config/secret");
 const friendProvider = require("./friendProvider");
 const friendDao = require("./friendDao");
-const baseResponse = require("../../../config/baseResponseStatus");
-const {response} = require("../../../config/response");
-const {errResponse} = require("../../../config/response");
 
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-const {connect} = require("http2");
+// 친구신청
+exports.friendAdd = async function (userIdxFromJWT, friendIdx) {
+    const insertFriendParams = [userIdxFromJWT, friendIdx];
+    const connection = await pool.getConnection(async (conn) => conn);
+    const friendDbAdd = await friendDao.addFriend(connection, insertFriendParams);
+    connection.release();
+  
+    return friendDbAdd;
+};
+
+// 친구신청 취소
+exports.deleteAddFriendList = async function (friendListIdx, userIdxFromJWT) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const friendDbDelete= await friendDao.deleteAddFriend(connection, friendListIdx, userIdxFromJWT);
+    connection.release();
+  
+    return friendDbDelete;
+};

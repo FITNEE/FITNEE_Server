@@ -31,7 +31,7 @@ async function searchFriend(connection, userIdFromJWT) {
 // search 받아서 healthCategory테이블의 연관 name 반환
 async function searchUser(connection, search) {
     const searchUserQuery = `
-        SELECT userNickname
+        SELECT userIdx, userNickname
         FROM User
         WHERE userNickname LIKE CONCAT('%', ?, '%');
     `;
@@ -39,7 +39,61 @@ async function searchUser(connection, search) {
     return searchResultRows;
 }
 
+// 친구신청
+async function addFriend(connection, insertFriendParams) {
+    const addFriendQuery = `
+        INSERT INTO friendList (fromUserIdx, toUserIdx, status)
+        VALUES(
+            (SELECT userIdx FROM User WHERE userIdx = ?),
+            (SELECT userIdx FROM User WHERE userIdx = ?),
+            '0'
+        );
+    `;
+    const [insertResultRows] = await connection.query(addFriendQuery, insertFriendParams);
+    return insertResultRows;
+}
+
+// 내가 보낸 친구신청 조회
+async function searchList(connection, userIdxFromJWT) {
+    const searchFriendQuery = `
+        SELECT fl.friendListIdx, fl.toUserIdx, u.userNickname
+        FROM friendList AS fl
+        LEFT JOIN User AS u ON fl.toUserIdx = u.userIdx
+        WHERE fl.fromUserIdx = ? AND fl.status = '0';
+    `;
+    const [searchResultRows] = await connection.query(searchFriendQuery, userIdxFromJWT);
+    return searchResultRows;
+}
+
+// 내가 보낸 친구신청 취소
+async function deleteAddFriend(connection, friendListIdx, userIdxFromJWT) {
+    const searchFriendQuery = `
+        DELETE
+        FROM friendList
+        WHERE friendListIdx = ? AND fromUserIdx = ? AND status = '0';
+    `;
+    const [searchResultRows] = await connection.query(searchFriendQuery, [friendListIdx, userIdxFromJWT]);
+    return searchResultRows;
+}
+
+// 내가 받은 친구신청 조회
+async function searchReceivedList(connection, userIdxFromJWT) {
+    const searchFriendQuery = `
+        SELECT fl.friendListIdx, fl.fromUserIdx, u.userNickname
+        FROM friendList AS fl
+        LEFT JOIN User AS u ON fl.fromUserIdx = u.userIdx
+        WHERE fl.toUserIdx = ? AND fl.status = '0';
+    `;
+    const [searchResultRows] = await connection.query(searchFriendQuery, userIdxFromJWT);
+    return searchResultRows;
+}
+
+
 module.exports = {
     searchFriend,
     searchUser,
+    addFriend,
+    searchList,
+    deleteAddFriend,
+    searchReceivedList,
 };
