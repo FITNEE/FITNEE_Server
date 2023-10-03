@@ -38,7 +38,7 @@ tags:
 
 /app/friend/searchUser:
   post:
-    summary: API NO.2 - 검색 단어와 연관된 닉네임 가진 user 조회
+    summary: API NO.2 - 검색 단어와 연관된 닉네임 가진 user 조회 api
     description: search에 사 단어 넣으면 userNickname에 search 단어 들어간 모든 userNickname return
     tags:
       - Friend
