@@ -55,3 +55,23 @@ tags:
         description: 성공
       '606':
         description: 검색내용을 입력해 주세요.
+
+/app/friend/addFriend:
+  post:
+    summary: API NO.3 - 친구 신청(추가)기능 api
+    description: 내 입장에선 보냄 상대 입장에서는 받음 - 나(fromUserIdx), 상대(toUserIdx)
+    tags:
+      - Friend
+    operationId: addFriend
+    parameters:
+      - name: friendIdx
+        in: body
+        required: true
+        description: 신청 보낼 유저의 userIdx
+        schema:
+          type: integer
+    responses:
+      '1000':
+        description: 성공
+      '2013':
+        description: jwt토큰 검증오류.
