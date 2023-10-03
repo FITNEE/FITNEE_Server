@@ -65,11 +65,57 @@ tags:
     operationId: addFriend
     parameters:
       - name: friendIdx
-        in: body
+        in: path
         required: true
         description: 신청 보낼 유저의 userIdx
         schema:
           type: integer
+    responses:
+      '1000':
+        description: 성공
+      '2013':
+        description: jwt토큰 검증오류.
+
+/app/friend/addFriendList:
+  get:
+    summary: API NO.3.1 - 보낸 친구신청 목록 get api
+    description: toUserIdx, toUserIdx의 userNickname get
+    tags:
+      - Friend
+    operationId: addFriendList
+    responses:
+      '1000':
+        description: 성공
+      '2013':
+        description: jwt토큰 검증오류.
+
+/app/friend/cancelAdd:
+  delete:
+    summary: API NO.3.2 - 보낸 친구신청 취소 api
+    description: api no.3.1에서 불러온 friendListIdx 입력
+    tags:
+      - Friend
+    operationId: cancelAdd
+    parameters:
+      - name: friendListIdx
+        in: query
+        required: true
+        description: 삭제할 친구신청 목록
+        schema:
+          type: integer
+    responses:
+      '1000':
+        description: 성공
+      '2013':
+        description: jwt토큰 검증오류.
+
+/app/friend/getReceiveList:
+  get:
+    summary: API NO.4 - 받은 친구신청 목록 get api
+    description: friendListIdx get(뒤에서 씀)
+    tags:
+      - Friend
+    operationId: getReceiveList
     responses:
       '1000':
         description: 성공
