@@ -111,7 +111,7 @@ tags:
         description: jwt토큰 검증오류.
 
 /app/friend/accept:
-  delete:
+  put:
     summary: API NO.4.1 - 받은 친구신청 수락 api
     description: api no.4에서 불러온 friendListIdx 입력
     tags:
