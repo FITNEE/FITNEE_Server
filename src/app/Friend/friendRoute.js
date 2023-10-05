@@ -26,4 +26,7 @@ router.delete('/cancelAdd',jwtMiddleware, freind.cancelAdd);
 // 4.
 router.get('/getReceiveList',jwtMiddleware, freind.getReceiveList);
 
+// 4.
+router.put('/accept',jwtMiddleware, freind.acceptFriend);
+
 module.exports = router;

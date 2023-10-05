@@ -21,3 +21,13 @@ exports.deleteAddFriendList = async function (friendListIdx, userIdxFromJWT) {
   
     return friendDbDelete;
 };
+
+
+// 친구수락
+exports.receiveFriend = async function (userIdxFromJWT, friendListIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const friendAccept = await friendDao.acceptFriend(connection, userIdxFromJWT, friendListIdx);
+    connection.release();
+  
+    return friendAccept;
+};

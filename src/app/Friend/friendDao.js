@@ -88,6 +88,17 @@ async function searchReceivedList(connection, userIdxFromJWT) {
     return searchResultRows;
 }
 
+// 받은 친구신청 수락
+async function acceptFriend(connection, userIdxFromJWT, friendListIdx) {
+    const acceptFriendQuery = `
+        UPDATE friendList
+        SET status = '1'
+        WHERE toUserIdx = ? AND friendListIdx = ?;
+    `;
+    const [updateResultRows] = await connection.query(acceptFriendQuery, [userIdxFromJWT, friendListIdx]);
+    return updateResultRows;
+}
+
 
 module.exports = {
     searchFriend,
@@ -96,4 +107,5 @@ module.exports = {
     searchList,
     deleteAddFriend,
     searchReceivedList,
+    acceptFriend,
 };
