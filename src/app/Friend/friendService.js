@@ -31,3 +31,12 @@ exports.receiveFriend = async function (userIdxFromJWT, friendListIdx) {
   
     return friendAccept;
 };
+
+// 친구거절
+exports.refuseFriend = async function (userIdxFromJWT, friendListIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const friendRefuse = await friendDao.refuseFriend(connection, userIdxFromJWT, friendListIdx);
+    connection.release();
+  
+    return friendRefuse;
+};

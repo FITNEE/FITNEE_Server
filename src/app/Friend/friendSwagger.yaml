@@ -120,7 +120,28 @@ tags:
       - name: friendListIdx
         in: query
         required: true
-        description: 수락할 친구신청 목록
+        description: 수락할 친구신청 friendListIdx
+        schema:
+          type: integer
+    responses:
+      '1000':
+        description: 성공
+      '2013':
+        description: jwt토큰 검증오류.
+      '711':
+        description: 입력 안됨.
+
+/app/friend/refuse:
+  delete:
+    summary: API NO.4.2 - 받은 친구신청 거절 api
+    description: api no.4에서 불러온 friendListIdx 입력
+    tags:
+      - Friend
+    parameters:
+      - name: friendListIdx
+        in: query
+        required: true
+        description: 거절할 친구신청 friendListIdx
         schema:
           type: integer
     responses:

@@ -15,18 +15,21 @@ router.get('/', jwtMiddleware, freind.getFriendByIdx);
 router.post('/searchUser', freind.searchUser);
 
 // 3. 
-router.post('/addFriend',jwtMiddleware, freind.addFriend);
+router.post('/addFriend', jwtMiddleware, freind.addFriend);
 
 // 3.1
-router.get('/addFriendList',jwtMiddleware, freind.addFriendList);
+router.get('/addFriendList', jwtMiddleware, freind.addFriendList);
 
 // 3.2
-router.delete('/cancelAdd',jwtMiddleware, freind.cancelAdd);
+router.delete('/cancelAdd', jwtMiddleware, freind.cancelAdd);
 
 // 4.
-router.get('/getReceiveList',jwtMiddleware, freind.getReceiveList);
+router.get('/getReceiveList', jwtMiddleware, freind.getReceiveList);
 
-// 4.
-router.put('/accept',jwtMiddleware, freind.acceptFriend);
+// 4.1
+router.put('/accept', jwtMiddleware, freind.acceptFriend);
+
+// 4.2
+router.delete('/refuse', jwtMiddleware, freind.refuseFriend);
 
 module.exports = router;

@@ -135,13 +135,24 @@ exports.acceptFriend = async function (req, res) {
 };
 
 
-
-
 /**
  *  * API No. 4.2
  * API Name : 친구 추가(신청) 거부 기능(delete friendList column)
  * [DELETE] /app/friend/refuse
  */
+exports.refuseFriend = async function (req, res) {
+    /**
+     * Path Variable: userIdxFromJWT
+     */
+    const userIdxFromJWT = req.decoded.userIdx;
+    const friendListIdx = req.query.friendListIdx;
+
+    if (!userIdxFromJWT) return res.send(errResponse(baseResponse.USER_USERID_NOT_EXIST));
+    if (!friendListIdx) return res.send(errResponse(baseResponse.MYPAGE_CONTENT_EMPTY))
+
+    const refuseFriend = await friendService.refuseFriend(userIdxFromJWT, friendListIdx);
+    return res.send(response(baseResponse.SUCCESS, refuseFriend));
+};
 
 
 /**
