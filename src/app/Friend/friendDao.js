@@ -121,7 +121,7 @@ async function refuseFriend(connection, userIdxFromJWT, friendListIdx) {
 async function deleteFriend(connection, userIdxFromJWT, friendUserIdx) {
     const deleteFriendQuery = `
         DELETE FROM friendList
-        WHERE (fromUserIdx = ? AND toUserIdx = ?) OR (fromUserIdx = ? AND toUserIdx = ?);
+        WHERE ((fromUserIdx = ? AND toUserIdx = ?) OR (fromUserIdx = ? AND toUserIdx = ?)) AND status = '1';
     `;
     const [deleteResultRows] = await connection.query(deleteFriendQuery, [userIdxFromJWT, friendUserIdx, friendUserIdx, userIdxFromJWT]);
     return deleteResultRows;
