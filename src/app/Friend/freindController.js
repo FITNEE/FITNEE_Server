@@ -118,16 +118,41 @@ exports.getReceiveList = async function (req, res) {
 /**
  *  * API No. 4.1
  * API Name : 친구 추가(신청) 수락 기능(friendList.status 0 -> 1)
- * [POST] /app/friend/accept
+ * [PUT] /app/friend/accept
  */
+exports.acceptFriend = async function (req, res) {
+    /**
+     * Path Variable: userIdxFromJWT
+     */
+    const userIdxFromJWT = req.decoded.userIdx;
+    const friendListIdx = req.query.friendListIdx;
 
+    if (!userIdxFromJWT) return res.send(errResponse(baseResponse.USER_USERID_NOT_EXIST));
+    if (!friendListIdx) return res.send(errResponse(baseResponse.MYPAGE_CONTENT_EMPTY))
+
+    const acceptFriend = await friendService.receiveFriend(userIdxFromJWT, friendListIdx);
+    return res.send(response(baseResponse.SUCCESS, acceptFriend));
+};
 
 
 /**
  *  * API No. 4.2
  * API Name : 친구 추가(신청) 거부 기능(delete friendList column)
- * [POST] /app/friend/refuse
+ * [DELETE] /app/friend/refuse
  */
+exports.refuseFriend = async function (req, res) {
+    /**
+     * Path Variable: userIdxFromJWT
+     */
+    const userIdxFromJWT = req.decoded.userIdx;
+    const friendListIdx = req.query.friendListIdx;
+
+    if (!userIdxFromJWT) return res.send(errResponse(baseResponse.USER_USERID_NOT_EXIST));
+    if (!friendListIdx) return res.send(errResponse(baseResponse.MYPAGE_CONTENT_EMPTY))
+
+    const refuseFriend = await friendService.refuseFriend(userIdxFromJWT, friendListIdx);
+    return res.send(response(baseResponse.SUCCESS, refuseFriend));
+};
 
 
 /**
