@@ -18,7 +18,6 @@ exports.getFriendByIdx = async function (req, res) {
      * Path Variable: jwt(userId)
      */
     const userIdFromJWT = req.decoded.userId;
-    console.log(req.decoded.userIdx);
 
     if (!userIdFromJWT) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
 
@@ -160,19 +159,38 @@ exports.refuseFriend = async function (req, res) {
  * API Name : 친구 삭제기능(이미 친구인 경우 삭제 / 별도 차단은X)
  * [DELETE] /app/friend/delete
  */
+exports.deleteFriend = async function (req, res) {
+    /**
+     * Path Variable: userIdxFromJWT, friendUserIdx
+     */
+    const userIdxFromJWT = req.decoded.userIdx;
+    const friendUserIdx = req.query.friendUserIdx;
+
+    if (!userIdxFromJWT) return res.send(errResponse(baseResponse.USER_USERID_NOT_EXIST));
+    if (!friendUserIdx) return res.send(errResponse(baseResponse.MYPAGE_FRIENDIDX_EMPTY))
+
+    const deleteFriend = await friendService.deleteFriend(userIdxFromJWT, friendUserIdx);
+    return res.send(response(baseResponse.SUCCESS, deleteFriend));
+};
 
 
 /**
  *  * API No. 6
  * API Name : 친구가 오늘 운동 했는지 이름 옆에 파란점으로 표시(운동을 안했다면 회색점)
- * -> 파란점일때 터치하면 api no.7이 나오게
+ * -> 파란점일때 터치하면 api no.6.1이 나오게
  * [GET] /app/friend/friendStatus
  */
 
 
-
 /**
  *  * API No. 6.1
- * API Name : 친구의 운동정보(오늘 어떤 운동 했는지 get)
+ * API Name : 친구의 운동정보 (오늘 어떤 운동 했는지 get)
  * [GET] /app/friend/friendExercise
+ */
+
+
+/**
+ *  * API No. 7
+ * API Name : 칼로리 기준으로 친구들 순위 매기기(1~3등정도만)
+ * [GET] /app/friend/rank
  */

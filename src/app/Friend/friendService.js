@@ -40,3 +40,12 @@ exports.refuseFriend = async function (userIdxFromJWT, friendListIdx) {
   
     return friendRefuse;
 };
+
+// 친구삭제
+exports.deleteFriend = async function (userIdxFromJWT, friendUserIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const friendDelete = await friendDao.deleteFriend(connection, userIdxFromJWT, friendUserIdx);
+    connection.release();
+  
+    return friendDelete;
+};

@@ -32,4 +32,7 @@ router.put('/accept', jwtMiddleware, freind.acceptFriend);
 // 4.2
 router.delete('/refuse', jwtMiddleware, freind.refuseFriend);
 
+// 5
+router.delete('/delete', jwtMiddleware, freind.deleteFriend);
+
 module.exports = router;

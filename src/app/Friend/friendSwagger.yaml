@@ -5,7 +5,7 @@ tags:
 /app/friend:
   get:
     summary: API NO.1 - userId 받아서 친구목록 조회 api
-    description: jwt토큰으로 유저의 친구 수와 친구 목록 반환
+    description: jwt토큰으로 유저의 친구 수와 친구 목록, 해당 친구의 userIdx 반환
     tags:
       - Friend
     responses:
@@ -150,4 +150,25 @@ tags:
       '2013':
         description: jwt토큰 검증오류.
       '711':
+        description: 입력 안됨.
+
+/app/friend/delete:
+  delete:
+    summary: API NO.5 - 친구 삭제기능 api
+    description: api no.1에서 불러온 friendUserIdx 입력
+    tags:
+      - Friend
+    parameters:
+      - name: friendUserIdx
+        in: query
+        required: true
+        description: 삭제할 친구의 friendUserIdx(userIdx)
+        schema:
+          type: integer
+    responses:
+      '1000':
+        description: 성공
+      '2013':
+        description: jwt토큰 검증오류.
+      '712':
         description: 입력 안됨.

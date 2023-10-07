@@ -1,11 +1,15 @@
-// userId 받아서 친구목록 조회
+// // userId 받아서 친구목록 조회
 async function searchFriend(connection, userIdFromJWT) {
     const searchFriendQuery = `
         SELECT DISTINCT
             CASE
                 WHEN fl.fromUserIdx = u.userIdx THEN u2.userNickname
                 WHEN fl.toUserIdx = u.userIdx THEN u1.userNickname
-            END AS friendNickname
+            END AS friendNickname,
+            CASE
+                WHEN fl.fromUserIdx = u.userIdx THEN u2.userIdx
+                WHEN fl.toUserIdx = u.userIdx THEN u1.userIdx
+            END AS friendUserIdx
         FROM friendList AS fl
         LEFT JOIN User AS u ON u.userId = ?
         LEFT JOIN User AS u1 ON u1.userIdx = fl.fromUserIdx
@@ -17,7 +21,10 @@ async function searchFriend(connection, userIdFromJWT) {
     // 새로운 배열 만들어 null 값 필터링
     const filteredFriendList = searchResultRows
         .filter((friend) => friend.friendNickname !== null)
-        .map((friend) => ({ friendNickname: friend.friendNickname }));
+        .map((friend) => ({
+            friendUserIdx: friend.friendUserIdx,
+            friendNickname: friend.friendNickname,
+        }));
 
     // 친구 수 == 필터링된 배열의 길이.
     const friendCount = filteredFriendList.length;
@@ -27,6 +34,7 @@ async function searchFriend(connection, userIdFromJWT) {
         friendList: filteredFriendList,
     };
 }
+
 
 // search 받아서 healthCategory테이블의 연관 name 반환
 async function searchUser(connection, search) {
@@ -109,6 +117,16 @@ async function refuseFriend(connection, userIdxFromJWT, friendListIdx) {
     return updateResultRows;
 }
 
+// 친구 삭제
+async function deleteFriend(connection, userIdxFromJWT, friendUserIdx) {
+    const deleteFriendQuery = `
+        DELETE FROM friendList
+        WHERE (fromUserIdx = ? AND toUserIdx = ?) OR (fromUserIdx = ? AND toUserIdx = ?);
+    `;
+    const [deleteResultRows] = await connection.query(deleteFriendQuery, [userIdxFromJWT, friendUserIdx, friendUserIdx, userIdxFromJWT]);
+    return deleteResultRows;
+}
+
 
 module.exports = {
     searchFriend,
@@ -119,4 +137,5 @@ module.exports = {
     searchReceivedList,
     acceptFriend,
     refuseFriend,
+    deleteFriend,
 };
