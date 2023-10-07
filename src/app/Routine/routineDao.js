@@ -35,42 +35,26 @@ async function insertRoutine(connection, userId, isPremium, info, gpt) {
 
     console.log(infoSentence);
 
-    // const chats = async function(openai, completion, isPremium) {
-    //     responseContent = [];
-
-    //     const [completion1, completion2, completion3] = await Promise.all([
-    //         openai.createChatCompletion(completion),
-    //         openai.createChatCompletion(completion),
-    //         openai.createChatCompletion(completion)
-    //     ]);
-    
-    //     responseContent.push(JSON.parse(completion1.data.choices[0].message.content));
-    //     responseContent.push(JSON.parse(completion2.data.choices[0].message.content));
-    //     responseContent.push(JSON.parse(completion3.data.choices[0].message.content));
-
-    //     return responseContent;
-    // }
-
     const chats = async function(openai, completion, isPremium) {
         responseContent = [];
 
         var chatCompletions = [];
-        // if (isPremium === 1) {
-        //     chatCompletions = [
-        //         openai.createChatCompletion(completion),
-        //         openai.createChatCompletion(completion),
-        //         openai.createChatCompletion(completion)
-        //     ]
-        // } else {
-        //     chatCompletions = [
-        //         openai.createChatCompletion(completion)
-        //     ]
-        // }
-        chatCompletions = [
-            openai.createChatCompletion(completion),
-            openai.createChatCompletion(completion),
-            openai.createChatCompletion(completion)
-        ]
+        if (isPremium === 1) {
+            chatCompletions = [
+                openai.createChatCompletion(completion),
+                openai.createChatCompletion(completion),
+                openai.createChatCompletion(completion)
+            ]
+        } else {
+            chatCompletions = [
+                openai.createChatCompletion(completion)
+            ]
+        }
+        // chatCompletions = [
+        //     openai.createChatCompletion(completion),
+        //     openai.createChatCompletion(completion),
+        //     openai.createChatCompletion(completion)
+        // ]
 
         const completions = await Promise.all(chatCompletions);
         completions.forEach(element => {
