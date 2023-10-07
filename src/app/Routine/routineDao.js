@@ -12,8 +12,6 @@ async function insertRoutine(connection, userId, isPremium, info, gpt) {
                   `;
     const [[responseUserInfo]] = await connection.query(selectUserInfo, userId);
 
-    console.log('gpt info: ', info);
-
     const openai = gpt.openai;
     const rmSentence = (info.RM)
                         ? `I think I can lift up to ${info.RM}kg when I do squats to the maximum.`
@@ -621,7 +619,7 @@ async function endProcess(connection, userId, isPremium) {
         responseRoutineContent.push(responseRoutine);
     };
 
-    await updateRoutine(connection, userId, todayProcess[0].originRoutineIdx, responseRoutineContent);
+    // await updateRoutine(connection, userId, todayProcess[0].originRoutineIdx, responseRoutineContent);
 
     return responseRoutineContent;
 };
