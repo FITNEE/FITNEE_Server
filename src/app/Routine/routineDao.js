@@ -39,7 +39,7 @@ async function insertRoutine(connection, userId, isPremium, info, gpt) {
         responseContent = [];
 
         var chatCompletions = [];
-        if (isPremium === 1) {
+        if (isPremium === '1') {
             chatCompletions = [
                 openai.createChatCompletion(completion),
                 openai.createChatCompletion(completion),
