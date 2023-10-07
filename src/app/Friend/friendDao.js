@@ -117,15 +117,48 @@ async function refuseFriend(connection, userIdxFromJWT, friendListIdx) {
     return updateResultRows;
 }
 
-// 친구 삭제
+// // 친구 삭제
+// async function deleteFriend(connection, userIdxFromJWT, friendUserIdx) {
+//     const deleteFriendQuery = `
+//         DELETE FROM friendList
+//         WHERE ((fromUserIdx = ? AND toUserIdx = ?) OR (fromUserIdx = ? AND toUserIdx = ?)) AND status = '1';
+//     `;
+//     const [deleteResultRows] = await connection.query(deleteFriendQuery, [userIdxFromJWT, friendUserIdx, friendUserIdx, userIdxFromJWT]);
+//     return deleteResultRows;
+// }
 async function deleteFriend(connection, userIdxFromJWT, friendUserIdx) {
+    const checkStatusQuery = `
+        SELECT status
+        FROM friendList
+        WHERE ((fromUserIdx = ? AND toUserIdx = ?) OR (fromUserIdx = ? AND toUserIdx = ?));
+    `;
+    const [statusResult] = await connection.query(checkStatusQuery, [userIdxFromJWT, friendUserIdx, friendUserIdx, userIdxFromJWT]);
+
+    if (statusResult.length === 0) {
+        throw new Error('친구 관계가 존재하지 않음.');
+    }
+
+    const status = statusResult[0].status;
+
+    if (status === '0') {
+        throw new Error('친구 신청이 수락되지 않음.');
+    }
+
     const deleteFriendQuery = `
         DELETE FROM friendList
         WHERE ((fromUserIdx = ? AND toUserIdx = ?) OR (fromUserIdx = ? AND toUserIdx = ?)) AND status = '1';
     `;
-    const [deleteResultRows] = await connection.query(deleteFriendQuery, [userIdxFromJWT, friendUserIdx, friendUserIdx, userIdxFromJWT]);
-    return deleteResultRows;
+
+    const [deleteResult] = await connection.query(deleteFriendQuery, [userIdxFromJWT, friendUserIdx, friendUserIdx, userIdxFromJWT]);
+
+    if (deleteResult.affectedRows === 0) {
+        throw new Error('친구 삭제에 실패하였습니다.');
+    }
+
+    return '친구 삭제 완료.';
 }
+
+
 
 
 module.exports = {
