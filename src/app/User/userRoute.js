@@ -20,7 +20,8 @@ router.get('/:userId', user.getUserById);
 // TODO: After login authentication method (JWT)
 // Login API (JWT creation)
 router.post('/login', user.login);
-// router.post('/login/after', user.loginAfter);
+
+router.post('/check', jwtMiddleware, user.check);
 
 // API for modifying member information (JWT verification and validation - using jwtMiddleware in method chaining method)
 // jwtMiddleware 사용 방법은 api params에 써주기. -> 로직 보려면 patchUsers 클릭

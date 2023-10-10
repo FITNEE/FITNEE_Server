@@ -87,14 +87,23 @@ async function getPasswordByUserId(connection, userId) {
 
 // 유저 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectUserAccount(connection, userId) {
+  const isPremiumCheckQuery = `
+        UPDATE User
+        SET premium = 
+            CASE 
+                WHEN premium = 1 AND DATE(DATE_ADD(endAt, INTERVAL 9 HOUR)) <= DATE(DATE_ADD(NOW(), INTERVAL 9 HOUR)) THEN 0
+                ELSE premium
+            END
+        WHERE userId = ?
+        `;
+  await connection.query(isPremiumCheckQuery, userId);
+
   const selectUserAccountQuery = `
         SELECT userIdx, userId, userNickname, premium, status
         FROM User
         WHERE userId = ?;`;
-  const selectUserAccountRow = await connection.query(
-      selectUserAccountQuery,
-      userId
-  );
+  const selectUserAccountRow = await connection.query(selectUserAccountQuery, userId);
+
   return selectUserAccountRow[0];
 }
 

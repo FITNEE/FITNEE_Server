@@ -176,6 +176,37 @@ exports.login = async function(req, res) {
     }
 };
 
+exports.check = async function(req, res) {
+    const userId = req.decoded.userId;
+    const isPremium = req.decoded.isPremium;
+
+    try {
+        const accessTokenCheck = await userService.accessTokenCheck(userId, isPremium);
+
+        console.log(accessTokenCheck);
+
+        if (!accessTokenCheck.isSuccess) return res.send(signInResponse);
+        else if (!accessTokenCheck.result) return res.send(baseResponse.SUCCESS);
+        const accessToken = accessTokenCheck.result.accessToken;
+
+        // '토큰-> 쿠키' 설정
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 쿠키 만료 시간 : 1년
+        })
+        
+        return res.send(response(baseResponse.SUCCESS, {
+                accessToken: accessToken,
+            //  refreshToken: refreshToken,
+            }));
+    } catch (error) {
+        logger.error(`토큰 check API 오류: ${error.message}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
+}
+
 
 /**
  * API No. 5

@@ -72,24 +72,18 @@ exports.postSignIn = async function (userId, userPw) {
         // access Token 및 refresh Token 발급
         let accessToken = ''
         // let refreshToken = ''
-        if (userInfoRows[0].status === '1') {
-            const payload = {
-                userIdx: userInfoRows[0].userIdx,
-                userId: userId,
-                isPremium: userInfoRows[0].premium
-            }
-            try {
-                accessToken = jwt.sign(payload, secret_config.jwtsecret, {
-                    expiresIn: '30d',
-                    algorithm: 'HS256',
-                })
-                // refreshToken = jwt.sign({}, secret_config.jwtsecret, {
-                //     expiresIn: '365d',
-                //     algorithm: 'HS256'
-                // })
-            } catch (error) {
-                console.log("Error generating token:", error)
-            }
+        const payload = {
+            userIdx: userInfoRows[0].userIdx,
+            userId: userId,
+            isPremium: userInfoRows[0].premium
+        }
+        try {
+            accessToken = jwt.sign(payload, secret_config.jwtsecret, {
+                expiresIn: '365d',
+                algorithm: 'HS256',
+            })
+        } catch (error) {
+            console.log("Error generating token:", error)
         }
         
         return response(baseResponse.SUCCESS, {
@@ -104,6 +98,45 @@ exports.postSignIn = async function (userId, userPw) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+// access token check
+exports.accessTokenCheck = async function (userId, isPremium) {
+    try {
+        // 계정 상태 확인
+        const userInfoRows = await userProvider.accountCheck(userId);
+
+        // 현재 상태가 회원(1)인지, 탈퇴 회원(2)인지 확인
+        if (userInfoRows[0].status === '2') return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT)
+        else if (userInfoRows[0].premium === isPremium) return response(baseResponse.SUCCESS);
+
+        // access Token 및 refresh Token 발급
+        let accessToken = ''
+        // let refreshToken = ''
+        const payload = {
+            userIdx: userInfoRows[0].userIdx,
+            userId: userId,
+            isPremium: userInfoRows[0].premium
+        }
+        try {
+            accessToken = jwt.sign(payload, secret_config.jwtsecret, {
+                expiresIn: '365d',
+                algorithm: 'HS256',
+            })
+        } catch (error) {
+            console.log("Error generating token:", error)
+        }
+
+        return response(baseResponse.SUCCESS, {
+            isSuccess: true,
+            userId: userId,
+            accessToken: accessToken,
+            // refreshToken: refreshToken,
+        });
+    } catch (err) {
+        logger.error(`App - accessTokenCheck Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
 
 // 닉네임 수정
 exports.editUser = async function (userId, userNickname) {

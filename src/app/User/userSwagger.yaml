@@ -157,3 +157,50 @@ paths:
                   message:
                     type: string
                     example: 서버 에러
+
+  /app/user/check:
+    post:
+      tags:
+        - User
+      summary: 토큰 체크 API
+      description: jwt access token을 체크하는 API
+      responses:
+        '1000':
+          description: 성공
+          content:
+            application/json1:
+              schema:
+                type: object
+                properties:
+                  'isSuccess':
+                    type: boolean
+                    example: true
+                  'code':
+                    type: integer
+                    example: 1000
+                  'message':
+                    type: string
+                    example: '성공'
+                  'result':
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                        example: 생성된 액세스 토큰
+            application/json2:
+              schema:
+                type: object
+                properties:
+                  'isSuccess':
+                    type: boolean
+                    example: true
+                  'code':
+                    type: integer
+                    example: 1000
+                  'message':
+                    type: string
+                    example: '성공'
+        '3000':
+          description: JWT 토큰 검증 실패
+        '4001':
+          description: 서버 에러
