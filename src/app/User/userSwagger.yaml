@@ -204,3 +204,30 @@ paths:
           description: JWT 토큰 검증 실패
         '4001':
           description: 서버 에러
+
+/app/user/device:
+  put:
+    summary: 가장 최근 로그인한 디바이스토큰 db에 저장 api
+    description: 로그인할 떄 userId로 deviceToken 저장
+    tags:
+      - User
+    parameters:
+      - name: userId
+        in: query
+        required: true
+        description: userId
+        schema:
+          type: string
+      - name: deviceToken
+        in: query
+        required: true
+        description: 최근 로그인 기기의 디바이스토큰
+        schema:
+          type: string
+    responses:
+      '1000':
+        description: 성공
+      '2014':
+        description: userId를 입력해주세요.
+      '2019':
+        description: 로그인한 기기의 디바이스토큰값을 입력해주세요.

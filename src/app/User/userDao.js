@@ -147,6 +147,17 @@ async function deleteUser(connection, userId) {
   return;
 }
 
+// 로그인할때 유저가 가장 최근에 로그인한 deviceTocken 저장
+async function putDevToken(connection, userId, devToken) {
+  const putDivTokenQuery = `
+      UPDATE User
+      SET deviceToken = ?
+      WHERE userId = ?;
+  `;
+  const [putResultRows] = await connection.query(putDivTokenQuery, [devToken, userId]);
+  return putResultRows;
+}
+
 module.exports = {
   selectUser,
   selectUserUserId,
@@ -156,5 +167,6 @@ module.exports = {
   selectUserAccount,
   updateUserInfo,
   selectUserNickname,
-  deleteUser
+  deleteUser,
+  putDevToken
 };
