@@ -36,6 +36,6 @@ router.delete('/refuse', jwtMiddleware, friend.refuseFriend);
 router.delete('/delete', jwtMiddleware, friend.deleteFriend);
 
 // pushAlarm test
-//router.get('/push', friend.pushAlarm)
+router.get('/push', friend.pushAlarm)
 
 module.exports = router;

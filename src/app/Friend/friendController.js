@@ -194,3 +194,42 @@ exports.deleteFriend = async function (req, res) {
  * API Name : 칼로리 기준으로 친구들 순위 매기기(1~3등정도만)
  * [GET] /app/friend/rank
  */
+
+
+/**
+ *  * API No. 8
+ * API Name : pushAlarm test api
+ * [GET] /app/friend/alarm
+ */
+const admin = require('firebase-admin');
+let serviceAccount = require("../../../firebase-admin.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+exports.pushAlarm = async function (req, res){
+
+    //디바이스의 토큰 값
+    let deviceToken =`f2GmDOppTJ015dXkvmX_bL:APA91bFpbuNWAdJMUHYnIn3i3Yog2MUxSH1VIp-QYJxj_6nSOfuLw10X5C48FZ-oogzHr9ulUeblouqSP7PNNSsJqbellkSzVgmhkjXWRRRRrA3eoe28KRzF92NDFhhGJYyMbXZLYEgC`
+       
+    let message = {
+        notification: {
+            title: '테스트 발송',
+            body: 'FITNEE 알람입니다. 확인해보세요',
+        },
+        token: deviceToken,
+    }
+   
+    admin
+        .messaging()
+        .send(message)
+        .then(function (response) {
+            console.log('Successfully sent message: : ', response)
+            return res.status(200).json({success : true})
+        })
+        .catch(function (err) {
+            console.log('Error Sending message!!! : ', err)
+            return res.status(400).json({success : false})
+    });
+}
