@@ -46,3 +46,4 @@ yarn.lock
 *.sw?
 
 config/secret.js
+config/firebase-admin.js
