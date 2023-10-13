@@ -9,6 +9,14 @@ const cookieParser = require('cookie-parser');
 // admin.initializeApp({
 //   credential: admin.credential.cert(serviceAccount),
 // });
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./firebase-admin.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
 
 var cors = require('cors');
 
