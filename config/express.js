@@ -2,20 +2,14 @@ const express = require('express');
 const compression = require('compression');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
-// const admin = require("firebase-admin");
 
-// let serviceAccount = require("./firebase-admin.json");
+// var admin = require("firebase-admin");
+
+// var serviceAccount = require("./firebase-admin.json");
 
 // admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
+//   credential: admin.credential.cert(serviceAccount)
 // });
-var admin = require("firebase-admin");
-
-var serviceAccount = require("./firebase-admin.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
 
 
 var cors = require('cors');
