@@ -8,7 +8,7 @@ const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
 // FCM
-const admin = require('../../../config/pushConn');
+//const admin = require('../../../config/pushConn');
 
 /**
  *  * API No. 1
@@ -203,53 +203,53 @@ exports.deleteFriend = async function (req, res) {
  * API Name : pushAlarm test api
  * [GET] /app/friend/alarm
  */
-exports.pushAlarm = async function (req, res){
+// exports.pushAlarm = async function (req, res){
 
-    const num = req.query.num;
-    //디바이스의 토큰 값
-    let deviceToken =`f2GmDOppTJ015dXkvmX_bL:APA91bFpbuNWAdJMUHYnIn3i3Yog2MUxSH1VIp-QYJxj_6nSOfuLw10X5C48FZ-oogzHr9ulUeblouqSP7PNNSsJqbellkSzVgmhkjXWRRRRrA3eoe28KRzF92NDFhhGJYyMbXZLYEgC`
+//     const num = req.query.num;
+//     //디바이스의 토큰 값
+//     let deviceToken =`f2GmDOppTJ015dXkvmX_bL:APA91bFpbuNWAdJMUHYnIn3i3Yog2MUxSH1VIp-QYJxj_6nSOfuLw10X5C48FZ-oogzHr9ulUeblouqSP7PNNSsJqbellkSzVgmhkjXWRRRRrA3eoe28KRzF92NDFhhGJYyMbXZLYEgC`
        
-    ////////////////////////////////////////////////////////////////////////////////////////
-    //admin.initializeApp(); // Firebase Admin SDK 초기화
+//     ////////////////////////////////////////////////////////////////////////////////////////
+//     //admin.initializeApp(); // Firebase Admin SDK 초기화
 
-    // FCM 등록 토큰의 유효성 검사
-    const validateFCMToken = async (deviceToken) => {
-    try {
-        await admin.auth().verifyIdToken(deviceToken);
+//     // FCM 등록 토큰의 유효성 검사
+//     const validateFCMToken = async (deviceToken) => {
+//     try {
+//         await admin.auth().verifyIdToken(deviceToken);
 
-        // 유효한 토큰일 경우
-        console.log("FCM 토큰이 유효합니다.");
-        return true;
+//         // 유효한 토큰일 경우
+//         console.log("FCM 토큰이 유효합니다.");
+//         return true;
         
-    } catch (error) {
-        // 유효하지 않은 토큰일 경우
-        console.error("FCM 토큰이 유효하지 않습니다. 에러:", error);
-        return false;
-    }
-    };
-    validateFCMToken(deviceToken);
-    ///////////////////////////////////////////////////////////////////////////////////////////
+//     } catch (error) {
+//         // 유효하지 않은 토큰일 경우
+//         console.error("FCM 토큰이 유효하지 않습니다. 에러:", error);
+//         return false;
+//     }
+//     };
+//     validateFCMToken(deviceToken);
+//     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    let message = {
-        notification: {
-            title: '테스트 알림 발송',
-            body: 'FITNEE 테스트 알림입니다.',
-        },
-        token: deviceToken,
-    }
+//     let message = {
+//         notification: {
+//             title: '테스트 알림 발송',
+//             body: 'FITNEE 테스트 알림입니다.',
+//         },
+//         token: deviceToken,
+//     }
    
-    admin
-        .messaging()
-        .send(message)
-        .then(function (response) {
-            console.log('Successfully sent message: : ', response)
-            return res.status(200).json({success : true})
-        })
-        .catch(function (err) {
-            console.log('Error Sending message! : ', err)
-            return res.status(400).json({success : false})
-    });
-}
+//     admin
+//         .messaging()
+//         .send(message)
+//         .then(function (response) {
+//             console.log('Successfully sent message: : ', response)
+//             return res.status(200).json({success : true})
+//         })
+//         .catch(function (err) {
+//             console.log('Error Sending message! : ', err)
+//             return res.status(400).json({success : false})
+//     });
+// }
 
 // const admin = require('../../../config/pushConn');
 
