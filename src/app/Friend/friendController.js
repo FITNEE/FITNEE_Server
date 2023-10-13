@@ -7,6 +7,8 @@ const {response, errResponse} = require("../../../config/response");
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
+// FCM
+const admin = require('../../../config/pushConn');
 
 /**
  *  * API No. 1
@@ -201,37 +203,87 @@ exports.deleteFriend = async function (req, res) {
  * API Name : pushAlarm test api
  * [GET] /app/friend/alarm
  */
+exports.pushAlarm = async function (req, res){
 
-// var admin = require("firebase-admin");
-
-// var serviceAccount = require("../../../firebase-admin.json");
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-
-// exports.pushAlarm = async function (req, res){
-
-//     //디바이스의 토큰 값
-//     let deviceToken =`f2GmDOppTJ015dXkvmX_bL:APA91bFpbuNWAdJMUHYnIn3i3Yog2MUxSH1VIp-QYJxj_6nSOfuLw10X5C48FZ-oogzHr9ulUeblouqSP7PNNSsJqbellkSzVgmhkjXWRRRRrA3eoe28KRzF92NDFhhGJYyMbXZLYEgC`
+    const num = req.query.num;
+    //디바이스의 토큰 값
+    let deviceToken =`f2GmDOppTJ015dXkvmX_bL:APA91bFpbuNWAdJMUHYnIn3i3Yog2MUxSH1VIp-QYJxj_6nSOfuLw10X5C48FZ-oogzHr9ulUeblouqSP7PNNSsJqbellkSzVgmhkjXWRRRRrA3eoe28KRzF92NDFhhGJYyMbXZLYEgC`
        
-//     let message = {
-//         notification: {
-//             title: '테스트 발송',
-//             body: 'FITNEE 알람입니다. 확인해보세요',
-//         },
-//         token: deviceToken,
-//     }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    //admin.initializeApp(); // Firebase Admin SDK 초기화
+
+    // FCM 등록 토큰의 유효성 검사
+    const validateFCMToken = async (deviceToken) => {
+    try {
+        await admin.auth().verifyIdToken(deviceToken);
+
+        // 유효한 토큰일 경우
+        console.log("FCM 토큰이 유효합니다.");
+        return true;
+        
+    } catch (error) {
+        // 유효하지 않은 토큰일 경우
+        console.error("FCM 토큰이 유효하지 않습니다. 에러:", error);
+        return false;
+    }
+    };
+    validateFCMToken(deviceToken);
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    let message = {
+        notification: {
+            title: '테스트 알림 발송',
+            body: 'FITNEE 테스트 알림입니다.',
+        },
+        token: deviceToken,
+    }
    
-//     admin
-//         .messaging()
-//         .send(message)
-//         .then(function (response) {
-//             console.log('Successfully sent message: : ', response)
-//             return res.status(200).json({success : true})
-//         })
-//         .catch(function (err) {
-//             console.log('Error Sending message!!! : ', err)
-//             return res.status(400).json({success : false})
-//     });
-// }
+    admin
+        .messaging()
+        .send(message)
+        .then(function (response) {
+            console.log('Successfully sent message: : ', response)
+            return res.status(200).json({success : true})
+        })
+        .catch(function (err) {
+            console.log('Error Sending message! : ', err)
+            return res.status(400).json({success : false})
+    });
+}
+
+// const admin = require('../../../config/pushConn');
+
+// exports.pushAlarm = async (req, res) => {
+// 	const parameters = {
+//     	"notice_num" : req.query.num
+//         }
+//    	//const result = await friendDAO.read_notice(parameters);
+    
+//     // fcm send message 
+//     let message = {
+//     	token : 'f2GmDOppTJ015dXkvmX_bL:APA91bFpbuNWAdJMUHYnIn3i3Yog2MUxSH1VIp-QYJxj_6nSOfuLw10X5C48FZ-oogzHr9ulUeblouqSP7PNNSsJqbellkSzVgmhkjXWRRRRrA3eoe28KRzF92NDFhhGJYyMbXZLYEgC',
+//         notification : {
+//         // 보내는 위치 알려주기 위해 body에 Notice 넣어줌
+//         	body : "Notice"
+//             },
+//        	// data : {
+//         // 	title : result[0].notice_title,
+//         //     body : result[0].notice_content
+//         //     },
+//      	android : {
+// 			priority : "high",
+//             },
+//      	}
+        
+//         admin.messaging()
+//         	.send(message)
+//             .then((res) => {
+//             	console.log('Success sent message : ', res);
+//                 res.send(res);
+//           	})
+//             .catch((err) => {
+//             	console.log('Error Sending message !! : ', err);
+//                 res.send(err);
+//           	})
+// };
+

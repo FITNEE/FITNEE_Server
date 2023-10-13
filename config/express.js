@@ -3,14 +3,6 @@ const compression = require('compression');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
 
-// var admin = require("firebase-admin");
-
-// var serviceAccount = require("./firebase-admin.json");
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-
 
 var cors = require('cors');
 
