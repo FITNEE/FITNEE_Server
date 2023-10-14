@@ -183,5 +183,3 @@ tags:
     responses:
       '1000':
         description: 성공
-      '2012':
-        description: jwt토큰 불일치

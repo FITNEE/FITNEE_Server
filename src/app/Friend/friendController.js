@@ -206,7 +206,7 @@ exports.deleteFriend = async function (req, res) {
 exports.pushAlarm = async function (req, res){
 
 
-    const num = req.query.num;
+    //const num = req.query.num;
     //디바이스의 토큰 값
     let deviceToken =`eUcJdj1-SW6odpyv04OznB:APA91bEIcO7ACqOtAnp1MWNrpeqFibVWT7C9Irm8Ja9fsf6FJ69A0G3bjTWLyeg18r9e1FKWQK7BlzJJzCZbVRDqbO64bFNknLOGzKkR62TUFqdZX7k-UQPX--vozCWe3SCD8kooOAGJ`
 
@@ -216,6 +216,9 @@ exports.pushAlarm = async function (req, res){
             body: 'FITNEE 테스트 알림입니다.',
         },
         token: deviceToken,
+        android : {
+            priority : "high",
+        },
     }
    
     admin
