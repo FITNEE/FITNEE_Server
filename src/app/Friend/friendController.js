@@ -286,4 +286,3 @@ exports.deleteFriend = async function (req, res) {
 //                 res.send(err);
 //           	})
 // };
-
