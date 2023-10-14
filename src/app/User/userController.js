@@ -289,7 +289,7 @@ exports.deviceToken = async function (req, res) {
     /**
      * Path Variable: userId
      */
-    const userId = req.query.userId;
+    const userId = req.decoded.userId;
     const devToken = req.query.devToken;
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USER_USERID_EMPTY));

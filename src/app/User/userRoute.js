@@ -33,7 +33,7 @@ router.delete('/', jwtMiddleware, user.deleteUser);
 // router.get('/auto-login', jwtMiddleware, user.autoLogin)
 
 // 최근 로그인한 기기 deviceTocken 저장
-router.put('/device', user.deviceToken);
+router.put('/device', jwtMiddleware, user.deviceToken);
 
 module.exports = router;
 

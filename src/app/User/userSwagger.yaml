@@ -212,12 +212,6 @@ paths:
     tags:
       - User
     parameters:
-      - name: userId
-        in: query
-        required: true
-        description: userId
-        schema:
-          type: string
       - name: deviceToken
         in: query
         required: true
@@ -227,7 +221,5 @@ paths:
     responses:
       '1000':
         description: 성공
-      '2014':
-        description: userId를 입력해주세요.
       '2019':
         description: 로그인한 기기의 디바이스토큰값을 입력해주세요.
