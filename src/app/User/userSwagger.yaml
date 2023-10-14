@@ -212,7 +212,7 @@ paths:
     tags:
       - User
     parameters:
-      - name: deviceToken
+      - name: devToken
         in: query
         required: true
         description: 최근 로그인 기기의 디바이스토큰
