@@ -201,33 +201,33 @@ exports.deleteFriend = async function (req, res) {
 /**
  *  * API No. 8
  * API Name : pushAlarm test api
- * [GET] /app/friend/alarm
+ * [GET] /app/friend/push
  */
 exports.pushAlarm = async function (req, res){
 
-    const num = req.query.num;
+    //const num = req.query.num;
     //디바이스의 토큰 값
-    let deviceToken =`f5fCKhYLT-6Q7tanRU1VFI:APA91bHQQ07bYv27AEMH4zhpQ1gKDX-YFDOjkpUL6bBM5d7zUhmrDOWWv5MIYIDgDFNUzeXAfsnDBS7-NtGqCfRKwxZBm8Zf84m84ado_Gtrs10Vi_qMmeK8PPLK7WI4ShUAkkXsgcWt`
+    let deviceToken =`eUcJdj1-SW6odpyv04OznB:APA91bEIcO7ACqOtAnp1MWNrpeqFibVWT7C9Irm8Ja9fsf6FJ69A0G3bjTWLyeg18r9e1FKWQK7BlzJJzCZbVRDqbO64bFNknLOGzKkR62TUFqdZX7k-UQPX--vozCWe3SCD8kooOAGJ`
        
     ////////////////////////////////////////////////////////////////////////////////////////
     //admin.initializeApp(); // Firebase Admin SDK 초기화
 
     // FCM 등록 토큰의 유효성 검사
-    const validateFCMToken = async (deviceToken) => {
-    try {
-        await admin.auth().verifyIdToken(deviceToken);
+    // const validateFCMToken = async (deviceToken) => {
+    // try {
+    //     await admin.auth().verifyIdToken(deviceToken);
 
-        // 유효한 토큰일 경우
-        console.log("FCM 토큰이 유효합니다.");
-        return true;
+    //     // 유효한 토큰일 경우
+    //     console.log("FCM 토큰이 유효합니다.");
+    //     return true;
         
-    } catch (error) {
-        // 유효하지 않은 토큰일 경우
-        console.error("FCM 토큰이 유효하지 않습니다. 에러:", error);
-        return false;
-    }
-    };
-    validateFCMToken(deviceToken);
+    // } catch (error) {
+    //     // 유효하지 않은 토큰일 경우
+    //     console.error("FCM 토큰이 유효하지 않습니다. 에러:", error);
+    //     return false;
+    // }
+    // };
+    // validateFCMToken(deviceToken);
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     let message = {
@@ -251,6 +251,8 @@ exports.pushAlarm = async function (req, res){
     });
 }
 
+
+////////// 2.
 // const admin = require('../../../config/pushConn');
 
 // exports.pushAlarm = async (req, res) => {
@@ -286,3 +288,29 @@ exports.pushAlarm = async function (req, res){
 //                 res.send(err);
 //           	})
 // };
+
+
+// //// 3.
+// exports.pushAlarm = async function (req, res) {
+//     const num = req.query.num;
+//     // 디바이스의 유효한 토큰 값 사용
+//     const deviceToken = 'f5fCKhYLT-6Q7tanRU1VFI:APA91bHQQ07bYv27AEMH4zhpQ1gKDX-YFDOjkpUL6bBM5d7zUhmrDOWWv5MIYIDgDFNUzeXAfsnDBS7-NtGqCfRKwxZBm8Zf84m84ado_Gtrs10Vi_qMmeK8PPLK7WI4ShUAkkXsgcWt';
+  
+//     const message = {
+//       notification: {
+//         title: '테스트 알림 발송',
+//         body: 'FITNEE 테스트 알림입니다.',
+//       },
+//       token: deviceToken,
+//     };
+  
+//     try {
+//       const response = await admin.messaging().send(message);
+//       console.log('Successfully sent message:', response);
+//       return res.status(200).json({ success: true });
+//     } catch (err) {
+//       console.error('Error Sending message:', err);
+//       return res.status(400).json({ success: false });
+//     }
+//   };
+  
