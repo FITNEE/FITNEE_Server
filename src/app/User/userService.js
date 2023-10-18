@@ -11,15 +11,12 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const {connect} = require("http2");
 
-// Service: Create, Update, Delete 비즈니스 로직 처리
-
 // 회원가입
 exports.postSignUp = async function (userId, userPw, userNickname, gender, height, weight, birthYear) {
     try {
         // 이메일 중복 확인
         const userIdRows = await userProvider.userIdCheck(userId);
-        if (userIdRows.length > 0)
-            return errResponse(baseResponse.SIGNUP_REDUNDANT_USERID);
+        if (userIdRows.length > 0) return errResponse(baseResponse.SIGNUP_REDUNDANT_USERID);
 
         // 비밀번호 암호화
         const hashedPassword = crypto
@@ -30,12 +27,11 @@ exports.postSignUp = async function (userId, userPw, userNickname, gender, heigh
         const insertUserInfoParams = [userId, hashedPassword, userNickname, gender, height, weight, birthYear];
 
         const connection = await pool.getConnection(async (conn) => conn);
-
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-        console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
-        return response(baseResponse.SUCCESS);
 
+        console.log(`추가된 회원 : ${userIdResult[0].insertId}`);
+        return response(baseResponse.SUCCESS);
 
     } catch (err) {
         logger.error(`App - postSignUp Service error\n: ${err.message}`);
@@ -51,7 +47,7 @@ exports.postSignIn = async function (userId, userPw) {
         if (userIdRows.length < 1) return errResponse(baseResponse.USER_USERID_NOT_EXIST);
 
         // userId에 해당하는 유저 정보 가져오기
-        const userResult = await userProvider.getPassword(userId)
+        const userResult = await userProvider.getPassword(userId);
 
         // 비밀번호 확인
         const hashedPasswordInput = crypto

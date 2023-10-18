@@ -16,7 +16,6 @@ async function selectUserUserId(connection, userId) {
                 WHERE userId = ?;
                 `;
   const [userIdRows] = await connection.query(selectUserUserIdQuery, [userId]);
-
   if (userIdRows.length) return userIdRows;
 
   const selectWithdrawUserIdQuery = `
@@ -26,9 +25,8 @@ async function selectUserUserId(connection, userId) {
                 `;
 
   const [withdrawUserIdRows] = await connection.query(selectWithdrawUserIdQuery, [userId]);
-
   if (withdrawUserIdRows.length) return withdrawUserIdRows;
-  else return undefined;
+  else return userIdRows;
 }
 
 // userId 회원 조회
@@ -48,10 +46,7 @@ async function insertUserInfo(connection, insertUserInfoParams) {
         INSERT INTO User(userId, userPw, userNickname, gender, height, weight, birthYear)
         VALUES (?, ?, ?, ?, ?, ?, ?);
     `;
-  const insertUserInfoRow = await connection.query(
-    insertUserInfoQuery,
-    insertUserInfoParams
-  );
+  const insertUserInfoRow = await connection.query(insertUserInfoQuery, insertUserInfoParams);
 
   return insertUserInfoRow;
 }

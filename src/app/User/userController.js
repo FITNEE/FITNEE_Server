@@ -8,94 +8,11 @@ const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
 /**
- * API No. 1
- * API Name : 유저 생성 (회원가입) API
- * [POST] /app/user
- */
-exports.postUsers = async function (req, res) {
-    /**
-     * Body: userId(이메일), userPw(비번), userNickname(실명 혹은 별명), gender(성별), height(키), weight(몸무게), birthYear(생년월일)
-     */
-    const { userId, userPw, userNickname, gender, height, weight, birthYear } = req.body;
-
-
-    // 유효성 검사 : 빈 값 체크
-    if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
-    if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
-    if (!userNickname) return res.send(errResponse(baseResponse.EMPTY_NICKNAME));
-    if (!gender) return res.send(errResponse(baseResponse.EMPTY_GENDER));
-    if (!height) return res.send(errResponse(baseResponse.EMPTY_HEIGHT));
-    if (!weight) return res.send(errResponse(baseResponse.EMPTY_WEIGHT));
-    if (!birthYear) return res.send(errResponse(baseResponse.EMPTY_BIRTHYEAR));
-
-    // 유효성 검사 : 길이 체크
-    if (userId.length >= 40) return res.send(errResponse(baseResponse.LENGTH_ID));
-    // if (userPw.length > 20) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
-    // if (userNickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
-
-    // 유효성 검사 : 성별, 키, 몸무게
-    // 성별 : 1(남자), 2(여자)
-    const validGenderValues = [1, 2];
-    if (!validGenderValues.includes(gender)) return res.send(errResponse(baseResponse.INVALID_GENDER));
-    if (isNaN(height) || height <= 0) return res.send(errResponse(baseResponse.INVALID_HEIGHT));
-    if (isNaN(weight) || weight <= 0) return res.send(errResponse(baseResponse.INVALID_WEIGHT));
-
-    // 이메일 형식 체크
-    if (!regexEmail.test(userId)) return res.send(errResponse(baseResponse.SIGNUP_USERID_ERROR_TYPE));
-
-    try {
-        // 닉네임 중복 체크
-        const nicknameExists = await userProvider.nicknameCheck(userNickname)
-        if (nicknameExists) {
-            return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME))
-        }
-
-        // 회원 생성 호출
-        const signUpResponse = await userService.postSignUp(userId, userPw, userNickname, gender, height, weight, birthYear);
-
-        // 회원가입(signUp) 성공 시, auto Login을 처리하여 accessToken 발급
-        if (signUpResponse.isSuccess) {
-            // 로그인(signIn) 변수 할당
-            const signInResponse = await userService.postSignIn(userId, userPw, res)
-            
-            if (signInResponse.isSuccess) {
-                const accessToken = signInResponse.result.accessToken
-
-                 // '토큰-> 쿠키' 설정
-                res.cookie('accessToken', accessToken, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'strict',
-                expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 쿠키 만료 시간 : 1년
-                })
-                // 로그인 성공 응답
-                return res.send(response(baseResponse.SUCCESS, {
-                    userId: userId,
-                    userNickname: userNickname,
-                    accessToken: accessToken,
-                    message: "로그인 성공",
-                }))
-            }
-        }
-
-        // 회원가입 성공 응답
-        return res.send(response(baseResponse.SUCCESS, {
-            userId: userId,
-            userNickname: userNickname,
-         }));
-    } catch (error) {
-        logger.error(`회원 가입 API 오류: ${error.message}`);
-        return res.send(errResponse(baseResponse.SERVER_ERROR));
-    }
-};
-
-/**
  * API No. 2
  * API Name : 유저 조회 API (+ 이메일로 검색 조회)
  * [GET] /app/user
  */
 exports.getUsers = async function (req, res) {
-
     /**
      * Query String: userId
      */
@@ -134,6 +51,90 @@ exports.getUserById = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, userByUserId));
 };
 
+setCookie = async function(res, accessToken) {
+    res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        expires: new Date(Date.now()+365 * 24 * 60 * 60 * 1000) // 쿠키 만료 시간 : 1년
+    })
+}
+
+/**
+ * API No. 1
+ * API Name : 유저 생성 (회원가입) API
+ * [POST] /app/user
+ */
+exports.postUsers = async function (req, res) {
+    /**
+     * Body: userId(이메일), userPw(비번), userNickname(실명 혹은 별명), gender(성별), height(키), weight(몸무게), birthYear(생년월일)
+     */
+    const { userId, userPw, userNickname, gender, height, weight, birthYear } = req.body;
+
+    // 유효성 검사 : 빈 값 체크
+    if (!userId) return res.send(errResponse(baseResponse.EMPTY_ID));
+    if (!userPw) return res.send(errResponse(baseResponse.EMPTY_PASSWORD));
+    if (!userNickname) return res.send(errResponse(baseResponse.EMPTY_NICKNAME));
+    if (!gender) return res.send(errResponse(baseResponse.EMPTY_GENDER));
+    if (!height) return res.send(errResponse(baseResponse.EMPTY_HEIGHT));
+    if (!weight) return res.send(errResponse(baseResponse.EMPTY_WEIGHT));
+    if (!birthYear) return res.send(errResponse(baseResponse.EMPTY_BIRTHYEAR));
+
+    // 유효성 검사 : 길이 체크
+    if (userId.length >= 40) return res.send(errResponse(baseResponse.LENGTH_ID));
+    // if (userPw.length > 20) return res.send(errResponse(baseResponse.LENGTH_PASSWORD));
+    // if (userNickname.length > 24) return res.send(errResponse(baseResponse.LENGTH_NAME));
+
+    // 유효성 검사 : 성별, 키, 몸무게
+    // 성별 : 1(남자), 2(여자)
+    const validGenderValues = [1, 2];
+    if (!validGenderValues.includes(gender)) return res.send(errResponse(baseResponse.INVALID_GENDER));
+    if (isNaN(height) || height <= 0) return res.send(errResponse(baseResponse.INVALID_HEIGHT));
+    if (isNaN(weight) || weight <= 0) return res.send(errResponse(baseResponse.INVALID_WEIGHT));
+
+    // 이메일 형식 체크
+    if (!regexEmail.test(userId)) return res.send(errResponse(baseResponse.SIGNUP_USERID_ERROR_TYPE));
+
+    try {
+        // 닉네임 중복 체크
+        const nicknameExists = await userProvider.nicknameCheck(userNickname);
+        if (nicknameExists) return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME));
+
+        // 회원 생성 호출
+        const signUpResponse = await userService.postSignUp(userId, userPw, userNickname, gender, height, weight, birthYear);
+        console.log(signUpResponse);
+
+        // 회원가입(signUp) 성공 시, 바로 로그인 처리
+        if (signUpResponse.isSuccess) {
+            const signInResponse = await userService.postSignIn(userId, userPw);
+            console.log(signInResponse);
+            
+            if (signInResponse.isSuccess) {
+                const accessToken = signInResponse.result.accessToken;
+                setCookie(res, accessToken);
+
+                // 로그인 성공 응답
+                return res.send(response(baseResponse.SUCCESS, {
+                    userId: userId,
+                    userNickname: userNickname,
+                    accessToken: accessToken,
+                    message: "로그인 성공",
+                }))
+            }
+        } else {
+            return res.send(signUpResponse);
+        }
+
+        // 회원가입 성공 응답
+        return res.send(response(baseResponse.SUCCESS, {
+            userId: userId,
+            userNickname: userNickname,
+         }));
+    } catch (error) {
+        logger.error(`회원 가입 API 오류: ${error.message}`);
+        return res.send(errResponse(baseResponse.SERVER_ERROR));
+    }
+};
 
 /**
  * API No. 4
@@ -151,25 +152,13 @@ exports.login = async function(req, res) {
     
     // 
     try {
-        const signInResponse = await userService.postSignIn(userId, userPw, res);
-
+        const signInResponse = await userService.postSignIn(userId, userPw);
         if (!signInResponse.isSuccess) return res.send(signInResponse);
 
-        const accessToken = signInResponse.result.accessToken
-        // const refreshToken = signInResponse.result.refreshToken
+        const accessToken = signInResponse.result.accessToken;
+        setCookie(res, accessToken);
         
-        // '토큰-> 쿠키' 설정
-        res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-            expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 쿠키 만료 시간 : 1년
-        })
-        
-        return res.send(response(baseResponse.SUCCESS, {
-             accessToken: accessToken,
-            //  refreshToken: refreshToken,
-            }));
+        return res.send(response(baseResponse.SUCCESS, {accessToken: accessToken}));
     } catch (error) {
         logger.error(`로그인 API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
@@ -182,25 +171,15 @@ exports.check = async function(req, res) {
 
     try {
         const accessTokenCheck = await userService.accessTokenCheck(userId, isPremium);
-
         console.log(accessTokenCheck);
 
         if (!accessTokenCheck.isSuccess) return res.send(signInResponse);
         else if (!accessTokenCheck.result) return res.send(baseResponse.SUCCESS);
-        const accessToken = accessTokenCheck.result.accessToken;
 
-        // '토큰-> 쿠키' 설정
-        res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-            expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 쿠키 만료 시간 : 1년
-        })
+        const accessToken = accessTokenCheck.result.accessToken;
+        setCookie(res, accessToken);
         
-        return res.send(response(baseResponse.SUCCESS, {
-                accessToken: accessToken,
-            //  refreshToken: refreshToken,
-            }));
+        return res.send(response(baseResponse.SUCCESS, {accessToken: accessToken}));
     } catch (error) {
         logger.error(`토큰 check API 오류: ${error.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
@@ -243,38 +222,9 @@ exports.deleteUser = async function (req, res) {
 
     try {
         const deleteUserResponse = await userService.deleteUser(userId);
-
         return res.send(deleteUserResponse);
     } catch (err) {
         logger.error(`회웥 탈퇴 API Error: ${err.message}`);
         return res.send(errResponse(baseResponse.SERVER_ERROR));
     }
 }
-
-
-
-
-/**
- * API No. 5
- * API Name : 자동 로그인
- * [GET] /app/user/auto-login
- * path variable : userId
- * body : userNickname
- */
-/** JWT 토큰 검증 API
- * [GET] /app/auto-login
- * 230801 보류(박준규)
- */
-// exports.autoLogin = async function (req, res) {
-//     // jwtMiddleware에서 토큰 검증된 userId 호출
-//     const userIdResult = req.decoded.userId;
-//     console.log("autoLogin.userIdResult:", userIdResult);
-
-//     try {
-//         // 자동 로그인 성공
-//         return res.send(response(baseResponse.SUCCESS, { userId: userId }))
-//     } catch (error) {
-//         console.error(`Auto Login API Error: ${error.message}`)
-//         return res.send(errResponse(baseResponse.SERVER_ERROR))
-//     }
-// };
