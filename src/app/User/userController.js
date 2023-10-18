@@ -25,9 +25,10 @@ exports.getUsers = async function (req, res) {
     } else {
         // 유저 검색 조회
         const userListByUserId = await userProvider.retrieveUserList(userId);
-        if (!userListByUserId)
+        console.log(userListByUserId);
+        if (userListByUserId.length < 1)
             return res.send(response(baseResponse.SIGNIN_USERID_UNKNOWN));
-        if (userListByUserId[0].withdrawUserId)
+        else if (userListByUserId[0].withdrawUserId)
             return res.send(response(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT));
         return res.send(response(baseResponse.SUCCESS, userListByUserId));
     }
