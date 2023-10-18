@@ -165,3 +165,11 @@ exports.deleteUser = async function (userId) {
         return errResponse(baseResponse.DB_ERROR);
     }
 }
+
+exports.putToken = async function (userId, devToken) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const putUserDevToken= await userDao.putDevToken(connection, userId, devToken);
+    connection.release();
+  
+    return putUserDevToken;
+};

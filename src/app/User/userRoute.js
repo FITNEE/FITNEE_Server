@@ -23,12 +23,13 @@ router.post('/login', user.login);
 // 자동로그인
 router.post('/check', jwtMiddleware, user.check);
 
-// API for modifying member information (JWT verification and validation - using jwtMiddleware in method chaining method)
-// jwtMiddleware 사용 방법은 api params에 써주기. -> 로직 보려면 patchUsers 클릭
 // 회원 정보 수정
 router.patch('/', jwtMiddleware, user.patchUsers);
 
 // 회원탈퇴 API
 router.delete('/', jwtMiddleware, user.deleteUser);
+
+// 최근 로그인한 기기 deviceTocken 저장
+router.put('/device', jwtMiddleware, user.deviceToken);
 
 module.exports = router;

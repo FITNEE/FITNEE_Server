@@ -113,13 +113,13 @@ module.exports = {
     USER_USERID_EMPTY : { "isSuccess": false, "code": 2012, "message": "userId를 입력해주세요." },
     USER_USERID_NOT_EXIST : { "isSuccess": false, "code": 2013, "message": "해당 회원이 존재하지 않습니다." },
 
-    USER_USER_USERID_EMPTY : { "isSuccess": false, "code": 2014, "message": "이메일을 입력해주세요." },
+    USER_USER_USERID_EMPTY : { "isSuccess": false, "code": 2014, "message": "userId를 입력해주세요." },
     USER_USER_USERID_NOT_EXIST : { "isSuccess": false, "code": 2015, "message": "해당 이메일을 가진 회원이 존재하지 않습니다." },
     USER_ID_NOT_MATCH : { "isSuccess": false, "code": 2016, "message": "유저 아이디 값을 확인해주세요" },
     USER_NICKNAME_EMPTY : { "isSuccess": false, "code": 2017, "message": "변경할 닉네임 값을 입력해주세요" },
 
     USER_STATUS_EMPTY : { "isSuccess": false, "code": 2018, "message": "회원 상태값을 입력해주세요" },
-
+    USER_USER_DEVTOKEN_EMPTY : { "isSuccess": false, "code": 2019, "message": "로그인한 기기의 디바이스토큰값을 입력해주세요." },
     // Response error
     SIGNUP_REDUNDANT_USERID : { "isSuccess": false, "code": 3001, "message":"중복된 이메일입니다." },
     SIGNUP_REDUNDANT_NICKNAME : { "isSuccess": false, "code": 3002, "message":"중복된 닉네임입니다." },

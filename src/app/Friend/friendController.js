@@ -7,6 +7,8 @@ const {response, errResponse} = require("../../../config/response");
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
+// FCM
+const admin = require('../../../config/pushConn');
 
 /**
  *  * API No. 1
@@ -194,3 +196,104 @@ exports.deleteFriend = async function (req, res) {
  * API Name : 칼로리 기준으로 친구들 순위 매기기(1~3등정도만)
  * [GET] /app/friend/rank
  */
+
+
+/**
+ *  * API No. 8
+ * API Name : pushAlarm test api
+ * [GET] /app/friend/push
+ */
+exports.pushAlarm = async function (req, res){
+
+
+    //const num = req.query.num;
+    //디바이스의 토큰 값
+    let deviceToken =`eUcJdj1-SW6odpyv04OznB:APA91bEIcO7ACqOtAnp1MWNrpeqFibVWT7C9Irm8Ja9fsf6FJ69A0G3bjTWLyeg18r9e1FKWQK7BlzJJzCZbVRDqbO64bFNknLOGzKkR62TUFqdZX7k-UQPX--vozCWe3SCD8kooOAGJ`
+
+    let message = {
+        notification: {
+            title: '테스트 알림 발송',
+            body: 'FITNEE 테스트 알림입니다.',
+        },
+        token: deviceToken,
+        android : {
+            priority : "high",
+        },
+    }
+   
+    admin
+        .messaging()
+        .send(message)
+        .then(function (response) {
+            console.log('Successfully sent message: : ', response)
+            return res.status(200).json({success : true})
+        })
+        .catch(function (err) {
+            console.log('Error Sending message! : ', err)
+            return res.status(400).json({success : false})
+    });
+}
+
+
+////////// 2.
+// const admin = require('../../../config/pushConn');
+
+// exports.pushAlarm = async (req, res) => {
+// 	const parameters = {
+//     	"notice_num" : req.query.num
+//         }
+//    	//const result = await friendDAO.read_notice(parameters);
+    
+//     // fcm send message 
+//     let message = {
+//     	token : 'f2GmDOppTJ015dXkvmX_bL:APA91bFpbuNWAdJMUHYnIn3i3Yog2MUxSH1VIp-QYJxj_6nSOfuLw10X5C48FZ-oogzHr9ulUeblouqSP7PNNSsJqbellkSzVgmhkjXWRRRRrA3eoe28KRzF92NDFhhGJYyMbXZLYEgC',
+//         notification : {
+//         // 보내는 위치 알려주기 위해 body에 Notice 넣어줌
+//         	body : "Notice"
+//             },
+//        	// data : {
+//         // 	title : result[0].notice_title,
+//         //     body : result[0].notice_content
+//         //     },
+//      	android : {
+// 			priority : "high",
+//             },
+//      	}
+        
+//         admin.messaging()
+//         	.send(message)
+//             .then((res) => {
+//             	console.log('Success sent message : ', res);
+//                 res.send(res);
+//           	})
+//             .catch((err) => {
+//             	console.log('Error Sending message !! : ', err);
+//                 res.send(err);
+//           	})
+// };
+
+
+// //// 3.
+// exports.pushAlarm = async function (req, res) {
+//     const num = req.query.num;
+//     // 디바이스의 유효한 토큰 값 사용
+//     const deviceToken = 'f5fCKhYLT-6Q7tanRU1VFI:APA91bHQQ07bYv27AEMH4zhpQ1gKDX-YFDOjkpUL6bBM5d7zUhmrDOWWv5MIYIDgDFNUzeXAfsnDBS7-NtGqCfRKwxZBm8Zf84m84ado_Gtrs10Vi_qMmeK8PPLK7WI4ShUAkkXsgcWt';
+  
+//     const message = {
+//       notification: {
+//         title: '테스트 알림 발송',
+//         body: 'FITNEE 테스트 알림입니다.',
+//       },
+//       token: deviceToken,
+//     };
+  
+//     try {
+//       const response = await admin.messaging().send(message);
+//       console.log('Successfully sent message:', response);
+//       return res.status(200).json({ success: true });
+//     } catch (err) {
+//       console.error('Error Sending message:', err);
+//       return res.status(400).json({ success: false });
+//     }
+//   };
+  

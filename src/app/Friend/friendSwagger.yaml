@@ -172,3 +172,14 @@ tags:
         description: jwt토큰 검증오류.
       '712':
         description: 입력 안됨.
+
+
+/app/friend/push:
+  get:
+    summary: device token으로 푸시알림 보내기 test
+    description: push alarm
+    tags:
+      - Friend
+    responses:
+      '1000':
+        description: 성공

@@ -228,3 +228,23 @@ exports.deleteUser = async function (req, res) {
         return res.send(errResponse(baseResponse.SERVER_ERROR));
     }
 }
+
+/**
+ * API No. 5
+ * API Name : 가장 최근 로그인한 디바이스토큰 db에 저장
+ * [PUT] /app/user/device
+ * path variable : userId
+ */
+exports.deviceToken = async function (req, res) {
+    /**
+     * Path Variable: userId
+     */
+    const userId = req.decoded.userId;
+    const devToken = req.query.devToken;
+
+    //if (!userId) return res.send(errResponse(baseResponse.USER_USER_USERID_EMPTY));
+    if (!devToken) return res.send(errResponse(baseResponse.USER_USER_DEVTOKEN_EMPTY));
+
+    const postToken = await userService.putToken(userId, devToken);
+    return res.send(response(baseResponse.SUCCESS, postToken));
+};
