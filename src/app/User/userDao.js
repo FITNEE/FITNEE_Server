@@ -94,7 +94,7 @@ async function selectUserAccount(connection, userId) {
   await connection.query(isPremiumCheckQuery, userId);
 
   const selectUserAccountQuery = `
-        SELECT userIdx, userId, userNickname, premium, status
+        SELECT userIdx, userId, deviceToken, userNickname, premium, status
         FROM User
         WHERE userId = ?;`;
   const selectUserAccountRow = await connection.query(selectUserAccountQuery, userId);

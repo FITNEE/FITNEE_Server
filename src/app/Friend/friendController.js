@@ -20,6 +20,13 @@ exports.getFriendByIdx = async function (req, res) {
      * Path Variable: jwt(userId)
      */
     const userIdFromJWT = req.decoded.userId;
+    // const deviceToken = req.decoded.deviceToken;
+    // console.log(deviceToken);
+    const deviceToken = req.decoded.deviceToken;
+    const modifiedDeviceToken = deviceToken.replace(/:APA.*/, "");
+    console.log(userIdFromJWT);
+    console.log(deviceToken);
+    console.log(modifiedDeviceToken);
 
     if (!userIdFromJWT) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
 
@@ -205,10 +212,13 @@ exports.deleteFriend = async function (req, res) {
  */
 exports.pushAlarm = async function (req, res){
 
-
-    //const num = req.query.num;
     //디바이스의 토큰 값
-    let deviceToken =`eUcJdj1-SW6odpyv04OznB:APA91bEIcO7ACqOtAnp1MWNrpeqFibVWT7C9Irm8Ja9fsf6FJ69A0G3bjTWLyeg18r9e1FKWQK7BlzJJzCZbVRDqbO64bFNknLOGzKkR62TUFqdZX7k-UQPX--vozCWe3SCD8kooOAGJ`
+    // let deviceToken =`eUcJdj1-SW6odpyv04OznB:APA91bEIcO7ACqOtAnp1MWNrpeqFibVWT7C9Irm8Ja9fsf6FJ69A0G3bjTWLyeg18r9e1FKWQK7BlzJJzCZbVRDqbO64bFNknLOGzKkR62TUFqdZX7k-UQPX--vozCWe3SCD8kooOAGJ`
+    // console.log(deviceToken);
+
+    const deviceToken = req.decoded.deviceToken;
+    console.log(deviceToken);
+
 
     let message = {
         notification: {

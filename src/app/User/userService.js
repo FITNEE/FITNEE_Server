@@ -61,7 +61,7 @@ exports.postSignIn = async function (userId, userPw) {
 
         // 계정 상태 확인
         const userInfoRows = await userProvider.accountCheck(userId);
-
+        console.log(userInfoRows[0]);
         // 현재 상태가 회원(1)인지, 탈퇴 회원(2)인지 확인
         if (userInfoRows[0].status === '2') return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT)
 
@@ -71,6 +71,7 @@ exports.postSignIn = async function (userId, userPw) {
         const payload = {
             userIdx: userInfoRows[0].userIdx,
             userId: userId,
+            deviceToken: userInfoRows[0].deviceToken,
             isPremium: userInfoRows[0].premium
         }
         try {
