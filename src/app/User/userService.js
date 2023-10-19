@@ -173,3 +173,12 @@ exports.putToken = async function (userId, devToken) {
   
     return putUserDevToken;
 };
+
+
+exports.deleteToken = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const deleteDevToken= await userDao.deleteDevToken(connection, userId);
+    connection.release();
+  
+    return deleteDevToken;
+};

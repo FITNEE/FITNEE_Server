@@ -231,7 +231,7 @@ exports.deleteUser = async function (req, res) {
 }
 
 /**
- * API No. 5
+ * 
  * API Name : 가장 최근 로그인한 디바이스토큰 db에 저장
  * [PUT] /app/user/device
  * path variable : userId
@@ -248,4 +248,22 @@ exports.deviceToken = async function (req, res) {
 
     const postToken = await userService.putToken(userId, devToken);
     return res.send(response(baseResponse.SUCCESS, postToken));
+};
+
+/**
+ * 
+ * API Name : 로그아웃할 때 디바이스토큰값 삭제
+ * [PUT] /app/user/deleteToken
+ * path variable : userId
+ */
+exports.deleteToken = async function (req, res) {
+    /**
+     * Path Variable: userId
+     */
+    const userId = req.decoded.userId;
+
+    if (!userId) return res.send(errResponse(baseResponse.USER_USER_USERID_EMPTY));
+
+    const deleteToken = await userService.deleteToken(userId);
+    return res.send(response(baseResponse.SUCCESS, deleteToken));
 };
