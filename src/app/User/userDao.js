@@ -21,7 +21,7 @@ async function selectUserUserId(connection, userId) {
   const selectWithdrawUserIdQuery = `
                 SELECT withdrawUserId, createdAt
                 FROM withdrawUser
-                WHERE withdrawUserId = ? AND DATE(createdAt)>DATE_SUB(NOW(), INTERVAL 30 DAY)
+                WHERE withdrawUserId = ? AND DATE(createdAt)>DATE_SUB(NOW(), INTERVAL 90 DAY)
                 `;
 
   const [withdrawUserIdRows] = await connection.query(selectWithdrawUserIdQuery, [userId]);
