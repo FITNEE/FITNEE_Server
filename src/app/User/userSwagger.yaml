@@ -223,3 +223,15 @@ paths:
         description: 성공
       '2019':
         description: 로그인한 기기의 디바이스토큰값을 입력해주세요.
+
+/app/user/deleteToken:
+  put:
+    summary: 로그아웃할 때 디바이스토큰값 삭제
+    description: 로그아웃할 때 디바이스토큰값 삭제
+    tags:
+      - User
+    responses:
+      '1000':
+        description: 성공
+      '2014':
+        description: jwt 토큰 오류.

@@ -94,7 +94,7 @@ async function selectUserAccount(connection, userId) {
   await connection.query(isPremiumCheckQuery, userId);
 
   const selectUserAccountQuery = `
-        SELECT userIdx, userId, userNickname, premium, status
+        SELECT userIdx, userId, deviceToken, userNickname, premium, status
         FROM User
         WHERE userId = ?;`;
   const selectUserAccountRow = await connection.query(selectUserAccountQuery, userId);
@@ -144,14 +144,26 @@ async function deleteUser(connection, userId) {
 
 // 로그인할때 유저가 가장 최근에 로그인한 deviceTocken 저장
 async function putDevToken(connection, userId, devToken) {
-  const putDivTokenQuery = `
+  const putDevTokenQuery = `
       UPDATE User
       SET deviceToken = ?
       WHERE userId = ?;
   `;
-  const [putResultRows] = await connection.query(putDivTokenQuery, [devToken, userId]);
+  const [putResultRows] = await connection.query(putDevTokenQuery, [devToken, userId]);
   return putResultRows;
 }
+
+// 로그아웃할 때 디바이스토큰값 삭제
+async function deleteDevToken(connection, userId) {
+  const deleteDevTokenQuery = `
+      UPDATE User
+      SET deviceToken = NULL
+      WHERE userId = ?;
+  `;
+  const [putResultRows] = await connection.query(deleteDevTokenQuery, [userId]);
+  return putResultRows;
+}
+
 
 module.exports = {
   selectUser,
@@ -163,5 +175,6 @@ module.exports = {
   updateUserInfo,
   selectUserNickname,
   deleteUser,
-  putDevToken
+  putDevToken,
+  deleteDevToken
 };
