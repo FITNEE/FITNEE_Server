@@ -11,6 +11,15 @@ const pool = mysql.createPool({
     multipleStatements: true
 });
 
+// const pool = mysql.createPool({
+//     host: 'fitneedb.cuuueh7vuqzb.ap-northeast-2.rds.amazonaws.com',
+//     user: 'root',
+//     port: '3306',
+//     password: 'fitnee123',
+//     database: 'fitneeDB',
+//     multipleStatements: true
+// });
+
 module.exports = {
     pool: pool
 };
