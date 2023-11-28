@@ -62,7 +62,7 @@ async function searchKeyword(connection, search) {
     const searchKeywordQuery = `
         SELECT healthCategoryIdx, name, parts, muscle, equipment
         FROM healthCategory
-        WHERE name LIKE CONCAT('%', ?, '%');
+        WHERE name LIKE CONCAT('%', ?, '%') AND status = '0';
     `;
     const [searchResultRows] = await connection.query(searchKeywordQuery, [search]);
     return searchResultRows;
