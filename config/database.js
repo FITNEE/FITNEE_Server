@@ -8,6 +8,7 @@ const pool = mysql.createPool({
     port: '3306',
     password: 'healthgpt',
     database: 'gpthealthDB',
+    timezone: '+09:00',
     multipleStatements: true
 });
 
