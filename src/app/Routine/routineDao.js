@@ -200,7 +200,6 @@ async function selectTodayRoutine(connection, userId) {
     const [[responseUserNickname]] = await connection.query(userNicknameQuery, userId);
 
     const exerciseDay = new Date();
-    exerciseDay.setTime(exerciseDay.getTime()+9*60*60*1000);
 
     const weekEn = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const weekKo = ['일', '월', '화', '수', '목', '금', '토'];
@@ -505,7 +504,6 @@ async function endProcess(connection, userId, isPremium) {
     };
 
     const today = new Date();
-    today.setTime(today.getTime()+9*60*60*1000);
 
     const todayProcessQuery = `
                       SELECT routineIdx, originRoutineIdx, totalExerciseTime
