@@ -645,7 +645,7 @@ async function getReplacementExercisesLimited(connection, healthCategoryIdx, max
     const getReplacementExercisesQuery = `
         SELECT name, healthCategoryIdx, parts, muscle, equipment, caution1, caution2, caution3
         FROM healthCategory
-        WHERE parts = ? AND healthCategoryIdx <> ?
+        WHERE parts = ? AND healthCategoryIdx <> ? AND healthCategoryIdx<26
         ORDER BY RAND()
         LIMIT ?;
     `;
